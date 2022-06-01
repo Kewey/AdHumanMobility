@@ -1,0 +1,43 @@
+{
+  "kind": "collectionType",
+  "collectionName": "instances",
+  "info": {
+    "singularName": "instance",
+    "pluralName": "instances",
+    "displayName": "Instance",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "status": {
+      "type": "enumeration",
+      "enum": [
+        "à définir"
+      ],
+      "default": "à définir",
+      "required": true
+    },
+    "prosecutor": {
+      "type": "string",
+      "required": true
+    },
+    "city": {
+      "type": "string",
+      "required": true
+    },
+    "beginningAt": {
+      "type": "date",
+      "required": true
+    },
+    "endingAt": {
+      "type": "date",
+      "required": true
+    },
+    "additional_information": {
+      "type": "text"
+    }
+  }
+}
