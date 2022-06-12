@@ -5,20 +5,32 @@ import Input from '../components/Input'
 import Layout from '../components/Layout'
 
 function Signup() {
-	const registerUser = async (name) => {
-		const data = await fetch('http://localhost:1337/api/auth/local/register', {
+	const registerUser = async (event) => {
+		event.preventDefault()
+
+		const fields = Array.prototype.slice
+			.call(event.target)
+			.filter((el) => el.name)
+			.reduce(
+				(form, el) => ({
+					...form,
+					[el.name]: el.value,
+				}),
+				{}
+			)
+
+		const body = {
+			...fields,
+			username: `${fields.firstname} ${fields.lastname}`,
+		}
+
+		await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/local/register`, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',
 			},
-			body: JSON.stringify({
-				username: 'Michel',
-				email: 'yyyy@zzzz.com',
-				password: '123456',
-			}),
+			body: JSON.stringify(body),
 		})
-
-		console.log('data', data)
 	}
 
 	return (
@@ -32,9 +44,10 @@ function Signup() {
 					vero repellat corrupti.
 				</p>
 
-				<form>
+				<form onSubmit={registerUser}>
 					<div className='mb-3'>
 						<Input
+							required
 							label='Nom'
 							placeholder='Dupont'
 							name='lastname'
@@ -44,6 +57,7 @@ function Signup() {
 
 					<div className='mb-3'>
 						<Input
+							required
 							label='Prénom'
 							placeholder='Jean'
 							name='firstname'
@@ -53,6 +67,7 @@ function Signup() {
 
 					<div className='mb-3'>
 						<Input
+							required
 							label='Adresse mail'
 							placeholder='adresse@mail.com'
 							name='email'
@@ -62,6 +77,7 @@ function Signup() {
 
 					<div className='mb-3'>
 						<Input
+							required
 							label='Mot de passe'
 							placeholder='**********'
 							name='password'
@@ -71,6 +87,7 @@ function Signup() {
 
 					<div className='mb-3'>
 						<Input
+							required
 							label='Confirmation de mot de passe'
 							placeholder='**********'
 							name='confirmPassword'
@@ -80,17 +97,18 @@ function Signup() {
 
 					<div className='mb-6'>
 						<Input
+							required
 							label='Téléphone'
 							placeholder='00 00 00 00 00'
 							name='phone'
 							type='tel'
 						/>
 					</div>
-				</form>
 
-				<Button type='button' variant='primary' block onClick={registerUser}>
-					Inscription
-				</Button>
+					<Button type='submit' variant='primary' block>
+						Inscription
+					</Button>
+				</form>
 			</div>
 		</Layout>
 	)

@@ -1,8 +1,8 @@
 import React, { ButtonHTMLAttributes } from 'react'
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-	block: boolean
-	variant: 'primary' | 'text'
+	block?: boolean
+	variant?: 'primary' | 'text'
 }
 
 function Button({

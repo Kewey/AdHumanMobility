@@ -1,0 +1,32 @@
+{
+  "kind": "collectionType",
+  "collectionName": "disturbances",
+  "info": {
+    "singularName": "disturbance",
+    "pluralName": "disturbances",
+    "displayName": "Perturbation",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "users_permissions_user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "perturbations"
+    },
+    "instances": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::instance.instance",
+      "mappedBy": "perturbation"
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    }
+  }
+}

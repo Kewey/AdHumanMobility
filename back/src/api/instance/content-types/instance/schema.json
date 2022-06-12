@@ -38,6 +38,12 @@
     },
     "additional_information": {
       "type": "text"
+    },
+    "perturbation": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::disturbance.disturbance",
+      "inversedBy": "instances"
     }
   }
 }

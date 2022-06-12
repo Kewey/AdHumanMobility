@@ -16,6 +16,7 @@ function Input({ label, placeholder, name, ...props }: InputComponentProps) {
 			<input
 				placeholder={placeholder}
 				id={name}
+				name={name}
 				className='focus:outline-none focus:border-indigo-500 px-4 py-3 w-full border rounded-lg'
 				{...props}
 			/>

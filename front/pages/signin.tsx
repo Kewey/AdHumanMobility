@@ -1,16 +1,26 @@
+import { getCsrfToken } from 'next-auth/react'
 import Link from 'next/link'
 import React from 'react'
 import Button from '../components/Button'
 import Input from '../components/Input'
 import Layout from '../components/Layout'
 
-function Login() {
+export async function getServerSideProps(context) {
+	return {
+		props: {
+			csrfToken: await getCsrfToken(context),
+		},
+	}
+}
+
+function Login({ csrfToken }) {
 	return (
 		<Layout title='Connexion'>
 			<div className='max-w-md m-auto p-4'>
 				<h1 className='text-3xl font-extrabold'>Connexion</h1>
 
-				<form action=''>
+				<form method='post' action='/api/auth/callback/credentials'>
+					<input name='csrfToken' type='hidden' defaultValue={csrfToken} />
 					<div className='mb-3'>
 						<Input
 							label='Adresse mail'
@@ -28,13 +38,13 @@ function Login() {
 							type={'password'}
 						/>
 					</div>
-				</form>
 
-				<div className='mb-3'>
-					<Button type='button' variant='primary' block>
-						Connexion
-					</Button>
-				</div>
+					<div className='mb-3'>
+						<Button type='submit' variant='primary' block>
+							Connexion
+						</Button>
+					</div>
+				</form>
 
 				<Link href={'signup'}>
 					<Button type='button' variant='text' block>
