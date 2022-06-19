@@ -54,4 +54,7 @@ Feel free to check out the [Strapi GitHub repository](https://github.com/strapi/
 
 ---
 
-<sub>🤫 Psst! [Strapi is hiring](https://strapi.io/careers).</sub>
+## 🏳 Help
+
+docker exec -i postgresDB /bin/bash -c "pg_dump -U **USER** **DB_name**" > ./database/dump.sql
+docker exec -i postgresDB /bin/bash -c "psql -U **USER** **DB_name**" < ./database/dump.sql
