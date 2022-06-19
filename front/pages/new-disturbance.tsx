@@ -5,22 +5,21 @@ import Button from '../components/Button';
 import Input from '../components/Input';
 import Layout from '../components/Layout';
 
-export async function getServerSideProps(context) {
-  return {
-    props: {
-      csrfToken: await getCsrfToken(context),
-    },
-  };
-}
+// export async function getServerSideProps(context) {
+//   return {
+//     props: {
+//       csrfToken: await getCsrfToken(context),
+//     },
+//   };
+// }
 
-function Login({ csrfToken }) {
+function NewDisturbance() {
   return (
     <Layout title="Connexion">
       <div className="max-w-md m-auto p-4">
         <h1 className="text-3xl font-extrabold">Connexion</h1>
 
         <form method="post" action="/api/auth/callback/credentials">
-          <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
           <div className="mb-3">
             <Input
               label="Adresse mail"
@@ -56,4 +55,4 @@ function Login({ csrfToken }) {
   );
 }
 
-export default Login;
+export default NewDisturbance;

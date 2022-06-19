@@ -2,13 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
-@supports (font-variation-settings: normal) {
-	@font-face {
-		font-family: 'Roboto';
-		font-style: normal;
-		font-weight: 100 900;
-		font-display: swap;
-		font-named-instance: 'Regular';
-		src: url('../public/fonts/RobotoFlex-Regular.ttf') format('truetype');
-	}
+@layer components {
+  h3 {
+    @apply text-lg font-semibold;
+  }
 }
+/* 
+@supports (font-variation-settings: normal) {
+  @font-face {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 100 900;
+    font-display: swap;
+    font-named-instance: 'Regular';
+    src: url('../public/fonts/RobotoFlex-Regular.ttf') format('truetype');
+  }
+} */

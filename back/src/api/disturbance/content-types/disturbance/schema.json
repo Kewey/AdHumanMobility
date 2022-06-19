@@ -12,7 +12,7 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "users_permissions_user": {
+    "author": {
       "type": "relation",
       "relation": "manyToOne",
       "target": "plugin::users-permissions.user",
@@ -27,6 +27,69 @@
     "title": {
       "type": "string",
       "required": true
+    },
+    "thumbnail": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "type": {
+      "type": "enumeration",
+      "enum": [
+        "Professionnel",
+        "Particulier"
+      ],
+      "required": true
+    },
+    "car_type": {
+      "type": "enumeration",
+      "enum": [
+        "Piéton",
+        "Vélo",
+        "Trottinette",
+        "Voiture",
+        "Camion"
+      ],
+      "required": true
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": [
+        "En cours",
+        "Terminé"
+      ]
+    },
+    "description": {
+      "type": "text",
+      "required": true,
+      "minLength": 250
+    },
+    "location": {
+      "type": "string",
+      "required": true
+    },
+    "longitude": {
+      "type": "float",
+      "required": true,
+      "default": 0
+    },
+    "latitude": {
+      "type": "float",
+      "required": true,
+      "default": 0
+    },
+    "company": {
+      "type": "string"
+    },
+    "relationship": {
+      "type": "string"
+    },
+    "slug": {
+      "type": "string",
+      "unique": true
     }
   }
 }

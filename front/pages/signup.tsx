@@ -1,11 +1,13 @@
-import Link from 'next/link'
+import { useRouter } from 'next/router'
 import React from 'react'
 import Button from '../components/Button'
 import Input from '../components/Input'
 import Layout from '../components/Layout'
 
 function Signup() {
-	const registerUser = async (event) => {
+	const router = useRouter()
+
+	const registerUser = async (event: any) => {
 		event.preventDefault()
 
 		const fields = Array.prototype.slice
@@ -36,7 +38,7 @@ function Signup() {
 	return (
 		<Layout title='Inscription'>
 			<div className='max-w-md m-auto p-4'>
-				<Link href='login'>Retour</Link>
+				<Button onClick={() => router.back()}>Retour</Button>
 				<h1 className='text-3xl font-extrabold mb-4'>Inscription</h1>
 				<p className='text-gray-500 mb-5'>
 					Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo

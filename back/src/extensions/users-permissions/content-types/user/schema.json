@@ -72,7 +72,7 @@
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::disturbance.disturbance",
-      "mappedBy": "users_permissions_user"
+      "mappedBy": "author"
     }
   }
 }
