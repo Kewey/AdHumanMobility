@@ -1,35 +1,51 @@
-import type { NextApiRequest, NextPage } from 'next';
-import Link from 'next/link';
-import { getSession, signIn, signOut, useSession } from 'next-auth/react';
-import Head from 'next/head';
-import React from 'react';
-import Badge from '../components/Badge';
-import Button from '../components/Button';
-import Input from '../components/Input';
+import type { NextApiRequest, NextPage } from 'next'
+import Link from 'next/link'
+import { getSession, signIn, signOut, useSession } from 'next-auth/react'
+import Head from 'next/head'
+import React from 'react'
+import Badge from '../components/Badge'
+import Button from '../components/Button'
+import Input from '../components/Input'
+import { getPosts } from './api/disturbances'
+import { StrapiEntity } from '../types/api'
+import { Disturbance as DisturbanceType } from '../types/disturbance'
+import { useContextualRouting } from 'next-use-contextual-routing'
+import Modal from 'react-modal'
+import { useRouter } from 'next/router'
+import { Disturbance } from '../components/Disturbance'
+
+Modal.setAppElement('#__next')
 
 export const getServerSideProps = async ({ req }: { req: NextApiRequest }) => {
-  const session = await getSession({ req });
+  const session = await getSession({ req })
+  const res = await getPosts()
+  const { data: posts } = await res.json()
 
-  let headers = {};
-  if (session) {
-    headers = { Authorization: `Bearer ${session.jwt}` };
-  }
+  // let headers = {}
+  // if (session) {
+  //   headers = { Authorization: `Bearer ${session.jwt}` }
+  // }
 
   return {
     props: {
       session,
+      posts,
     },
-  };
-};
+  }
+}
 
-const Home: NextPage = () => {
-  const { data: session, status } = useSession();
-  console.log('session', session);
-  console.log('status', status);
+interface HomePageProps {
+  posts: StrapiEntity<Disturbance>[]
+}
+
+const Home: NextPage = ({ posts }: HomePageProps) => {
+  const { data: session } = useSession()
+  const { makeContextualHref, returnHref } = useContextualRouting()
+  const router = useRouter()
 
   const signInButtonNode = () => {
     if (session) {
-      return false;
+      return false
     }
 
     return (
@@ -37,20 +53,20 @@ const Home: NextPage = () => {
         <Link href="/api/auth/signin">
           <Button
             onClick={(e) => {
-              e.preventDefault();
-              signIn();
+              e.preventDefault()
+              signIn()
             }}
           >
             Sign In
           </Button>
         </Link>
       </div>
-    );
-  };
+    )
+  }
 
   const signOutButtonNode = () => {
     if (!session) {
-      return false;
+      return false
     }
 
     return (
@@ -58,73 +74,102 @@ const Home: NextPage = () => {
         <Link href="/api/auth/signout">
           <button
             onClick={(e) => {
-              e.preventDefault();
-              signOut();
+              e.preventDefault()
+              signOut()
             }}
           >
             Sign Out
           </button>
         </Link>
       </div>
-    );
-  };
+    )
+  }
 
   return (
-    <div className="hero">
-      <Head>
-        <title>Bienvenue</title>
-      </Head>
-      <div className="absolute right-4 top-4">
-        Menu
-        {signOutButtonNode()}
-        {signInButtonNode()}
+    <>
+      <Modal
+        isOpen={!!router.query.slug}
+        onRequestClose={() => router.push('/')}
+        contentLabel="Post modal"
+        className="absolute top-8 bottom-8 left-0 right-0 max-w-lg bg-white mx-auto overflow-y-auto"
+      >
+        <Disturbance disturbance={posts[0].attributes} />
+      </Modal>
+
+      <div className="hero">
+        <Head>
+          <title>Bienvenue</title>
+        </Head>
+        <div className="absolute right-4 top-4">
+          Menu
+          {signOutButtonNode()}
+          {signInButtonNode()}
+        </div>
+
+        <div className="grid grid-cols-[360px_1fr]">
+          <aside className="p-4 h-screen overflow-y-auto">
+            <h1>Bienvenue {session?.user?.name} !</h1>
+            <Link href={'new-disturbance'}>
+              <Button block>Ajouter un incident</Button>
+            </Link>
+            <div className="mt-4">
+              <Input
+                placeholder="Rechercher un incident, une ville, ..."
+                type="search"
+                name="search"
+                id="search"
+              />
+            </div>
+            <div className="mt-4">
+              {posts.map(
+                ({
+                  attributes: {
+                    title,
+                    type,
+                    car_type,
+                    status,
+                    slug,
+                    thumbnail,
+                  },
+                }: StrapiEntity<DisturbanceType>) => (
+                  <Link
+                    key={slug}
+                    as={`disturbances/${slug}`}
+                    href={makeContextualHref({ slug })}
+                    shallow
+                  >
+                    <article>
+                      {thumbnail && (
+                        <img
+                          src={thumbnail.attributes.url}
+                          alt="test"
+                          height={175}
+                          width={'100%'}
+                          className="border-8"
+                        />
+                      )}
+                      <div className="flex justify-between mt-3">
+                        <div className="grid grid-flow-col gap-2">
+                          <Badge>{type}</Badge>
+                          <Badge>{car_type}</Badge>
+                        </div>
+
+                        <Badge>{status}</Badge>
+                      </div>
+                      <h3 className="mt-2">{title}</h3>
+                    </article>
+                  </Link>
+                )
+              )}
+            </div>
+          </aside>
+          <main className="bg-slate-100">
+            <p>Map</p>
+          </main>
+        </div>
       </div>
+    </>
+  )
+}
 
-      <div className="grid grid-cols-[360px_1fr]">
-        <aside className="p-4 h-screen overflow-y-auto">
-          <h1>Bienvenue {session?.user?.name} !</h1>
-          <Link href={'new-disturbance'}>
-            <Button block>Ajouter un incident</Button>
-          </Link>
-          <div className="mt-4">
-            <Input
-              placeholder="Rechercher un incident, une ville, ..."
-              type="search"
-              name="search"
-              id="search"
-            />
-          </div>
-          <div className="mt-4">
-            {[1, 1, 1, 1, 1, 1, 1, 1].map(() => (
-              <Link href={''}>
-                <article>
-                  <img
-                    src=""
-                    alt="test"
-                    height={175}
-                    width={'100%'}
-                    className="border-8 block"
-                  />
-                  <div className="flex justify-between mt-3">
-                    <div className="grid grid-flow-col gap-2">
-                      <Badge>Badge</Badge>
-                      <Badge>Badge</Badge>
-                    </div>
-
-                    <Badge>En cours</Badge>
-                  </div>
-                  <h3 className="mt-2">Titre de l'incident</h3>
-                </article>
-              </Link>
-            ))}
-          </div>
-        </aside>
-        <main>
-          <p>Test</p>
-        </main>
-      </div>
-    </div>
-  );
-};
-
-export default Home;
+export default Home
