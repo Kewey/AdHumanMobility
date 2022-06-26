@@ -1,16 +1,16 @@
-import { getCsrfToken } from 'next-auth/react';
-import Link from 'next/link';
-import React from 'react';
-import Button from '../components/Button';
-import Input from '../components/Input';
-import Layout from '../components/Layout';
+import { getCsrfToken } from 'next-auth/react'
+import Link from 'next/link'
+import React from 'react'
+import Button from '../components/Button'
+import Input from '../components/form/Input'
+import Layout from '../components/Layout'
 
 export async function getServerSideProps(context) {
   return {
     props: {
       csrfToken: await getCsrfToken(context),
     },
-  };
+  }
 }
 
 function Login({ csrfToken }) {
@@ -53,7 +53,7 @@ function Login({ csrfToken }) {
         </Link>
       </div>
     </Layout>
-  );
+  )
 }
 
-export default Login;
+export default Login

@@ -1,7 +1,7 @@
-import React, { InputHTMLAttributes } from 'react';
+import React, { InputHTMLAttributes } from 'react'
 
 interface InputComponentProps extends InputHTMLAttributes<HTMLInputElement> {
-  label?: string;
+  label?: string
 }
 
 function Input({ label, placeholder, name, ...props }: InputComponentProps) {
@@ -10,7 +10,7 @@ function Input({ label, placeholder, name, ...props }: InputComponentProps) {
       {label && (
         <label
           htmlFor={name}
-          className="mb-1 text-gray-500 font-bold block w-full"
+          className="mb-2 text-gray-400 font-semibold block w-full"
         >
           {label}
         </label>
@@ -23,7 +23,7 @@ function Input({ label, placeholder, name, ...props }: InputComponentProps) {
         {...props}
       />
     </div>
-  );
+  )
 }
 
-export default Input;
+export default Input

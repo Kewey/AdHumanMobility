@@ -5,7 +5,7 @@ import Head from 'next/head'
 import React from 'react'
 import Badge from '../components/Badge'
 import Button from '../components/Button'
-import Input from '../components/Input'
+import Input from '../components/form/Input'
 import { getPosts } from './api/disturbances'
 import { StrapiEntity } from '../types/api'
 import { Disturbance as DisturbanceType } from '../types/disturbance'
@@ -93,7 +93,7 @@ const Home: NextPage = ({ posts }: HomePageProps) => {
         contentLabel="Post modal"
         className="absolute top-8 bottom-8 left-0 right-0 max-w-lg bg-white mx-auto overflow-y-auto"
       >
-        <Disturbance disturbance={posts[0].attributes} />
+        <Disturbance disturbance={posts?.[0]?.attributes} />
       </Modal>
 
       <div className="hero">
@@ -109,9 +109,11 @@ const Home: NextPage = ({ posts }: HomePageProps) => {
         <div className="grid grid-cols-[360px_1fr]">
           <aside className="p-4 h-screen overflow-y-auto">
             <h1>Bienvenue {session?.user?.name} !</h1>
-            <Link href={'new-disturbance'}>
-              <Button block>Ajouter un incident</Button>
-            </Link>
+            {session && (
+              <Link href={'disturbances/new'}>
+                <Button block>Ajouter un incident</Button>
+              </Link>
+            )}
             <div className="mt-4">
               <Input
                 placeholder="Rechercher un incident, une ville, ..."
@@ -121,7 +123,7 @@ const Home: NextPage = ({ posts }: HomePageProps) => {
               />
             </div>
             <div className="mt-4">
-              {posts.map(
+              {posts?.map(
                 ({
                   attributes: {
                     title,
