@@ -7,13 +7,20 @@ import Badge from '../components/Badge'
 import Button from '../components/Button'
 import Input from '../components/form/Input'
 import { getDisturbances } from './api/disturbances'
-import { StrapiCall, StrapiEntity } from '../types/api'
+import { displayMedia, StrapiCall, StrapiEntity } from '../types/api'
 import { Disturbance as DisturbanceType } from '../types/disturbance'
 import { useContextualRouting } from 'next-use-contextual-routing'
 import Modal from 'react-modal'
 import { useRouter } from 'next/router'
 import { Disturbance } from '../components/Disturbance'
 import { useForm } from 'react-hook-form'
+import Image from 'next/image'
+import {
+  faFolder,
+  faMapLocation,
+  faPlusSquare,
+} from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 Modal.setAppElement('#__next')
 
@@ -23,18 +30,19 @@ export const getServerSideProps = async () => {
 
   return {
     props: {
-      disturbances,
+      disturbances: disturbances.data,
     },
   }
 }
 
 interface HomePageProps {
-  disturbances: StrapiCall<StrapiEntity<DisturbanceType>[]>
+  disturbances: StrapiEntity<DisturbanceType>[]
 }
 
 const Home: NextPage = ({ disturbances }: HomePageProps) => {
   const { data: session } = useSession()
-  const [selectedDisturbance, setSelectedDisturbance] = useState(null)
+  const [selectedDisturbance, setSelectedDisturbance] =
+    useState<DisturbanceType>(null)
   const { makeContextualHref, returnHref } = useContextualRouting()
   const router = useRouter()
 
@@ -84,28 +92,52 @@ const Home: NextPage = ({ disturbances }: HomePageProps) => {
 
   return (
     <>
+      <Head>
+        <title>Bienvenue</title>
+      </Head>
       <Modal
         isOpen={!!router.query.slug}
         onRequestClose={() => router.push('/')}
-        contentLabel="Post modal"
-        className="absolute top-8 bottom-8 left-0 right-0 max-w-4xl bg-white mx-auto overflow-y-auto"
+        contentLabel={selectedDisturbance?.title}
+        className="absolute lg:top-8 top-0 lg:bottom-8 bottom-0 left-0 right-0 max-w-4xl bg-white mx-auto lg:rounded-xl"
+        style={{
+          overlay: {
+            backgroundColor: 'rgba(0, 0, 0, 0.75)',
+          },
+        }}
       >
-        <Disturbance disturbance={disturbances.data?.[0].attributes} />
+        <Disturbance disturbance={selectedDisturbance} />
       </Modal>
 
       <div className="hero">
-        <Head>
-          <title>Bienvenue</title>
-        </Head>
-        <div className="absolute right-4 top-4">
+        <div className="absolute z-10 right-4 top-4">
           Menu
-          {signOutButtonNode()}
           {signInButtonNode()}
         </div>
 
-        <div className="grid grid-cols-[360px_1fr]">
-          <aside className="p-4 h-screen overflow-y-auto">
-            <h1>Bienvenue {session?.user?.name} !</h1>
+        {session && (
+          <div className="lg:hidden absolute bottom-0 left-0 right-0 bg-white z-50 grid grid-flow-col border-t border-gray-200 border-solid">
+            <button className="flex flex-col items-center justify-center pt-4 pb-2 text-gray-900">
+              <FontAwesomeIcon icon={faMapLocation} className="text-2xl mb-1" />
+              <span className="text-sm">Carte</span>
+            </button>
+            <Link href={'disturbances/new'}>
+              <button className="py-3">
+                <FontAwesomeIcon
+                  icon={faPlusSquare}
+                  className="text-5xl text-primary-500"
+                />
+              </button>
+            </Link>
+            <button className="flex flex-col items-center justify-center pt-4 pb-2 text-gray-500">
+              <FontAwesomeIcon icon={faFolder} className="text-2xl mb-1" />
+              <span className="text-sm">Dossiers</span>
+            </button>
+          </div>
+        )}
+
+        <div className="grid lg:grid-cols-[360px_1fr] grid-cols-1 h-full">
+          <aside className="p-4 h-screen overflow-y-auto lg:block hidden">
             {session && (
               <Link href={'disturbances/new'}>
                 <Button block>Ajouter un incident</Button>
@@ -121,7 +153,7 @@ const Home: NextPage = ({ disturbances }: HomePageProps) => {
               />
             </div>
             <div className="mt-4">
-              {disturbances?.data.map(
+              {disturbances?.map(
                 ({
                   id,
                   attributes: {
@@ -131,6 +163,7 @@ const Home: NextPage = ({ disturbances }: HomePageProps) => {
                     status,
                     slug,
                     thumbnail,
+                    ...disturbance
                   },
                 }) => (
                   <Link
@@ -139,14 +172,29 @@ const Home: NextPage = ({ disturbances }: HomePageProps) => {
                     href={makeContextualHref({ slug })}
                     shallow
                   >
-                    <article>
-                      {thumbnail && (
-                        <img
-                          src={thumbnail.attributes.url}
-                          alt="test"
+                    <article
+                      className="mb-8"
+                      onClick={() =>
+                        setSelectedDisturbance({
+                          title,
+                          type,
+                          car_type,
+                          status,
+                          slug,
+                          thumbnail,
+                          ...disturbance,
+                        })
+                      }
+                    >
+                      {thumbnail.data && (
+                        <Image
+                          src={displayMedia(thumbnail.data.attributes.url)}
+                          alt={title}
                           height={175}
-                          width={'100%'}
-                          className="border-8"
+                          layout="responsive"
+                          width={335}
+                          className="rounded-xl"
+                          objectFit="cover"
                         />
                       )}
                       <div className="flex justify-between mt-3">
@@ -155,7 +203,7 @@ const Home: NextPage = ({ disturbances }: HomePageProps) => {
                           <Badge>{car_type}</Badge>
                         </div>
 
-                        <Badge>{status}</Badge>
+                        {status && <Badge color="bg-green-600">{status}</Badge>}
                       </div>
                       <h3 className="mt-2">{title}</h3>
                     </article>
@@ -164,7 +212,8 @@ const Home: NextPage = ({ disturbances }: HomePageProps) => {
               )}
             </div>
           </aside>
-          <main className="bg-slate-100">
+          <main className="bg-slate-100 relative min-h-screen">
+            <Image src={'/map.png'} layout="fill" objectFit="cover" />
             <p>Map</p>
           </main>
         </div>

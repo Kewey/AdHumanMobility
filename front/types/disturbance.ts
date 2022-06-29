@@ -1,4 +1,4 @@
-import { StrapiEntity } from './api'
+import { StrapiCall, StrapiEntity } from './api'
 import { Media } from './media'
 
 export interface Disturbance {
@@ -13,7 +13,7 @@ export interface Disturbance {
   company: string | null
   relationship: string | null
   slug: string
-  thumbnail: StrapiEntity<Media>
+  thumbnail: StrapiCall<StrapiEntity<Media>>
   createdAt: string
   updatedAt: string
   publishedAt: string

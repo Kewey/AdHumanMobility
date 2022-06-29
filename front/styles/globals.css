@@ -3,6 +3,10 @@
 @tailwind utilities;
 
 @layer components {
+  * {
+    white-space: pre-line;
+  }
+
   h1 {
     @apply text-xl font-bold;
   }
@@ -14,7 +18,41 @@
   h3 {
     @apply text-lg font-semibold;
   }
+
+  h4 {
+    @apply text-lg font-semibold text-gray-700;
+  }
+
+  h5 {
+    @apply text-sm font-semibold text-gray-700 uppercase mb-1;
+  }
+
+  .ReactModal__Overlay {
+    opacity: 0;
+    transition: opacity 300ms ease-in-out;
+  }
+
+  .ReactModal__Overlay--after-open {
+    opacity: 1;
+  }
+
+  .ReactModal__Overlay--before-closen {
+    opacity: 0;
+  }
+
+  .ReactModal__Overlay > .ReactModal__Content {
+    transition: transform 300ms ease-in-out;
+    transform: translateY(100px);
+  }
+
+  .ReactModal__Overlay--after-open > .ReactModal__Content {
+    transform: translateY(0);
+  }
+  .ReactModal__Overlay--before-closen > .ReactModal__Content {
+    transform: translateY(100px);
+  }
 }
+
 /* 
 @supports (font-variation-settings: normal) {
   @font-face {

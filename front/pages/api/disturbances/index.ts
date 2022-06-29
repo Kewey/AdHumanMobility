@@ -5,14 +5,14 @@ import { Disturbance, DisturbanceFormType } from '../../../types/disturbance'
 import { getSession } from 'next-auth/react'
 
 export function getDisturbances() {
-  return fetch(`${process.env.NEXT_PUBLIC_API_URL}/disturbances`)
+  return fetch(`${process.env.NEXT_PUBLIC_API_URL}/disturbances?populate=*`)
 }
 
 export async function getDisturbance(
   slug: string
 ): Promise<StrapiCall<StrapiEntity<Disturbance>>> {
   return fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/slugify/slugs/disturbance/${slug}`
+    `${process.env.NEXT_PUBLIC_API_URL}/slugify/slugs/disturbance/${slug}?populate=*`
   )
 }
 
