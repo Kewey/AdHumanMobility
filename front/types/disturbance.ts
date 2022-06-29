@@ -18,3 +18,19 @@ export interface Disturbance {
   updatedAt: string
   publishedAt: string
 }
+
+export interface DisturbanceFormType {
+  author: string
+  instances: string[]
+  title: string
+  thumbnail: string
+  type: string
+  car_type: string
+  status: string
+  description: string
+  location: string
+  longitude: number
+  latitude: number
+  company?: string
+  relationship: string
+}

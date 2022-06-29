@@ -4,6 +4,7 @@ interface CheckboxComponentProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string
   value?: string
   type: 'radio' | 'checkbox'
+  register: any
 }
 
 function Checkbox({
@@ -13,6 +14,8 @@ function Checkbox({
   type,
   value,
   className = '',
+  register,
+  required,
   ...props
 }: CheckboxComponentProps) {
   return (
@@ -22,6 +25,7 @@ function Checkbox({
     >
       {label}
       <input
+        {...(register && register(name, { required }))}
         className="ml-4"
         placeholder={placeholder}
         id={`${name}-${value}`}

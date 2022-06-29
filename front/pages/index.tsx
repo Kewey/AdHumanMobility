@@ -6,42 +6,42 @@ import React from 'react'
 import Badge from '../components/Badge'
 import Button from '../components/Button'
 import Input from '../components/form/Input'
-import { getPosts } from './api/disturbances'
+import { getDisturbances } from './api/disturbances'
 import { StrapiEntity } from '../types/api'
 import { Disturbance as DisturbanceType } from '../types/disturbance'
 import { useContextualRouting } from 'next-use-contextual-routing'
 import Modal from 'react-modal'
 import { useRouter } from 'next/router'
 import { Disturbance } from '../components/Disturbance'
+import { useForm } from 'react-hook-form'
 
 Modal.setAppElement('#__next')
 
-export const getServerSideProps = async ({ req }: { req: NextApiRequest }) => {
-  const session = await getSession({ req })
-  const res = await getPosts()
-  const { data: posts } = await res.json()
+export const getServerSideProps = async () => {
+  const res = await getDisturbances()
+  const disturbances = await res.json()
 
-  // let headers = {}
-  // if (session) {
-  //   headers = { Authorization: `Bearer ${session.jwt}` }
-  // }
+  console.log('disturbances', disturbances)
 
   return {
     props: {
-      session,
-      posts,
+      disturbances,
     },
   }
 }
 
 interface HomePageProps {
-  posts: StrapiEntity<Disturbance>[]
+  posts: StrapiEntity<DisturbanceType[]>
 }
 
 const Home: NextPage = ({ posts }: HomePageProps) => {
   const { data: session } = useSession()
   const { makeContextualHref, returnHref } = useContextualRouting()
   const router = useRouter()
+
+  console.log('posts', posts)
+
+  const { register, handleSubmit } = useForm<{ search: string }>({})
 
   const signInButtonNode = () => {
     if (session) {
@@ -116,6 +116,7 @@ const Home: NextPage = ({ posts }: HomePageProps) => {
             )}
             <div className="mt-4">
               <Input
+                register={register}
                 placeholder="Rechercher un incident, une ville, ..."
                 type="search"
                 name="search"

@@ -1,10 +1,20 @@
 import React, { InputHTMLAttributes } from 'react'
+import { UseFormRegister } from 'react-hook-form'
+import { DisturbanceFormType } from '../../types/disturbance'
 
 interface InputComponentProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string
+  register?: UseFormRegister<any>
 }
 
-function Input({ label, placeholder, name, ...props }: InputComponentProps) {
+function Input({
+  label,
+  placeholder,
+  name = '',
+  register,
+  required,
+  ...props
+}: InputComponentProps) {
   return (
     <div>
       {label && (
@@ -16,6 +26,7 @@ function Input({ label, placeholder, name, ...props }: InputComponentProps) {
         </label>
       )}
       <input
+        {...(register && register(name, { required }))}
         placeholder={placeholder}
         id={name}
         name={name}

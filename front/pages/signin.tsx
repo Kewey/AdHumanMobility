@@ -5,7 +5,7 @@ import Button from '../components/Button'
 import Input from '../components/form/Input'
 import Layout from '../components/Layout'
 
-export async function getServerSideProps(context) {
+export async function getServerSideProps(context: any) {
   return {
     props: {
       csrfToken: await getCsrfToken(context),
@@ -13,7 +13,7 @@ export async function getServerSideProps(context) {
   }
 }
 
-function Login({ csrfToken }) {
+function Login({ csrfToken }: any) {
   return (
     <Layout title="Connexion">
       <div className="max-w-md m-auto p-4">

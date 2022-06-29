@@ -3,12 +3,15 @@ import React, { TextareaHTMLAttributes } from 'react'
 interface TextareaComponentProps
   extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   label?: string
+  register: any
 }
 
 function Textarea({
   label,
   placeholder,
   name,
+  register,
+  required,
   ...props
 }: TextareaComponentProps) {
   return (
@@ -22,6 +25,7 @@ function Textarea({
         </label>
       )}
       <textarea
+        {...(register && register(name, { required }))}
         placeholder={placeholder}
         id={name}
         name={name}
