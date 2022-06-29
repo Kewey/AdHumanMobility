@@ -1,21 +1,23 @@
 import { NextPage } from 'next'
 import { Disturbance } from '../../components/Disturbance'
-import { StrapiEntity } from '../../types/api'
+import { StrapiCall, StrapiEntity } from '../../types/api'
 import { Disturbance as DisturbanceType } from '../../types/disturbance'
-import { getPost } from '../api/disturbances'
+import { getDisturbance } from '../api/disturbances'
 
 interface PostPageProps {
-  post: StrapiEntity<DisturbanceType>
+  disturbances: StrapiCall<StrapiEntity<DisturbanceType>[]>
 }
 
-const PostPage: NextPage = ({ post: { attributes } }: PostPageProps) => (
+const PostPage: NextPage = ({ disturbance: { attributes } }: PostPageProps) => (
   <Disturbance disturbance={attributes} />
 )
 
 PostPage.getInitialProps = async ({ query: { slug } }) => {
-  const res = await getPost(slug)
-  const { data: post } = await res.json()
-  return { post }
+  if (!slug || Array.isArray(slug)) return
+
+  const res = await getDisturbance(slug)
+  const { data: disturbance } = await res.json()
+  return { disturbance }
 }
 
 export default PostPage

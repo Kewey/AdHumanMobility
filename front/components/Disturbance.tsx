@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import { Disturbance as DisturbanceType } from '../types/disturbance'
 
 interface DisturbanceProps {
@@ -5,10 +6,11 @@ interface DisturbanceProps {
 }
 
 export const Disturbance = ({
-  disturbance: { title, description },
+  disturbance: { title, description, ...disturbance },
 }: DisturbanceProps) => {
   return (
-    <div>
+    <div className="p-4">
+      {/* <Image src={thumbnail.attributes.url} /> */}
       <h1>{title}</h1>
       <p>{description}</p>
     </div>

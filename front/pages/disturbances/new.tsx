@@ -1,5 +1,4 @@
 import React from 'react'
-import Link from 'next/link'
 import { useForm } from 'react-hook-form'
 import Button from '../../components/Button'
 import Input from '../../components/form/Input'
@@ -9,6 +8,7 @@ import Checkbox from '../../components/form/Checkbox'
 import { postDisturbance } from '../api/disturbances'
 import { DisturbanceFormType } from '../../types/disturbance'
 import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/router'
 
 enum IS_COMPANY {
   TRUE = 'Professionnel',
@@ -23,21 +23,19 @@ enum VEHICULE_TYPE {
   TRUCK = 'Camion',
 }
 
-enum STATUS {
-  ONGOING = 'En cours',
-  DONE = 'Terminé',
-}
-
 function NewDisturbance() {
   const { register, handleSubmit } = useForm<DisturbanceFormType>({})
+  const router = useRouter()
 
   const { data: session } = useSession()
 
   const onSubmit = async (data: any) => {
-    // console.log('data', data)
-    // console.log('session', session)
-    const post = await postDisturbance({ ...data, author: session?.id })
-    console.log(post)
+    try {
+      await postDisturbance({ ...data, author: session?.id })
+    } catch (error) {
+      console.error('error', error)
+    }
+    router.back()
   }
 
   return (

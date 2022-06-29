@@ -2,12 +2,12 @@ import type { NextApiRequest, NextPage } from 'next'
 import Link from 'next/link'
 import { getSession, signIn, signOut, useSession } from 'next-auth/react'
 import Head from 'next/head'
-import React from 'react'
+import React, { useState } from 'react'
 import Badge from '../components/Badge'
 import Button from '../components/Button'
 import Input from '../components/form/Input'
 import { getDisturbances } from './api/disturbances'
-import { StrapiEntity } from '../types/api'
+import { StrapiCall, StrapiEntity } from '../types/api'
 import { Disturbance as DisturbanceType } from '../types/disturbance'
 import { useContextualRouting } from 'next-use-contextual-routing'
 import Modal from 'react-modal'
@@ -21,8 +21,6 @@ export const getServerSideProps = async () => {
   const res = await getDisturbances()
   const disturbances = await res.json()
 
-  console.log('disturbances', disturbances)
-
   return {
     props: {
       disturbances,
@@ -31,15 +29,14 @@ export const getServerSideProps = async () => {
 }
 
 interface HomePageProps {
-  posts: StrapiEntity<DisturbanceType[]>
+  disturbances: StrapiCall<StrapiEntity<DisturbanceType>[]>
 }
 
-const Home: NextPage = ({ posts }: HomePageProps) => {
+const Home: NextPage = ({ disturbances }: HomePageProps) => {
   const { data: session } = useSession()
+  const [selectedDisturbance, setSelectedDisturbance] = useState(null)
   const { makeContextualHref, returnHref } = useContextualRouting()
   const router = useRouter()
-
-  console.log('posts', posts)
 
   const { register, handleSubmit } = useForm<{ search: string }>({})
 
@@ -91,9 +88,9 @@ const Home: NextPage = ({ posts }: HomePageProps) => {
         isOpen={!!router.query.slug}
         onRequestClose={() => router.push('/')}
         contentLabel="Post modal"
-        className="absolute top-8 bottom-8 left-0 right-0 max-w-lg bg-white mx-auto overflow-y-auto"
+        className="absolute top-8 bottom-8 left-0 right-0 max-w-4xl bg-white mx-auto overflow-y-auto"
       >
-        <Disturbance disturbance={posts?.[0]?.attributes} />
+        <Disturbance disturbance={disturbances.data?.[0].attributes} />
       </Modal>
 
       <div className="hero">
@@ -124,8 +121,9 @@ const Home: NextPage = ({ posts }: HomePageProps) => {
               />
             </div>
             <div className="mt-4">
-              {posts?.map(
+              {disturbances?.data.map(
                 ({
+                  id,
                   attributes: {
                     title,
                     type,
@@ -134,9 +132,9 @@ const Home: NextPage = ({ posts }: HomePageProps) => {
                     slug,
                     thumbnail,
                   },
-                }: StrapiEntity<DisturbanceType>) => (
+                }) => (
                   <Link
-                    key={slug}
+                    key={id}
                     as={`disturbances/${slug}`}
                     href={makeContextualHref({ slug })}
                     shallow

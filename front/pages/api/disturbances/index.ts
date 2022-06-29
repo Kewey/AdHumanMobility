@@ -4,9 +4,7 @@ import { StrapiCall, StrapiEntity } from '../../../types/api'
 import { Disturbance, DisturbanceFormType } from '../../../types/disturbance'
 import { getSession } from 'next-auth/react'
 
-export function getDisturbances(): Promise<
-  StrapiCall<StrapiEntity<Disturbance[]>>
-> {
+export function getDisturbances() {
   return fetch(`${process.env.NEXT_PUBLIC_API_URL}/disturbances`)
 }
 

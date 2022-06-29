@@ -1,4 +1,4 @@
-const defaultTheme = require('tailwindcss/defaultTheme');
+const defaultTheme = require('tailwindcss/defaultTheme')
 
 module.exports = {
   content: [
@@ -23,6 +23,19 @@ module.exports = {
           900: '#2d154c',
         },
       },
+      background: {
+        primary: {
+          100: '#f5edff',
+          200: '#e0c8ff',
+          300: '#cba3ff',
+          400: '#ac6cff',
+          500: '#9747FF',
+          600: '#8840e6',
+          700: '#6a32b3',
+          800: '#4c2480',
+          900: '#2d154c',
+        },
+      },
     },
   },
   plugins: [
@@ -30,4 +43,4 @@ module.exports = {
       strategy: 'class',
     }),
   ],
-};
+}
