@@ -1,4 +1,5 @@
 import { NextPage } from 'next'
+import Head from 'next/head'
 import { Disturbance } from '../../components/Disturbance'
 import { StrapiCall, StrapiEntity } from '../../types/api'
 import { Disturbance as DisturbanceType } from '../../types/disturbance'
@@ -9,7 +10,12 @@ interface PostPageProps {
 }
 
 const PostPage: NextPage = ({ disturbance: { attributes } }: PostPageProps) => (
-  <Disturbance disturbance={attributes} />
+  <>
+    <Head>
+      <title>{attributes?.title}</title>
+    </Head>
+    <Disturbance disturbance={attributes} />
+  </>
 )
 
 PostPage.getInitialProps = async ({ query: { slug } }) => {

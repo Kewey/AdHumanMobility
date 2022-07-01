@@ -1,5 +1,4 @@
 import fetch from 'isomorphic-fetch'
-import { getCookie } from 'cookies-next'
 import { StrapiCall, StrapiEntity } from '../../../types/api'
 import { Disturbance, DisturbanceFormType } from '../../../types/disturbance'
 import { getSession } from 'next-auth/react'
@@ -16,46 +15,52 @@ export async function getDisturbance(
   )
 }
 
-export async function postDisturbance({
-  author,
-  instances,
-  title,
-  thumbnail,
-  type,
-  car_type,
-  status,
-  description,
-  location,
-  longitude,
-  latitude,
-  company,
-  relationship,
-}: DisturbanceFormType): Promise<Disturbance | undefined> {
+export async function postDisturbance(
+  {
+    author,
+    instances,
+    title,
+    type,
+    car_type,
+    status,
+    description,
+    location,
+    longitude,
+    latitude,
+    company,
+    relationship,
+  }: DisturbanceFormType,
+  thumbnail: File
+): Promise<Disturbance | undefined> {
   const { jwt } = await getSession()
+
+  const formdata = new FormData()
+  formdata.append(
+    'data',
+    JSON.stringify({
+      author,
+      instances,
+      title,
+      type,
+      car_type,
+      status,
+      description,
+      location,
+      // longitude: 1,
+      // latitude: 1,
+      company,
+      relationship,
+    })
+  )
+  formdata.append('thumbnail', thumbnail)
 
   return fetch(`${process.env.NEXT_PUBLIC_API_URL}/disturbances`, {
     method: 'Post',
     headers: {
       Accept: 'application/json',
-      'Content-Type': 'application/json',
+      'Content-Type': 'multipart/form-data',
       Authorization: `Bearer ${jwt}`,
     },
-    body: JSON.stringify({
-      data: {
-        author,
-        instances,
-        title,
-        // thumbnail: 1,
-        type,
-        car_type,
-        status,
-        description,
-        location,
-        longitude: 1,
-        latitude: 1,
-        company,
-        relationship,
-      },
-    }),
+    body: formdata,
   })
 }

@@ -23,7 +23,7 @@ export interface DisturbanceFormType {
   author: string
   instances: string[]
   title: string
-  thumbnail: string
+  thumbnail: File
   type: string
   car_type: string
   status: string

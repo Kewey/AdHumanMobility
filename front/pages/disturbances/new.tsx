@@ -12,6 +12,7 @@ import { useRouter } from 'next/router'
 import Link from 'next/link'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import UploadPhotos from '../../components/form/Photos'
 
 enum IS_COMPANY {
   TRUE = 'Professionnel',
@@ -32,13 +33,17 @@ function NewDisturbance() {
 
   const { data: session } = useSession()
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async ({ thumbnail, ...data }: any) => {
+    const body = { ...data, author: session?.id }
+
+    console.log('thumbnail', thumbnail)
+
     try {
-      await postDisturbance({ ...data, author: session?.id })
+      await postDisturbance(body, thumbnail)
+      // router.back()
     } catch (error) {
       console.error('error', error)
     }
-    router.back()
   }
 
   return (
@@ -83,11 +88,10 @@ function NewDisturbance() {
 
             {/* PHOTO TODO */}
             <div className="mb-3">
-              <Input
+              <UploadPhotos
                 register={register}
                 name="thumbnail"
                 label="Photo de la perturbation ou des lieux"
-                type={'text'}
               />
             </div>
 

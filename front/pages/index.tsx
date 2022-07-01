@@ -93,7 +93,17 @@ const Home: NextPage = ({ disturbances }: HomePageProps) => {
   return (
     <>
       <Head>
-        <title>Bienvenue</title>
+        <title>
+          {!!router.query.slug ? selectedDisturbance.title : 'Bienvenue'}
+        </title>
+        <meta
+          name="description"
+          content={
+            !!router.query.slug
+              ? `${selectedDisturbance.description.slice(0, 160)}...`
+              : 'TODO'
+          }
+        />
       </Head>
       <Modal
         isOpen={!!router.query.slug}
