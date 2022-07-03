@@ -2,6 +2,7 @@ import fetch from 'isomorphic-fetch'
 import { StrapiCall, StrapiEntity } from '../../../types/api'
 import { Disturbance, DisturbanceFormType } from '../../../types/disturbance'
 import { getSession } from 'next-auth/react'
+import { format } from 'path'
 
 export function getDisturbances() {
   return fetch(`${process.env.NEXT_PUBLIC_API_URL}/disturbances?populate=*`)
@@ -35,6 +36,7 @@ export async function postDisturbance(
   const { jwt } = await getSession()
 
   const formdata = new FormData()
+  formdata.append('ref', 'api::disturbance.disturbance')
   formdata.append(
     'data',
     JSON.stringify({
@@ -46,19 +48,19 @@ export async function postDisturbance(
       status,
       description,
       location,
-      // longitude: 1,
-      // latitude: 1,
+      longitude: 1,
+      latitude: 1,
       company,
       relationship,
     })
   )
-  formdata.append('thumbnail', thumbnail)
+  formdata.append('files.thumbnail', thumbnail)
 
   return fetch(`${process.env.NEXT_PUBLIC_API_URL}/disturbances`, {
     method: 'Post',
     headers: {
       Accept: 'application/json',
-      'Content-Type': 'multipart/form-data',
+      // 'Content-Type': 'multipart/form-data',
       Authorization: `Bearer ${jwt}`,
     },
     body: formdata,

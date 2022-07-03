@@ -36,8 +36,6 @@ function NewDisturbance() {
   const onSubmit = async ({ thumbnail, ...data }: any) => {
     const body = { ...data, author: session?.id }
 
-    console.log('thumbnail', thumbnail)
-
     try {
       await postDisturbance(body, thumbnail)
       // router.back()

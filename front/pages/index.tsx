@@ -41,6 +41,7 @@ interface HomePageProps {
 
 const Home: NextPage = ({ disturbances }: HomePageProps) => {
   const { data: session } = useSession()
+
   const [selectedDisturbance, setSelectedDisturbance] =
     useState<DisturbanceType>(null)
   const { makeContextualHref, returnHref } = useContextualRouting()
@@ -183,7 +184,7 @@ const Home: NextPage = ({ disturbances }: HomePageProps) => {
                     shallow
                   >
                     <article
-                      className="mb-8"
+                      className="mb-8 cursor-pointer"
                       onClick={() =>
                         setSelectedDisturbance({
                           title,
