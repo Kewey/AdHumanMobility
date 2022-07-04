@@ -1,8 +1,5 @@
-import fetch from 'isomorphic-fetch'
-import { StrapiCall, StrapiEntity } from '../../../types/api'
-import { Disturbance, DisturbanceFormType } from '../../../types/disturbance'
+import { DisturbanceFormType } from '../../../types/disturbance'
 import { getSession } from 'next-auth/react'
-import { format } from 'path'
 
 export function getDisturbances() {
   return fetch(`${process.env.NEXT_PUBLIC_API_URL}/disturbances?populate=*`)

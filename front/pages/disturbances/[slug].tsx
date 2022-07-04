@@ -1,7 +1,6 @@
-import { NextPage } from 'next'
 import Head from 'next/head'
 import { Disturbance } from '../../components/Disturbance'
-import { StrapiCall, StrapiEntity } from '../../types/api'
+import { StrapiEntity } from '../../types/api'
 import { Disturbance as DisturbanceType } from '../../types/disturbance'
 import { getDisturbance } from '../api/disturbances'
 
