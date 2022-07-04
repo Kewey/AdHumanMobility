@@ -2,7 +2,7 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { ChangeEvent, InputHTMLAttributes } from 'react'
 import { UseFormRegister } from 'react-hook-form'
-import { uploadMedia } from '../../pages/api/media'
+// import { uploadMedia } from '../../pages/api/media'
 
 interface InputComponentProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string
@@ -16,11 +16,11 @@ const UploadPhotos = ({
   required,
   ...props
 }: InputComponentProps) => {
-  async function uploadSelectedFile(event: ChangeEvent<HTMLInputElement>) {
-    const selectedImg = event?.target?.files?.[0]
-    if (!selectedImg) return
-    await uploadMedia(selectedImg)
-  }
+  // async function uploadSelectedFile(event: ChangeEvent<HTMLInputElement>) {
+  //   const selectedImg = event?.target?.files?.[0]
+  //   if (!selectedImg) return
+  //   await uploadMedia(selectedImg)
+  // }
 
   return (
     <div>

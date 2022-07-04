@@ -8,9 +8,7 @@ export function getDisturbances() {
   return fetch(`${process.env.NEXT_PUBLIC_API_URL}/disturbances?populate=*`)
 }
 
-export async function getDisturbance(
-  slug: string
-): Promise<StrapiCall<StrapiEntity<Disturbance>>> {
+export async function getDisturbance(slug: string) {
   return fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/slugify/slugs/disturbance/${slug}?populate=*`
   )
@@ -32,8 +30,10 @@ export async function postDisturbance(
     relationship,
   }: DisturbanceFormType,
   thumbnail: File
-): Promise<Disturbance | undefined> {
-  const { jwt } = await getSession()
+) {
+  const session = await getSession()
+
+  const jwt = session?.jwt
 
   const formdata = new FormData()
   formdata.append('ref', 'api::disturbance.disturbance')

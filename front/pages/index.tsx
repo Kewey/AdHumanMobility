@@ -39,11 +39,11 @@ interface HomePageProps {
   disturbances: StrapiEntity<DisturbanceType>[]
 }
 
-const Home: NextPage = ({ disturbances }: HomePageProps) => {
+const Home = ({ disturbances }: HomePageProps) => {
   const { data: session } = useSession()
 
   const [selectedDisturbance, setSelectedDisturbance] =
-    useState<DisturbanceType>(null)
+    useState<DisturbanceType | null>(null)
   const { makeContextualHref, returnHref } = useContextualRouting()
   const router = useRouter()
 
@@ -95,13 +95,13 @@ const Home: NextPage = ({ disturbances }: HomePageProps) => {
     <>
       <Head>
         <title>
-          {!!router.query.slug ? selectedDisturbance.title : 'Bienvenue'}
+          {!!router.query.slug ? selectedDisturbance?.title : 'Bienvenue'}
         </title>
         <meta
           name="description"
           content={
             !!router.query.slug
-              ? `${selectedDisturbance.description.slice(0, 160)}...`
+              ? `${selectedDisturbance?.description.slice(0, 160)}...`
               : 'TODO'
           }
         />
@@ -117,7 +117,9 @@ const Home: NextPage = ({ disturbances }: HomePageProps) => {
           },
         }}
       >
-        <Disturbance disturbance={selectedDisturbance} />
+        {selectedDisturbance && (
+          <Disturbance disturbance={selectedDisturbance} />
+        )}
       </Modal>
 
       <div className="hero">

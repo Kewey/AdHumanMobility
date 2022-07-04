@@ -6,10 +6,10 @@ import { Disturbance as DisturbanceType } from '../../types/disturbance'
 import { getDisturbance } from '../api/disturbances'
 
 interface PostPageProps {
-  disturbances: StrapiCall<StrapiEntity<DisturbanceType>[]>
+  disturbances: StrapiEntity<DisturbanceType>
 }
 
-const PostPage: NextPage = ({ disturbance: { attributes } }: PostPageProps) => (
+const PostPage = ({ disturbances: { attributes } }: PostPageProps) => (
   <>
     <Head>
       <title>{attributes?.title}</title>
@@ -18,7 +18,11 @@ const PostPage: NextPage = ({ disturbance: { attributes } }: PostPageProps) => (
   </>
 )
 
-PostPage.getInitialProps = async ({ query: { slug } }) => {
+PostPage.getInitialProps = async ({
+  query: { slug },
+}: {
+  query: { slug: string }
+}) => {
   if (!slug || Array.isArray(slug)) return
 
   const res = await getDisturbance(slug)
