@@ -50,5 +50,5 @@
   }
   .ReactModal__Overlay--before-closen > .ReactModal__Content {
     transform: translateY(100px);
-  }
+  } 
 }
