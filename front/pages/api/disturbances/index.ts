@@ -29,7 +29,6 @@ export async function postDisturbance(
   thumbnail: File
 ) {
   const session = await getSession()
-
   const jwt = session?.jwt
 
   const formdata = new FormData()
