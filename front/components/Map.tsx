@@ -17,13 +17,6 @@ export const Map = ({ latlng }: MapProps) => {
     []
   )
 
-  navigator.geolocation.getCurrentPosition((pos) => {
-    console.log('pos', pos),
-      (err) => {
-        console.log('err', err)
-      }
-  })
-
   const onLoad = useCallback((map: any) => {
     mapRef.current = map
   }, [])
