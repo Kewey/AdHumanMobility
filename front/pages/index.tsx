@@ -1,8 +1,7 @@
-import type { NextApiRequest, NextPage } from 'next'
 import Link from 'next/link'
 import { getSession, signIn, signOut, useSession } from 'next-auth/react'
 import Head from 'next/head'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Badge from '../components/Badge'
 import Button from '../components/Button'
 import Input from '../components/form/Input'
@@ -15,12 +14,15 @@ import { useRouter } from 'next/router'
 import { Disturbance } from '../components/Disturbance'
 import { useForm } from 'react-hook-form'
 import Image from 'next/image'
+import { useLoadScript } from '@react-google-maps/api'
 import {
   faFolder,
   faMapLocation,
   faPlusSquare,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { Pin } from '../components/Pin'
+import { Map } from '../components/Map'
 
 Modal.setAppElement('#__next')
 
@@ -42,12 +44,46 @@ interface HomePageProps {
 const Home = ({ disturbances }: HomePageProps) => {
   const { data: session } = useSession()
 
+  const [centerMap, setCenterMap] = useState({
+    lat: 44.837789,
+    lng: -0.57918,
+  })
+  const setApproximatedUserLocation = async () => {
+    const res = await fetch(
+      'https://www.googleapis.com/geolocation/v1/geolocate?key=' +
+        process.env.NEXT_PUBLIC_GOOGLE_MAP_KEY,
+      {
+        method: 'post',
+      }
+    )
+    const {
+      location: { lat, lng },
+    } = await res.json()
+    setCenterMap({ lat, lng })
+  }
+
+  useEffect(() => {
+    setApproximatedUserLocation()
+  }, [])
+
+  const { isLoaded: isMapLoaded } = useLoadScript({
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAP_KEY || '',
+    libraries: ['places'],
+  })
+
   const [selectedDisturbance, setSelectedDisturbance] =
     useState<DisturbanceType | null>(null)
+
   const { makeContextualHref, returnHref } = useContextualRouting()
   const router = useRouter()
 
   const { register, handleSubmit } = useForm<{ search: string }>({})
+
+  const onPinClicked = (key: number, childProps: any) => {
+    console.log('childProps', childProps)
+    const { lat, lng } = childProps
+    setCenterMap({ lat, lng })
+  }
 
   const signInButtonNode = () => {
     if (session) {
@@ -226,8 +262,26 @@ const Home = ({ disturbances }: HomePageProps) => {
             </div>
           </aside>
           <main className="bg-slate-100 relative min-h-screen">
-            <Image src={'/map.png'} layout="fill" objectFit="cover" />
-            <p>Map</p>
+            {isMapLoaded && (
+              <>
+                <Map latlng={centerMap} />
+                {/* <GoogleMapReact
+              defaultCenter={centerMap}
+              defaultZoom={15}
+              // onBoundsChange={}
+              bootstrapURLKeys={{
+                key: process.env.GOOGLE_MAP_KEY,
+                language: 'fr',
+              }}
+              onChildClick={onPinClicked}
+              >
+              <Pin lat={44.837789} lng={-0.57918}>
+              salut
+              </Pin>
+            </GoogleMapReact> */}
+                {/* <Image src={'/map.png'} layout="fill" objectFit="cover" /> */}
+              </>
+            )}
           </main>
         </div>
       </div>

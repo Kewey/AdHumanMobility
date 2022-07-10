@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 module.exports = () => ({
-  reactStrictMode: true,
+  reactStrictMode: false,
   images: {
     domains: [process.env.NEXT_PUBLIC_DOMAIN],
   },
