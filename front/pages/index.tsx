@@ -73,7 +73,9 @@ const Home = ({ disturbances }: HomePageProps) => {
     setApproximatedUserLocation()
   }, [])
 
-  const libraries = useMemo<string[]>(() => ['places'], [])
+  const libraries = useMemo<
+    ('places' | 'drawing' | 'geometry' | 'localContext' | 'visualization')[]
+  >(() => ['places'], [])
 
   const { isLoaded: isMapLoaded } = useLoadScript({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAP_KEY || '',
