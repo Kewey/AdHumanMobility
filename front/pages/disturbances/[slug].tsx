@@ -5,15 +5,15 @@ import { Disturbance as DisturbanceType } from '../../types/disturbance'
 import { getDisturbance } from '../api/disturbances'
 
 interface PostPageProps {
-  disturbances: StrapiEntity<DisturbanceType>
+  disturbance: StrapiEntity<DisturbanceType>
 }
 
-const PostPage = ({ disturbances: { attributes } }: PostPageProps) => (
+const PostPage = ({ disturbance }: PostPageProps) => (
   <>
     <Head>
-      <title>{attributes?.title}</title>
+      <title>{disturbance?.attributes?.title}</title>
     </Head>
-    <Disturbance disturbance={attributes} />
+    <Disturbance disturbance={disturbance?.attributes} />
   </>
 )
 

@@ -44,8 +44,8 @@ export async function postDisturbance(
       status,
       description,
       location,
-      longitude: 1,
-      latitude: 1,
+      longitude,
+      latitude,
       company,
       relationship,
     })

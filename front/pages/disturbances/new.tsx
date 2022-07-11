@@ -1,5 +1,5 @@
 import React from 'react'
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 import Button from '../../components/Button'
 import Input from '../../components/form/Input'
 import Layout from '../../components/Layout'
@@ -13,6 +13,8 @@ import Link from 'next/link'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import UploadPhotos from '../../components/form/Photos'
+import { SearchPlace } from '../../components/form/SearchPlace'
+import { getGeocode } from 'use-places-autocomplete'
 
 enum IS_COMPANY {
   TRUE = 'Professionnel',
@@ -28,7 +30,8 @@ enum VEHICULE_TYPE {
 }
 
 function NewDisturbance() {
-  const { register, handleSubmit } = useForm<DisturbanceFormType>({})
+  const { register, handleSubmit, control, setValue, watch } =
+    useForm<DisturbanceFormType>({})
   const router = useRouter()
 
   const { data: session } = useSession()
@@ -38,7 +41,7 @@ function NewDisturbance() {
 
     try {
       await postDisturbance(body, thumbnail)
-      // router.back()
+      router.back()
     } catch (error) {
       console.error('error', error)
     }
@@ -75,13 +78,32 @@ function NewDisturbance() {
             </div>
 
             <div className="mb-3">
-              <Input
+              <label className="mb-2 text-gray-400 font-semibold block w-full">
+                Lieu de la perturbation
+              </label>
+              <Controller
+                control={control}
+                name="location"
+                render={() => (
+                  <SearchPlace
+                    goToLocation={async (location) => {
+                      setValue('latitude', location.lat)
+                      setValue('longitude', location.lng)
+
+                      const res = await getGeocode({ location })
+                      const { formatted_address } = res[0]
+                      setValue('location', formatted_address)
+                    }}
+                  />
+                )}
+              />
+              {/* <Input
                 register={register}
                 name="location"
                 label="Lieu de la perturbation"
                 placeholder="2 Quai des Queyries, 33100 Bordeaux"
                 type={'text'}
-              />
+              /> */}
             </div>
 
             {/* PHOTO TODO */}
@@ -103,7 +125,6 @@ function NewDisturbance() {
               />
             </div>
 
-            {/* TODO : Radio */}
             <div className="mb-3">
               <h4 className="mb-2 text-gray-400 font-semibold block w-full">
                 Entreprise mise en cause ?
@@ -126,15 +147,17 @@ function NewDisturbance() {
               </div>
             </div>
 
-            <div className="mb-3">
-              <Input
-                register={register}
-                name="company"
-                label="Nom de l'entreprise concernées"
-                placeholder="Uber, Lime, ..."
-                type={'text'}
-              />
-            </div>
+            {watch('type') === IS_COMPANY.TRUE && (
+              <div className="mb-3">
+                <Input
+                  register={register}
+                  name="company"
+                  label="Nom de l'entreprise concernées"
+                  placeholder="Uber, Lime, ..."
+                  type={'text'}
+                />
+              </div>
+            )}
 
             <div className="mb-3 lg:col-span-2">
               <h4 className="mb-2 text-gray-400 font-semibold block w-full">
@@ -198,7 +221,7 @@ function NewDisturbance() {
               block
               form="disturbanceForm"
             >
-              Connexion
+              Envoyer le dossier
             </Button>
           </div>
         </div>

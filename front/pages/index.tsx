@@ -1,10 +1,9 @@
 import Link from 'next/link'
-import { getSession, signIn, signOut, useSession } from 'next-auth/react'
+import { signIn, signOut, useSession } from 'next-auth/react'
 import Head from 'next/head'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Badge from '../components/Badge'
 import Button from '../components/Button'
-import Input from '../components/form/Input'
 import { getDisturbances } from './api/disturbances'
 import { displayMedia, StrapiCall, StrapiEntity } from '../types/api'
 import { Disturbance as DisturbanceType } from '../types/disturbance'
@@ -12,9 +11,13 @@ import { useContextualRouting } from 'next-use-contextual-routing'
 import Modal from 'react-modal'
 import { useRouter } from 'next/router'
 import { Disturbance } from '../components/Disturbance'
-import { useForm } from 'react-hook-form'
 import Image from 'next/image'
-import { useLoadScript } from '@react-google-maps/api'
+import {
+  GoogleMap,
+  Marker,
+  MarkerClusterer,
+  useLoadScript,
+} from '@react-google-maps/api'
 import {
   faFolder,
   faMapLocation,
@@ -22,7 +25,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Pin } from '../components/Pin'
-import { Map } from '../components/Map'
+import { SearchPlace } from '../components/form/SearchPlace'
 
 Modal.setAppElement('#__next')
 
@@ -49,26 +52,33 @@ const Home = ({ disturbances }: HomePageProps) => {
     lng: -0.57918,
   })
   const setApproximatedUserLocation = async () => {
-    const res = await fetch(
-      'https://www.googleapis.com/geolocation/v1/geolocate?key=' +
-        process.env.NEXT_PUBLIC_GOOGLE_MAP_KEY,
-      {
-        method: 'post',
-      }
-    )
-    const {
-      location: { lat, lng },
-    } = await res.json()
-    setCenterMap({ lat, lng })
+    try {
+      const res = await fetch(
+        'https://www.googleapis.com/geolocation/v1/geolocate?key=' +
+          process.env.NEXT_PUBLIC_GOOGLE_MAP_KEY,
+        {
+          method: 'post',
+        }
+      )
+      const {
+        location: { lat, lng },
+      } = await res.json()
+      setCenterMap({ lat, lng })
+    } catch (error) {
+      console.error('error', error)
+    }
   }
 
   useEffect(() => {
     setApproximatedUserLocation()
   }, [])
 
+  const libraries = useMemo<string[]>(() => ['places'], [])
+
   const { isLoaded: isMapLoaded } = useLoadScript({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAP_KEY || '',
-    libraries: ['places'],
+    libraries: libraries,
+    language: 'fr',
   })
 
   const [selectedDisturbance, setSelectedDisturbance] =
@@ -77,13 +87,26 @@ const Home = ({ disturbances }: HomePageProps) => {
   const { makeContextualHref, returnHref } = useContextualRouting()
   const router = useRouter()
 
-  const { register, handleSubmit } = useForm<{ search: string }>({})
-
   const onPinClicked = (key: number, childProps: any) => {
     console.log('childProps', childProps)
     const { lat, lng } = childProps
     setCenterMap({ lat, lng })
   }
+
+  const mapRef = useRef<GoogleMap>()
+
+  const options = useMemo<google.maps.MapOptions>(
+    () => ({
+      disableDefaultUI: true,
+      clickableIcons: false,
+      mapId: 'a72a1dea3db3656a',
+    }),
+    []
+  )
+
+  const onLoad = useCallback((map: any) => {
+    mapRef.current = map
+  }, [])
 
   const signInButtonNode = () => {
     if (session) {
@@ -192,15 +215,15 @@ const Home = ({ disturbances }: HomePageProps) => {
                 <Button block>Ajouter un incident</Button>
               </Link>
             )}
-            <div className="mt-4">
-              <Input
-                register={register}
-                placeholder="Rechercher un incident, une ville, ..."
-                type="search"
-                name="search"
-                id="search"
-              />
-            </div>
+            {isMapLoaded && (
+              <div className="mt-4">
+                <SearchPlace
+                  goToLocation={(position) => {
+                    mapRef.current?.panTo(position)
+                  }}
+                />
+              </div>
+            )}
             <div className="mt-4">
               {disturbances?.map(
                 ({
@@ -263,24 +286,49 @@ const Home = ({ disturbances }: HomePageProps) => {
           </aside>
           <main className="bg-slate-100 relative min-h-screen">
             {isMapLoaded && (
-              <>
-                <Map latlng={centerMap} />
-                {/* <GoogleMapReact
-              defaultCenter={centerMap}
-              defaultZoom={15}
-              // onBoundsChange={}
-              bootstrapURLKeys={{
-                key: process.env.GOOGLE_MAP_KEY,
-                language: 'fr',
-              }}
-              onChildClick={onPinClicked}
+              <GoogleMap
+                zoom={12}
+                center={centerMap}
+                mapContainerClassName={'w-full h-full'}
+                options={options}
+                onLoad={onLoad}
               >
-              <Pin lat={44.837789} lng={-0.57918}>
-              salut
-              </Pin>
-            </GoogleMapReact> */}
-                {/* <Image src={'/map.png'} layout="fill" objectFit="cover" /> */}
-              </>
+                <MarkerClusterer>
+                  {(clusterer) => (
+                    <>
+                      {disturbances.map(
+                        ({
+                          id,
+                          attributes: {
+                            latitude,
+                            longitude,
+                            slug,
+                            ...disturbance
+                          },
+                        }) => (
+                          <Marker
+                            key={id + 'mark'}
+                            position={{ lat: latitude, lng: longitude }}
+                            clusterer={clusterer}
+                            onClick={() => {
+                              setSelectedDisturbance({
+                                ...disturbance,
+                                latitude,
+                                longitude,
+                                slug,
+                              })
+                              router.push(
+                                makeContextualHref({ slug }),
+                                `disturbances/${slug}`
+                              )
+                            }}
+                          />
+                        )
+                      )}
+                    </>
+                  )}
+                </MarkerClusterer>
+              </GoogleMap>
             )}
           </main>
         </div>
