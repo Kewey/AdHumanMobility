@@ -187,6 +187,7 @@ const Home = ({ disturbances }: HomePageProps) => {
         <div className="absolute z-10 right-4 top-4">
           Menu
           {signInButtonNode()}
+          {signOutButtonNode()}
         </div>
 
         {session && (
