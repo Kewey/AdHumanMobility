@@ -81,15 +81,18 @@
       "required": true,
       "default": 0
     },
-    "company": {
-      "type": "string"
-    },
     "relationship": {
       "type": "string"
     },
     "slug": {
       "type": "string",
       "unique": true
+    },
+    "referent": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::referent.referent",
+      "inversedBy": "perturbations"
     }
   }
 }

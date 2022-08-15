@@ -26,6 +26,7 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Pin } from '../components/Pin'
 import { SearchPlace } from '../components/form/SearchPlace'
+import Layout from '../components/Layout'
 
 Modal.setAppElement('#__next')
 
@@ -110,85 +111,106 @@ const Home = ({ disturbances }: HomePageProps) => {
     mapRef.current = map
   }, [])
 
-  const signInButtonNode = () => {
-    if (session) {
-      return false
-    }
-
-    return (
-      <div>
-        <Link href="/api/auth/signin">
-          <Button
-            onClick={(e) => {
-              e.preventDefault()
-              signIn()
-            }}
-          >
-            Sign In
-          </Button>
-        </Link>
-      </div>
-    )
-  }
-
-  const signOutButtonNode = () => {
-    if (!session) {
-      return false
-    }
-
-    return (
-      <div>
-        <Link href="/api/auth/signout">
-          <button
-            onClick={(e) => {
-              e.preventDefault()
-              signOut()
-            }}
-          >
-            Sign Out
-          </button>
-        </Link>
-      </div>
-    )
-  }
-
   return (
-    <>
-      <Head>
-        <title>
-          {!!router.query.slug ? selectedDisturbance?.title : 'Bienvenue'}
-        </title>
-        <meta
-          name="description"
-          content={
-            !!router.query.slug
-              ? `${selectedDisturbance?.description.slice(0, 160)}...`
-              : 'TODO'
-          }
-        />
-      </Head>
-      <Modal
-        isOpen={!!router.query.slug}
-        onRequestClose={() => router.push('/')}
-        contentLabel={selectedDisturbance?.title}
-        className="absolute lg:top-8 top-0 lg:bottom-8 bottom-0 left-0 right-0 max-w-4xl bg-white mx-auto lg:rounded-xl"
-        style={{
-          overlay: {
-            backgroundColor: 'rgba(0, 0, 0, 0.75)',
-          },
-        }}
-      >
-        {selectedDisturbance && (
-          <Disturbance disturbance={selectedDisturbance} />
-        )}
-      </Modal>
+    <Layout
+      mapRef={mapRef.current}
+      title={
+        !!router.query.slug
+          ? selectedDisturbance?.title || 'Error'
+          : 'Bienvenue'
+      }
+      description={
+        !!router.query.slug
+          ? `${selectedDisturbance?.description.slice(0, 160)}...`
+          : 'TODO'
+      }
+      // sidebar={
+      //   <div className="pt-4 flex flex-col h-full">
+      //     <div className="px-8">
+      //       <Link href="disturbances/new">
+      //         <Button block>Déclarer un incident ou une pertubation</Button>
+      //       </Link>
 
-      <div className="hero">
-        <div className="absolute z-10 right-4 top-4">
-          Menu
-          {signInButtonNode()}
-          {signOutButtonNode()}
-        </div>
+      //       <h4 className="mt-8">Incidents & pertubations de la zone</h4>
+      //     </div>
+      //     <div className="h-full overflow-y-auto px-8">
+      //       {disturbances?.map(
+      //         ({
+      //           id,
+      //           attributes: {
+      //             title,
+      //             type,
+      //             car_type,
+      //             status,
+      //             slug,
+      //             thumbnail,
+      //             ...disturbance
+      //           },
+      //         }) => (
+      //           <Link
+      //             key={id}
+      //             as={`disturbances/${slug}`}
+      //             href={makeContextualHref({ slug })}
+      //             shallow
+      //           >
+      //             <article
+      //               className="mb-8 cursor-pointer"
+      //               onClick={() =>
+      //                 setSelectedDisturbance({
+      //                   title,
+      //                   type,
+      //                   car_type,
+      //                   status,
+      //                   slug,
+      //                   thumbnail,
+      //                   ...disturbance,
+      //                 })
+      //               }
+      //             >
+      //               {thumbnail.data && (
+      //                 <Image
+      //                   src={displayMedia(thumbnail.data.attributes.url)}
+      //                   alt={title}
+      //                   height={175}
+      //                   layout="responsive"
+      //                   width={335}
+      //                   className="rounded-xl"
+      //                   objectFit="cover"
+      //                 />
+      //               )}
+      //               <div className="flex justify-between mt-3">
+      //                 <div className="grid grid-flow-col gap-2">
+      //                   <Badge>{type}</Badge>
+      //                   <Badge>{car_type}</Badge>
+      //                 </div>
+
+      //                 {status && <Badge color="bg-green-600">{status}</Badge>}
+      //               </div>
+      //               <h3 className="mt-2">{title}</h3>
+      //             </article>
+      //           </Link>
+      //         )
+      //       )}
+      //     </div>
+      //   </div>
+      // }
+    >
+      <>
+        <Modal
+          isOpen={!!router.query.slug}
+          onRequestClose={() => router.push('/')}
+          contentLabel={selectedDisturbance?.title}
+          className="absolute lg:top-8 top-0 lg:bottom-8 bottom-0 left-0 right-0 max-w-4xl bg-white mx-auto lg:rounded-xl"
+          style={{
+            overlay: {
+              backgroundColor: 'rgba(0, 0, 0, 0.75)',
+            },
+          }}
+        >
+          {selectedDisturbance && (
+            <Disturbance disturbance={selectedDisturbance} />
+          )}
+        </Modal>
 
         {session && (
           <div className="lg:hidden absolute bottom-0 left-0 right-0 bg-white z-50 grid grid-flow-col border-t border-gray-200 border-solid">
@@ -211,132 +233,55 @@ const Home = ({ disturbances }: HomePageProps) => {
           </div>
         )}
 
-        <div className="grid lg:grid-cols-[360px_1fr] grid-cols-1 h-full">
-          <aside className="p-4 h-screen overflow-y-auto lg:block hidden">
-            {session && (
-              <Link href={'disturbances/new'}>
-                <Button block>Ajouter un incident</Button>
-              </Link>
-            )}
-            {isMapLoaded && (
-              <div className="mt-4">
-                <SearchPlace
-                  goToLocation={(position) => {
-                    mapRef.current?.panTo(position)
-                  }}
-                />
-              </div>
-            )}
-            <div className="mt-4">
-              {disturbances?.map(
-                ({
-                  id,
-                  attributes: {
-                    title,
-                    type,
-                    car_type,
-                    status,
-                    slug,
-                    thumbnail,
-                    ...disturbance
-                  },
-                }) => (
-                  <Link
-                    key={id}
-                    as={`disturbances/${slug}`}
-                    href={makeContextualHref({ slug })}
-                    shallow
-                  >
-                    <article
-                      className="mb-8 cursor-pointer"
-                      onClick={() =>
-                        setSelectedDisturbance({
-                          title,
-                          type,
-                          car_type,
-                          status,
+        <div className="bg-slate-100 relative h-[calc(100vh-80px)]">
+          {isMapLoaded && (
+            <GoogleMap
+              zoom={12}
+              center={centerMap}
+              mapContainerClassName={'w-full h-full'}
+              options={options}
+              onLoad={onLoad}
+            >
+              <MarkerClusterer>
+                {(clusterer) => (
+                  <>
+                    {disturbances.map(
+                      ({
+                        id,
+                        attributes: {
+                          latitude,
+                          longitude,
                           slug,
-                          thumbnail,
-                          ...disturbance,
-                        })
-                      }
-                    >
-                      {thumbnail.data && (
-                        <Image
-                          src={displayMedia(thumbnail.data.attributes.url)}
-                          alt={title}
-                          height={175}
-                          layout="responsive"
-                          width={335}
-                          className="rounded-xl"
-                          objectFit="cover"
+                          ...disturbance
+                        },
+                      }) => (
+                        <Marker
+                          key={id + 'mark'}
+                          position={{ lat: latitude, lng: longitude }}
+                          clusterer={clusterer}
+                          onClick={() => {
+                            setSelectedDisturbance({
+                              ...disturbance,
+                              latitude,
+                              longitude,
+                              slug,
+                            })
+                            router.push(
+                              makeContextualHref({ slug }),
+                              `disturbances/${slug}`
+                            )
+                          }}
                         />
-                      )}
-                      <div className="flex justify-between mt-3">
-                        <div className="grid grid-flow-col gap-2">
-                          <Badge>{type}</Badge>
-                          <Badge>{car_type}</Badge>
-                        </div>
-
-                        {status && <Badge color="bg-green-600">{status}</Badge>}
-                      </div>
-                      <h3 className="mt-2">{title}</h3>
-                    </article>
-                  </Link>
-                )
-              )}
-            </div>
-          </aside>
-          <main className="bg-slate-100 relative min-h-screen">
-            {isMapLoaded && (
-              <GoogleMap
-                zoom={12}
-                center={centerMap}
-                mapContainerClassName={'w-full h-full'}
-                options={options}
-                onLoad={onLoad}
-              >
-                <MarkerClusterer>
-                  {(clusterer) => (
-                    <>
-                      {disturbances.map(
-                        ({
-                          id,
-                          attributes: {
-                            latitude,
-                            longitude,
-                            slug,
-                            ...disturbance
-                          },
-                        }) => (
-                          <Marker
-                            key={id + 'mark'}
-                            position={{ lat: latitude, lng: longitude }}
-                            clusterer={clusterer}
-                            onClick={() => {
-                              setSelectedDisturbance({
-                                ...disturbance,
-                                latitude,
-                                longitude,
-                                slug,
-                              })
-                              router.push(
-                                makeContextualHref({ slug }),
-                                `disturbances/${slug}`
-                              )
-                            }}
-                          />
-                        )
-                      )}
-                    </>
-                  )}
-                </MarkerClusterer>
-              </GoogleMap>
-            )}
-          </main>
+                      )
+                    )}
+                  </>
+                )}
+              </MarkerClusterer>
+            </GoogleMap>
+          )}
         </div>
-      </div>
-    </>
+      </>
+    </Layout>
   )
 }
 

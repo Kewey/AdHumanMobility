@@ -56,5 +56,11 @@ Feel free to check out the [Strapi GitHub repository](https://github.com/strapi/
 
 ## 🏳 Help
 
+### BDD
+
 docker exec -i postgresDB /bin/bash -c "pg_dump -U **USER** **DB_name**" > ./database/dump.sql
 docker exec -i postgresDB /bin/bash -c "psql -U **USER** **DB_name**" < ./database/dump.sql
+
+### Refresh build
+
+docker build -t sergeapp .

@@ -3,15 +3,17 @@ import React, { ButtonHTMLAttributes } from 'react'
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   block?: boolean
   variant?: 'primary' | 'secondary' | 'text'
+  size?: 'md' | 'sm' | 'lg'
 }
 
 function Button({
   children,
   variant = 'primary',
+  size = 'md',
   block,
   ...props
 }: ButtonProps) {
-  const buttonStyle = () => {
+  const buttonVariant = () => {
     switch (variant) {
       case 'text':
         return 'text-primary-500 hover:bg-gray-100'
@@ -24,12 +26,25 @@ function Button({
     }
   }
 
+  const buttonSize = () => {
+    switch (size) {
+      case 'lg':
+        return 'px-8 py-6'
+
+      case 'sm':
+        return 'px-4 py-2'
+
+      default:
+        return 'px-6 py-4'
+    }
+  }
+
   return (
     <button
       {...props}
       className={`${
         block ? 'w-full justify-center flex' : 'inline-flex'
-      } items-center px-6 py-4 rounded-md text-base font-medium ${buttonStyle()}`}
+      } items-center rounded-md text-base font-medium ${buttonVariant()} ${buttonSize()}`}
     >
       {children}
     </button>

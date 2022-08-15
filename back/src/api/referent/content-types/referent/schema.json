@@ -1,0 +1,53 @@
+{
+  "kind": "collectionType",
+  "collectionName": "referents",
+  "info": {
+    "singularName": "referent",
+    "pluralName": "referents",
+    "displayName": "Référent",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "lastname": {
+      "type": "string",
+      "required": false,
+      "private": true
+    },
+    "firstname": {
+      "type": "string",
+      "private": true
+    },
+    "postalCode": {
+      "type": "string",
+      "maxLength": 5,
+      "minLength": 5
+    },
+    "phone": {
+      "type": "string",
+      "private": true
+    },
+    "companyName": {
+      "type": "string"
+    },
+    "job": {
+      "type": "string",
+      "private": true
+    },
+    "postalAdresse": {
+      "type": "string"
+    },
+    "perturbations": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::disturbance.disturbance",
+      "mappedBy": "referent"
+    },
+    "mail": {
+      "type": "email"
+    }
+  }
+}
