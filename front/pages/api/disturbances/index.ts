@@ -1,14 +1,14 @@
 import { DisturbanceFormType } from '../../../types/disturbance'
 import { getSession } from 'next-auth/react'
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL
+
 export function getDisturbances() {
-  return fetch(`${process.env.NEXT_PUBLIC_API_URL}/disturbances?populate=*`)
+  return fetch(`${API_URL}/disturbances?populate=*`)
 }
 
 export async function getDisturbance(slug: string) {
-  return fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/slugify/slugs/disturbance/${slug}?populate=*`
-  )
+  return fetch(`${API_URL}/slugify/slugs/disturbance/${slug}?populate=*`)
 }
 
 export async function postDisturbance(
@@ -52,7 +52,7 @@ export async function postDisturbance(
   )
   formdata.append('files.thumbnail', thumbnail)
 
-  return fetch(`${process.env.NEXT_PUBLIC_API_URL}/disturbances`, {
+  return fetch(`${API_URL}/disturbances`, {
     method: 'Post',
     headers: {
       Accept: 'application/json',

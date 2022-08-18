@@ -20,6 +20,7 @@ export interface Disturbance {
 }
 
 export interface DisturbanceFormType {
+  typology: string
   author: string
   instances: string[]
   title: string

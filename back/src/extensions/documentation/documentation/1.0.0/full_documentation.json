@@ -14,7 +14,7 @@
       "name": "Apache 2.0",
       "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
     },
-    "x-generation-date": "2022-08-15T13:45:58.046Z"
+    "x-generation-date": "2022-08-18T07:14:24.309Z"
   },
   "x-strapi-config": {
     "path": "/documentation",
@@ -219,7 +219,7 @@
                       "label": {
                         "type": "string"
                       },
-                      "image": {
+                      "icon": {
                         "type": "object",
                         "properties": {
                           "data": {
@@ -2299,7 +2299,7 @@
                                 "label": {
                                   "type": "string"
                                 },
-                                "image": {
+                                "icon": {
                                   "type": "object",
                                   "properties": {
                                     "data": {
@@ -4405,7 +4405,7 @@
                               "label": {
                                 "type": "string"
                               },
-                              "image": {
+                              "icon": {
                                 "type": "object",
                                 "properties": {
                                   "data": {
@@ -6476,9 +6476,7 @@
               "type",
               "car_type",
               "description",
-              "location",
-              "longitude",
-              "latitude"
+              "location"
             ],
             "type": "object",
             "properties": {
@@ -6551,14 +6549,6 @@
               "location": {
                 "type": "string"
               },
-              "longitude": {
-                "type": "number",
-                "format": "float"
-              },
-              "latitude": {
-                "type": "number",
-                "format": "float"
-              },
               "relationship": {
                 "type": "string"
               },
@@ -6575,6 +6565,19 @@
                   }
                 ],
                 "example": "string or id"
+              },
+              "Position": {
+                "type": "object",
+                "properties": {
+                  "latitude": {
+                    "type": "number",
+                    "format": "float"
+                  },
+                  "longitude": {
+                    "type": "number",
+                    "format": "float"
+                  }
+                }
               }
             }
           }
@@ -7590,14 +7593,6 @@
                                               "location": {
                                                 "type": "string"
                                               },
-                                              "longitude": {
-                                                "type": "number",
-                                                "format": "float"
-                                              },
-                                              "latitude": {
-                                                "type": "number",
-                                                "format": "float"
-                                              },
                                               "relationship": {
                                                 "type": "string"
                                               },
@@ -7710,6 +7705,22 @@
                                                         }
                                                       }
                                                     }
+                                                  }
+                                                }
+                                              },
+                                              "Position": {
+                                                "type": "object",
+                                                "properties": {
+                                                  "id": {
+                                                    "type": "string"
+                                                  },
+                                                  "latitude": {
+                                                    "type": "number",
+                                                    "format": "float"
+                                                  },
+                                                  "longitude": {
+                                                    "type": "number",
+                                                    "format": "float"
                                                   }
                                                 }
                                               },
@@ -8237,14 +8248,6 @@
                     "location": {
                       "type": "string"
                     },
-                    "longitude": {
-                      "type": "number",
-                      "format": "float"
-                    },
-                    "latitude": {
-                      "type": "number",
-                      "format": "float"
-                    },
                     "relationship": {
                       "type": "string"
                     },
@@ -8265,6 +8268,22 @@
                               "properties": {}
                             }
                           }
+                        }
+                      }
+                    },
+                    "Position": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "latitude": {
+                          "type": "number",
+                          "format": "float"
+                        },
+                        "longitude": {
+                          "type": "number",
+                          "format": "float"
                         }
                       }
                     },
@@ -9352,14 +9371,6 @@
                                             "location": {
                                               "type": "string"
                                             },
-                                            "longitude": {
-                                              "type": "number",
-                                              "format": "float"
-                                            },
-                                            "latitude": {
-                                              "type": "number",
-                                              "format": "float"
-                                            },
                                             "relationship": {
                                               "type": "string"
                                             },
@@ -9472,6 +9483,22 @@
                                                       }
                                                     }
                                                   }
+                                                }
+                                              }
+                                            },
+                                            "Position": {
+                                              "type": "object",
+                                              "properties": {
+                                                "id": {
+                                                  "type": "string"
+                                                },
+                                                "latitude": {
+                                                  "type": "number",
+                                                  "format": "float"
+                                                },
+                                                "longitude": {
+                                                  "type": "number",
+                                                  "format": "float"
                                                 }
                                               }
                                             },
@@ -9999,14 +10026,6 @@
                   "location": {
                     "type": "string"
                   },
-                  "longitude": {
-                    "type": "number",
-                    "format": "float"
-                  },
-                  "latitude": {
-                    "type": "number",
-                    "format": "float"
-                  },
                   "relationship": {
                     "type": "string"
                   },
@@ -10027,6 +10046,22 @@
                             "properties": {}
                           }
                         }
+                      }
+                    }
+                  },
+                  "Position": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "latitude": {
+                        "type": "number",
+                        "format": "float"
+                      },
+                      "longitude": {
+                        "type": "number",
+                        "format": "float"
                       }
                     }
                   },
@@ -11221,14 +11256,6 @@
                                 "location": {
                                   "type": "string"
                                 },
-                                "longitude": {
-                                  "type": "number",
-                                  "format": "float"
-                                },
-                                "latitude": {
-                                  "type": "number",
-                                  "format": "float"
-                                },
                                 "relationship": {
                                   "type": "string"
                                 },
@@ -11341,6 +11368,22 @@
                                           }
                                         }
                                       }
+                                    }
+                                  }
+                                },
+                                "Position": {
+                                  "type": "object",
+                                  "properties": {
+                                    "id": {
+                                      "type": "string"
+                                    },
+                                    "latitude": {
+                                      "type": "number",
+                                      "format": "float"
+                                    },
+                                    "longitude": {
+                                      "type": "number",
+                                      "format": "float"
                                     }
                                   }
                                 },
@@ -12548,14 +12591,6 @@
                               "location": {
                                 "type": "string"
                               },
-                              "longitude": {
-                                "type": "number",
-                                "format": "float"
-                              },
-                              "latitude": {
-                                "type": "number",
-                                "format": "float"
-                              },
                               "relationship": {
                                 "type": "string"
                               },
@@ -12668,6 +12703,22 @@
                                         }
                                       }
                                     }
+                                  }
+                                }
+                              },
+                              "Position": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "string"
+                                  },
+                                  "latitude": {
+                                    "type": "number",
+                                    "format": "float"
+                                  },
+                                  "longitude": {
+                                    "type": "number",
+                                    "format": "float"
                                   }
                                 }
                               },
@@ -13909,14 +13960,6 @@
                                   "location": {
                                     "type": "string"
                                   },
-                                  "longitude": {
-                                    "type": "number",
-                                    "format": "float"
-                                  },
-                                  "latitude": {
-                                    "type": "number",
-                                    "format": "float"
-                                  },
                                   "relationship": {
                                     "type": "string"
                                   },
@@ -14029,6 +14072,22 @@
                                             }
                                           }
                                         }
+                                      }
+                                    }
+                                  },
+                                  "Position": {
+                                    "type": "object",
+                                    "properties": {
+                                      "id": {
+                                        "type": "string"
+                                      },
+                                      "latitude": {
+                                        "type": "number",
+                                        "format": "float"
+                                      },
+                                      "longitude": {
+                                        "type": "number",
+                                        "format": "float"
                                       }
                                     }
                                   },
@@ -15245,14 +15304,6 @@
                                 "location": {
                                   "type": "string"
                                 },
-                                "longitude": {
-                                  "type": "number",
-                                  "format": "float"
-                                },
-                                "latitude": {
-                                  "type": "number",
-                                  "format": "float"
-                                },
                                 "relationship": {
                                   "type": "string"
                                 },
@@ -15365,6 +15416,22 @@
                                           }
                                         }
                                       }
+                                    }
+                                  }
+                                },
+                                "Position": {
+                                  "type": "object",
+                                  "properties": {
+                                    "id": {
+                                      "type": "string"
+                                    },
+                                    "latitude": {
+                                      "type": "number",
+                                      "format": "float"
+                                    },
+                                    "longitude": {
+                                      "type": "number",
+                                      "format": "float"
                                     }
                                   }
                                 },
@@ -15596,7 +15663,7 @@
                                   "label": {
                                     "type": "string"
                                   },
-                                  "image": {
+                                  "icon": {
                                     "type": "object",
                                     "properties": {
                                       "data": {
@@ -17656,7 +17723,7 @@
                                             "label": {
                                               "type": "string"
                                             },
-                                            "image": {
+                                            "icon": {
                                               "type": "object",
                                               "properties": {
                                                 "data": {
@@ -19742,7 +19809,7 @@
                                           "label": {
                                             "type": "string"
                                           },
-                                          "image": {
+                                          "icon": {
                                             "type": "object",
                                             "properties": {
                                               "data": {
@@ -21772,7 +21839,7 @@
       "TypologieLocalizationRequest": {
         "required": [
           "label",
-          "image",
+          "icon",
           "locale"
         ],
         "type": "object",
@@ -21780,7 +21847,7 @@
           "label": {
             "type": "string"
           },
-          "image": {
+          "icon": {
             "oneOf": [
               {
                 "type": "integer"
@@ -21819,14 +21886,14 @@
           "data": {
             "required": [
               "label",
-              "image"
+              "icon"
             ],
             "type": "object",
             "properties": {
               "label": {
                 "type": "string"
               },
-              "image": {
+              "icon": {
                 "oneOf": [
                   {
                     "type": "integer"
@@ -21867,7 +21934,7 @@
           "label": {
             "type": "string"
           },
-          "image": {
+          "icon": {
             "type": "object",
             "properties": {
               "data": {
@@ -22266,7 +22333,7 @@
                                     "label": {
                                       "type": "string"
                                     },
-                                    "image": {
+                                    "icon": {
                                       "type": "object",
                                       "properties": {
                                         "data": {
@@ -23930,7 +23997,7 @@
                     "label": {
                       "type": "string"
                     },
-                    "image": {
+                    "icon": {
                       "type": "object",
                       "properties": {
                         "data": {
@@ -24329,7 +24396,7 @@
                                               "label": {
                                                 "type": "string"
                                               },
-                                              "image": {
+                                              "icon": {
                                                 "type": "object",
                                                 "properties": {
                                                   "data": {
@@ -26019,7 +26086,7 @@
                   "label": {
                     "type": "string"
                   },
-                  "image": {
+                  "icon": {
                     "type": "object",
                     "properties": {
                       "data": {
@@ -26418,7 +26485,7 @@
                                             "label": {
                                               "type": "string"
                                             },
-                                            "image": {
+                                            "icon": {
                                               "type": "object",
                                               "properties": {
                                                 "data": {
@@ -29908,14 +29975,6 @@
                                                             "location": {
                                                               "type": "string"
                                                             },
-                                                            "longitude": {
-                                                              "type": "number",
-                                                              "format": "float"
-                                                            },
-                                                            "latitude": {
-                                                              "type": "number",
-                                                              "format": "float"
-                                                            },
                                                             "relationship": {
                                                               "type": "string"
                                                             },
@@ -30028,6 +30087,22 @@
                                                                       }
                                                                     }
                                                                   }
+                                                                }
+                                                              }
+                                                            },
+                                                            "Position": {
+                                                              "type": "object",
+                                                              "properties": {
+                                                                "id": {
+                                                                  "type": "string"
+                                                                },
+                                                                "latitude": {
+                                                                  "type": "number",
+                                                                  "format": "float"
+                                                                },
+                                                                "longitude": {
+                                                                  "type": "number",
+                                                                  "format": "float"
                                                                 }
                                                               }
                                                             },
@@ -31215,14 +31290,6 @@
                                                           "location": {
                                                             "type": "string"
                                                           },
-                                                          "longitude": {
-                                                            "type": "number",
-                                                            "format": "float"
-                                                          },
-                                                          "latitude": {
-                                                            "type": "number",
-                                                            "format": "float"
-                                                          },
                                                           "relationship": {
                                                             "type": "string"
                                                           },
@@ -31335,6 +31402,22 @@
                                                                     }
                                                                   }
                                                                 }
+                                                              }
+                                                            }
+                                                          },
+                                                          "Position": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                              "id": {
+                                                                "type": "string"
+                                                              },
+                                                              "latitude": {
+                                                                "type": "number",
+                                                                "format": "float"
+                                                              },
+                                                              "longitude": {
+                                                                "type": "number",
+                                                                "format": "float"
                                                               }
                                                             }
                                                           },
@@ -32516,14 +32599,6 @@
                                                                           "location": {
                                                                             "type": "string"
                                                                           },
-                                                                          "longitude": {
-                                                                            "type": "number",
-                                                                            "format": "float"
-                                                                          },
-                                                                          "latitude": {
-                                                                            "type": "number",
-                                                                            "format": "float"
-                                                                          },
                                                                           "relationship": {
                                                                             "type": "string"
                                                                           },
@@ -32636,6 +32711,22 @@
                                                                                     }
                                                                                   }
                                                                                 }
+                                                                              }
+                                                                            }
+                                                                          },
+                                                                          "Position": {
+                                                                            "type": "object",
+                                                                            "properties": {
+                                                                              "id": {
+                                                                                "type": "string"
+                                                                              },
+                                                                              "latitude": {
+                                                                                "type": "number",
+                                                                                "format": "float"
+                                                                              },
+                                                                              "longitude": {
+                                                                                "type": "number",
+                                                                                "format": "float"
                                                                               }
                                                                             }
                                                                           },
@@ -33852,14 +33943,6 @@
                                                                         "location": {
                                                                           "type": "string"
                                                                         },
-                                                                        "longitude": {
-                                                                          "type": "number",
-                                                                          "format": "float"
-                                                                        },
-                                                                        "latitude": {
-                                                                          "type": "number",
-                                                                          "format": "float"
-                                                                        },
                                                                         "relationship": {
                                                                           "type": "string"
                                                                         },
@@ -33972,6 +34055,22 @@
                                                                                   }
                                                                                 }
                                                                               }
+                                                                            }
+                                                                          }
+                                                                        },
+                                                                        "Position": {
+                                                                          "type": "object",
+                                                                          "properties": {
+                                                                            "id": {
+                                                                              "type": "string"
+                                                                            },
+                                                                            "latitude": {
+                                                                              "type": "number",
+                                                                              "format": "float"
+                                                                            },
+                                                                            "longitude": {
+                                                                              "type": "number",
+                                                                              "format": "float"
                                                                             }
                                                                           }
                                                                         },
@@ -35301,14 +35400,6 @@
                                                             "location": {
                                                               "type": "string"
                                                             },
-                                                            "longitude": {
-                                                              "type": "number",
-                                                              "format": "float"
-                                                            },
-                                                            "latitude": {
-                                                              "type": "number",
-                                                              "format": "float"
-                                                            },
                                                             "relationship": {
                                                               "type": "string"
                                                             },
@@ -35421,6 +35512,22 @@
                                                                       }
                                                                     }
                                                                   }
+                                                                }
+                                                              }
+                                                            },
+                                                            "Position": {
+                                                              "type": "object",
+                                                              "properties": {
+                                                                "id": {
+                                                                  "type": "string"
+                                                                },
+                                                                "latitude": {
+                                                                  "type": "number",
+                                                                  "format": "float"
+                                                                },
+                                                                "longitude": {
+                                                                  "type": "number",
+                                                                  "format": "float"
                                                                 }
                                                               }
                                                             },
@@ -36650,14 +36757,6 @@
                                                           "location": {
                                                             "type": "string"
                                                           },
-                                                          "longitude": {
-                                                            "type": "number",
-                                                            "format": "float"
-                                                          },
-                                                          "latitude": {
-                                                            "type": "number",
-                                                            "format": "float"
-                                                          },
                                                           "relationship": {
                                                             "type": "string"
                                                           },
@@ -36770,6 +36869,22 @@
                                                                     }
                                                                   }
                                                                 }
+                                                              }
+                                                            }
+                                                          },
+                                                          "Position": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                              "id": {
+                                                                "type": "string"
+                                                              },
+                                                              "latitude": {
+                                                                "type": "number",
+                                                                "format": "float"
+                                                              },
+                                                              "longitude": {
+                                                                "type": "number",
+                                                                "format": "float"
                                                               }
                                                             }
                                                           },
