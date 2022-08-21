@@ -32,7 +32,7 @@
         }
       }
     },
-    "image": {
+    "icon": {
       "type": "media",
       "multiple": false,
       "required": true,
@@ -45,7 +45,7 @@
         }
       }
     },
-    "sous_categories": {
+    "subCategories": {
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::sub-category.sub-category",

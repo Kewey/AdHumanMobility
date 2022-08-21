@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import Button from '../../components/Button'
 import Input from '../../components/form/Input'
@@ -12,7 +12,12 @@ import { useRouter } from 'next/router'
 import UploadPhotos from '../../components/form/Photos'
 import { SearchPlace } from '../../components/form/SearchPlace'
 import { getGeocode } from 'use-places-autocomplete'
-import { getTypologies } from '../api/forms'
+import {
+  getCategories,
+  getCategoriesFromTypology,
+  getSubCategoriesFromCategory,
+  getTypologies,
+} from '../api/forms'
 import { StrapiEntity } from '../../types/api'
 
 enum IS_COMPANY {
@@ -44,11 +49,41 @@ interface NewDisturbanceProps {
 }
 
 function NewDisturbance({ typologies }: NewDisturbanceProps) {
+  const [categories, setCategories] = useState<null | any>(null)
+  const [subCategories, setSubCategories] = useState<null | any>(null)
+
   const { register, handleSubmit, control, setValue, watch } =
     useForm<DisturbanceFormType>({})
   const router = useRouter()
 
   const { data: session } = useSession()
+
+  useEffect(() => {
+    const subscription = watch(async (value, { name }) => {
+      console.log('value', value)
+      console.log('name', name)
+      if (name === 'typology') {
+        const categories = await getCategoriesFromTypology(value[name] || '')
+        console.log('categories', categories)
+        setCategories(categories)
+        setValue('category', '', {})
+        setValue('subCategory', '', {})
+        return
+      }
+
+      if (name === 'category') {
+        const subCategories = await getSubCategoriesFromCategory(
+          value[name] || ''
+        )
+        console.log('subCategories', subCategories)
+        setSubCategories(subCategories)
+        setValue('subCategory', '', {})
+        return
+      }
+    })
+
+    return () => subscription.unsubscribe()
+  }, [watch])
 
   const onSubmit = async ({ thumbnail, ...data }: any) => {
     const body = { ...data, author: session?.id }
@@ -79,8 +114,10 @@ function NewDisturbance({ typologies }: NewDisturbanceProps) {
           className="grid lg:grid-cols-2 grid-cols-1 gap-8"
         >
           <div className="col-span-full">
+            <h3>Choissiez une typologie</h3>
             {typologies?.map((typology) => (
               <Checkbox
+                iconUrl={typology.attributes?.icon?.data?.attributes?.url}
                 register={register}
                 name="typology"
                 label={typology.attributes.label}
@@ -89,6 +126,38 @@ function NewDisturbance({ typologies }: NewDisturbanceProps) {
               />
             ))}
           </div>
+
+          {categories && (
+            <div className="col-span-full">
+              <h3>Choissiez une catégorie</h3>
+              {categories?.map((category) => (
+                <Checkbox
+                  iconUrl={category.attributes?.icon?.data?.attributes?.url}
+                  register={register}
+                  name="category"
+                  label={category.attributes.label}
+                  type={'radio'}
+                  value={category.id.toString()}
+                />
+              ))}
+            </div>
+          )}
+
+          {subCategories && (
+            <div className="col-span-full">
+              <h3>Choissiez une sous catégorie</h3>
+              {subCategories?.map((subCategory) => (
+                <Checkbox
+                  iconUrl={subCategory.attributes?.icon?.data?.attributes?.url}
+                  register={register}
+                  name="subCategory"
+                  label={subCategory.attributes.label}
+                  type={'radio'}
+                  value={subCategory.id.toString()}
+                />
+              ))}
+            </div>
+          )}
 
           <div className="mb-3">
             <Input

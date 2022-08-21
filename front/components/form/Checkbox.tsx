@@ -1,10 +1,14 @@
+import { icon } from '@fortawesome/fontawesome-svg-core'
+import Image from 'next/image'
 import React, { InputHTMLAttributes } from 'react'
+import { displayMedia } from '../../types/api'
 
 interface CheckboxComponentProps extends InputHTMLAttributes<HTMLInputElement> {
-  label?: string
-  value?: string
   type: 'radio' | 'checkbox'
   register: any
+  label?: string
+  value?: string
+  iconUrl?: string
 }
 
 function Checkbox({
@@ -14,6 +18,7 @@ function Checkbox({
   type,
   value,
   className = '',
+  iconUrl,
   register,
   required,
   ...props
@@ -23,7 +28,15 @@ function Checkbox({
       htmlFor={`${name}-${value}`}
       className={`focus:outline-none focus:border-primary-500 inline-flex items-center justify-between px-4 py-3 border rounded-lg ${className}`}
     >
-      {label}
+      {iconUrl && (
+        <Image
+          src={displayMedia(iconUrl)}
+          layout="fixed"
+          height={50}
+          width={50}
+        />
+      )}
+      <span>{label}</span>
       <input
         {...(register && register(name, { required }))}
         className="ml-4"

@@ -21,6 +21,8 @@ export interface Disturbance {
 
 export interface DisturbanceFormType {
   typology: string
+  category: string
+  subCategory: string
   author: string
   instances: string[]
   title: string

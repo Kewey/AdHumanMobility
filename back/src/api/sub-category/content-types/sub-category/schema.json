@@ -4,7 +4,8 @@
   "info": {
     "singularName": "sub-category",
     "pluralName": "sub-categories",
-    "displayName": "Sous catégories"
+    "displayName": "Sous catégories",
+    "description": ""
   },
   "options": {
     "draftAndPublish": false
@@ -15,12 +16,6 @@
     }
   },
   "attributes": {
-    "category": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::category.category",
-      "inversedBy": "sous_categories"
-    },
     "label": {
       "pluginOptions": {
         "i18n": {
@@ -31,18 +26,24 @@
       "required": true,
       "unique": true
     },
-    "image": {
+    "icon": {
+      "type": "media",
+      "multiple": false,
+      "required": true,
       "allowedTypes": [
         "images"
       ],
-      "type": "media",
-      "multiple": false,
       "pluginOptions": {
         "i18n": {
           "localized": false
         }
-      },
-      "required": true
+      }
+    },
+    "category": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::category.category",
+      "inversedBy": "subCategories"
     }
   }
 }
