@@ -1,17 +1,13 @@
 import Link from 'next/link'
-import { signIn, signOut, useSession } from 'next-auth/react'
-import Head from 'next/head'
+import { useSession } from 'next-auth/react'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import Badge from '../components/Badge'
-import Button from '../components/Button'
 import { getDisturbances } from './api/disturbances'
-import { displayMedia, StrapiCall, StrapiEntity } from '../types/api'
+import { StrapiEntity } from '../types/api'
 import { Disturbance as DisturbanceType } from '../types/disturbance'
 import { useContextualRouting } from 'next-use-contextual-routing'
 import Modal from 'react-modal'
 import { useRouter } from 'next/router'
 import { Disturbance } from '../components/Disturbance'
-import Image from 'next/image'
 import {
   GoogleMap,
   Marker,
@@ -25,7 +21,6 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Pin } from '../components/Pin'
-import { SearchPlace } from '../components/form/SearchPlace'
 import Layout from '../components/Layout'
 
 Modal.setAppElement('#__next')
@@ -52,6 +47,7 @@ const Home = ({ disturbances }: HomePageProps) => {
     lat: 44.837789,
     lng: -0.57918,
   })
+
   const setApproximatedUserLocation = async () => {
     try {
       const res = await fetch(
@@ -64,6 +60,7 @@ const Home = ({ disturbances }: HomePageProps) => {
       const {
         location: { lat, lng },
       } = await res.json()
+
       setCenterMap({ lat, lng })
     } catch (error) {
       console.error('error', error)
@@ -113,7 +110,7 @@ const Home = ({ disturbances }: HomePageProps) => {
 
   return (
     <Layout
-      mapRef={mapRef.current}
+      callback={(lat, lng) => mapRef.panTo({ lat, lng })}
       title={
         !!router.query.slug
           ? selectedDisturbance?.title || 'Error'
@@ -124,76 +121,6 @@ const Home = ({ disturbances }: HomePageProps) => {
           ? `${selectedDisturbance?.description.slice(0, 160)}...`
           : 'TODO'
       }
-      // sidebar={
-      //   <div className="pt-4 flex flex-col h-full">
-      //     <div className="px-8">
-      //       <Link href="disturbances/new">
-      //         <Button block>Déclarer un incident ou une pertubation</Button>
-      //       </Link>
-
-      //       <h4 className="mt-8">Incidents & pertubations de la zone</h4>
-      //     </div>
-      //     <div className="h-full overflow-y-auto px-8">
-      //       {disturbances?.map(
-      //         ({
-      //           id,
-      //           attributes: {
-      //             title,
-      //             type,
-      //             car_type,
-      //             status,
-      //             slug,
-      //             thumbnail,
-      //             ...disturbance
-      //           },
-      //         }) => (
-      //           <Link
-      //             key={id}
-      //             as={`disturbances/${slug}`}
-      //             href={makeContextualHref({ slug })}
-      //             shallow
-      //           >
-      //             <article
-      //               className="mb-8 cursor-pointer"
-      //               onClick={() =>
-      //                 setSelectedDisturbance({
-      //                   title,
-      //                   type,
-      //                   car_type,
-      //                   status,
-      //                   slug,
-      //                   thumbnail,
-      //                   ...disturbance,
-      //                 })
-      //               }
-      //             >
-      //               {thumbnail.data && (
-      //                 <Image
-      //                   src={displayMedia(thumbnail.data.attributes.url)}
-      //                   alt={title}
-      //                   height={175}
-      //                   layout="responsive"
-      //                   width={335}
-      //                   className="rounded-xl"
-      //                   objectFit="cover"
-      //                 />
-      //               )}
-      //               <div className="flex justify-between mt-3">
-      //                 <div className="grid grid-flow-col gap-2">
-      //                   <Badge>{type}</Badge>
-      //                   <Badge>{car_type}</Badge>
-      //                 </div>
-
-      //                 {status && <Badge color="bg-green-600">{status}</Badge>}
-      //               </div>
-      //               <h3 className="mt-2">{title}</h3>
-      //             </article>
-      //           </Link>
-      //         )
-      //       )}
-      //     </div>
-      //   </div>
-      // }
     >
       <>
         <Modal
@@ -233,7 +160,7 @@ const Home = ({ disturbances }: HomePageProps) => {
           </div>
         )}
 
-        <div className="bg-slate-100 relative h-[calc(100vh-80px)]">
+        <div className="bg-slate-100 relative h-[calc(100vh-80px)] -mx-6">
           {isMapLoaded && (
             <GoogleMap
               zoom={12}
@@ -243,39 +170,44 @@ const Home = ({ disturbances }: HomePageProps) => {
               onLoad={onLoad}
             >
               <MarkerClusterer>
-                {(clusterer) => (
-                  <>
-                    {disturbances.map(
-                      ({
-                        id,
-                        attributes: {
-                          latitude,
-                          longitude,
-                          slug,
-                          ...disturbance
-                        },
-                      }) => (
-                        <Marker
-                          key={id + 'mark'}
-                          position={{ lat: latitude, lng: longitude }}
-                          clusterer={clusterer}
-                          onClick={() => {
-                            setSelectedDisturbance({
-                              ...disturbance,
-                              latitude,
-                              longitude,
-                              slug,
-                            })
-                            router.push(
-                              makeContextualHref({ slug }),
-                              `disturbances/${slug}`
-                            )
-                          }}
-                        />
-                      )
-                    )}
-                  </>
-                )}
+                {(clusterer) => {
+                  return (
+                    <>
+                      {disturbances.map(
+                        ({
+                          id,
+                          attributes: {
+                            latitude,
+                            longitude,
+                            slug,
+                            ...disturbance
+                          },
+                        }) => (
+                          <Marker
+                            key={id + 'mark'}
+                            position={{
+                              lat: latitude || 0,
+                              lng: longitude || 0,
+                            }}
+                            clusterer={clusterer}
+                            onClick={() => {
+                              setSelectedDisturbance({
+                                ...disturbance,
+                                latitude,
+                                longitude,
+                                slug,
+                              })
+                              router.push(
+                                makeContextualHref({ slug }),
+                                `disturbances/${slug}`
+                              )
+                            }}
+                          />
+                        )
+                      )}
+                    </>
+                  )
+                }}
               </MarkerClusterer>
             </GoogleMap>
           )}

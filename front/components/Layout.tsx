@@ -1,6 +1,10 @@
 import { GoogleMap } from '@react-google-maps/api'
 import Head from 'next/head'
-import React, { ReactElement } from 'react'
+import React, { forwardRef, ReactElement, useState } from 'react'
+import usePlacesAutocomplete, {
+  getGeocode,
+  getLatLng,
+} from 'use-places-autocomplete'
 import Header from './Header'
 
 interface LayoutProps {
@@ -8,16 +12,37 @@ interface LayoutProps {
   description: string
   children: ReactElement
   sidebar?: ReactElement
-  mapRef?: GoogleMap | undefined
+  callback?: (lat: number, lng: number) => void
 }
 
-function Layout({
+const Layout = ({
   title,
   description,
   children,
   sidebar,
-  mapRef,
-}: LayoutProps) {
+  callback,
+}: LayoutProps) => {
+  const [query, setQuery] = useState('')
+
+  const {
+    ready,
+    value,
+    setValue,
+    suggestions: { data },
+    clearSuggestions,
+  } = usePlacesAutocomplete()
+
+  const handleSelectedOption = async (selectedOption: string) => {
+    if (!callback) return
+
+    setValue(selectedOption, false)
+    clearSuggestions()
+
+    const res = await getGeocode({ address: selectedOption })
+    const { lat, lng } = await getLatLng(res[0])
+    callback(lat, lng)
+  }
+
   return (
     <>
       <Head>
@@ -26,17 +51,26 @@ function Layout({
       </Head>
 
       <div className="min-h-screen flex flex-col">
-        <Header mapRef={mapRef} />
+        <Header
+          selectedValue={value}
+          disabled={!ready}
+          setQuery={setQuery}
+          options={data}
+          query={query}
+          placeholder={'Rechercher une ville, rue, ...'}
+          displayedProperty={''}
+          handleSelectedOption={handleSelectedOption}
+        />
 
         {sidebar ? (
           <div className="grid lg:grid-cols-[400px_1fr] grid-cols-1 h-full">
             <aside className="h-[calc(100vh-80px)] overflow-y-hidden">
               {sidebar}
             </aside>
-            <main className="flex-1">{children}</main>
+            <main className="flex-1 px-6">{children}</main>
           </div>
         ) : (
-          <main className="flex-1">{children}</main>
+          <main className="flex-1 px-6">{children}</main>
         )}
       </div>
     </>

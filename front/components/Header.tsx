@@ -3,13 +3,30 @@ import { signIn, signOut, useSession } from 'next-auth/react'
 import Link from 'next/link'
 import React, { MutableRefObject, Ref } from 'react'
 import Button from './Button'
+import { SearchInput } from './form/Search'
 import { SearchPlace } from './form/SearchPlace'
 
-interface HeaderProps {
-  mapRef?: GoogleMap | undefined
+interface HeaderProps<T> {
+  options: T[]
+  selectedValue: string
+  displayedProperty: string
+  query: string
+  disabled: boolean
+  placeholder: string
+  setQuery: (value: string) => void
+  handleSelectedOption: (value: any) => void
 }
 
-const Header = ({ mapRef }: HeaderProps) => {
+const Header = ({
+  options,
+  query,
+  selectedValue,
+  displayedProperty,
+  disabled,
+  placeholder,
+  setQuery,
+  handleSelectedOption,
+}: HeaderProps<any>) => {
   const { data: session } = useSession()
 
   return (
@@ -33,13 +50,16 @@ const Header = ({ mapRef }: HeaderProps) => {
       </div>
 
       <div className="w-full max-w-[460px]">
-        {mapRef && (
-          <SearchPlace
-            goToLocation={(position) => {
-              mapRef.panTo(position)
-            }}
-          />
-        )}
+        <SearchInput
+          options={options}
+          query={query}
+          selectedValue={selectedValue}
+          setQuery={setQuery}
+          placeholder={placeholder}
+          disabled={disabled}
+          displayedProperty={displayedProperty}
+          handleSelectedOption={handleSelectedOption}
+        />
       </div>
 
       <div className="flex place-self-center justify-self-end items-center gap-4">

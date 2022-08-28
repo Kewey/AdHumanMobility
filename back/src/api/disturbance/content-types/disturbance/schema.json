@@ -24,10 +24,6 @@
       "target": "api::instance.instance",
       "mappedBy": "perturbation"
     },
-    "title": {
-      "type": "string",
-      "required": true
-    },
     "thumbnail": {
       "type": "media",
       "multiple": false,
@@ -83,10 +79,6 @@
     },
     "relationship": {
       "type": "string"
-    },
-    "slug": {
-      "type": "string",
-      "unique": true
     },
     "referent": {
       "type": "relation",

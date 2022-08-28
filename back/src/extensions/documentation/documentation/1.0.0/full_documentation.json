@@ -14,7 +14,7 @@
       "name": "Apache 2.0",
       "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
     },
-    "x-generation-date": "2022-08-20T16:44:25.969Z"
+    "x-generation-date": "2022-08-28T23:12:15.142Z"
   },
   "x-strapi-config": {
     "path": "/documentation",
@@ -90,7 +90,7 @@
       "CategoryLocalizationRequest": {
         "required": [
           "label",
-          "icon",
+          "image",
           "locale"
         ],
         "type": "object",
@@ -109,7 +109,7 @@
           "label": {
             "type": "string"
           },
-          "icon": {
+          "image": {
             "oneOf": [
               {
                 "type": "integer"
@@ -148,7 +148,7 @@
           "data": {
             "required": [
               "label",
-              "icon"
+              "image"
             ],
             "type": "object",
             "properties": {
@@ -166,7 +166,7 @@
               "label": {
                 "type": "string"
               },
-              "icon": {
+              "image": {
                 "oneOf": [
                   {
                     "type": "integer"
@@ -623,7 +623,7 @@
                                     "label": {
                                       "type": "string"
                                     },
-                                    "icon": {
+                                    "image": {
                                       "type": "object",
                                       "properties": {
                                         "data": {
@@ -1010,7 +1010,7 @@
                                                   "label": {
                                                     "type": "string"
                                                   },
-                                                  "icon": {
+                                                  "image": {
                                                     "type": "object",
                                                     "properties": {
                                                       "data": {
@@ -1827,7 +1827,7 @@
           "label": {
             "type": "string"
           },
-          "icon": {
+          "image": {
             "type": "object",
             "properties": {
               "data": {
@@ -2703,7 +2703,7 @@
                                               "label": {
                                                 "type": "string"
                                               },
-                                              "icon": {
+                                              "image": {
                                                 "type": "object",
                                                 "properties": {
                                                   "data": {
@@ -3090,7 +3090,7 @@
                                                             "label": {
                                                               "type": "string"
                                                             },
-                                                            "icon": {
+                                                            "image": {
                                                               "type": "object",
                                                               "properties": {
                                                                 "data": {
@@ -3907,7 +3907,7 @@
                     "label": {
                       "type": "string"
                     },
-                    "icon": {
+                    "image": {
                       "type": "object",
                       "properties": {
                         "data": {
@@ -4809,7 +4809,7 @@
                                             "label": {
                                               "type": "string"
                                             },
-                                            "icon": {
+                                            "image": {
                                               "type": "object",
                                               "properties": {
                                                 "data": {
@@ -5196,7 +5196,7 @@
                                                           "label": {
                                                             "type": "string"
                                                           },
-                                                          "icon": {
+                                                          "image": {
                                                             "type": "object",
                                                             "properties": {
                                                               "data": {
@@ -6013,7 +6013,7 @@
                   "label": {
                     "type": "string"
                   },
-                  "icon": {
+                  "image": {
                     "type": "object",
                     "properties": {
                       "data": {
@@ -6472,7 +6472,6 @@
         "properties": {
           "data": {
             "required": [
-              "title",
               "type",
               "car_type",
               "description",
@@ -6506,9 +6505,6 @@
                   ],
                   "example": "string or id"
                 }
-              },
-              "title": {
-                "type": "string"
               },
               "thumbnail": {
                 "oneOf": [
@@ -6560,9 +6556,6 @@
                 "format": "float"
               },
               "relationship": {
-                "type": "string"
-              },
-              "slug": {
                 "type": "string"
               },
               "referent": {
@@ -7187,9 +7180,6 @@
                                                   }
                                                 }
                                               },
-                                              "title": {
-                                                "type": "string"
-                                              },
                                               "thumbnail": {
                                                 "type": "object",
                                                 "properties": {
@@ -7601,9 +7591,6 @@
                                               "relationship": {
                                                 "type": "string"
                                               },
-                                              "slug": {
-                                                "type": "string"
-                                              },
                                               "referent": {
                                                 "type": "object",
                                                 "properties": {
@@ -7833,9 +7820,6 @@
                           }
                         }
                       }
-                    },
-                    "title": {
-                      "type": "string"
                     },
                     "thumbnail": {
                       "type": "object",
@@ -8246,9 +8230,6 @@
                       "format": "float"
                     },
                     "relationship": {
-                      "type": "string"
-                    },
-                    "slug": {
                       "type": "string"
                     },
                     "referent": {
@@ -8949,9 +8930,6 @@
                                                 }
                                               }
                                             },
-                                            "title": {
-                                              "type": "string"
-                                            },
                                             "thumbnail": {
                                               "type": "object",
                                               "properties": {
@@ -9363,9 +9341,6 @@
                                             "relationship": {
                                               "type": "string"
                                             },
-                                            "slug": {
-                                              "type": "string"
-                                            },
                                             "referent": {
                                               "type": "object",
                                               "properties": {
@@ -9595,9 +9570,6 @@
                         }
                       }
                     }
-                  },
-                  "title": {
-                    "type": "string"
                   },
                   "thumbnail": {
                     "type": "object",
@@ -10008,9 +9980,6 @@
                     "format": "float"
                   },
                   "relationship": {
-                    "type": "string"
-                  },
-                  "slug": {
                     "type": "string"
                   },
                   "referent": {
@@ -10818,9 +10787,6 @@
                                     }
                                   }
                                 },
-                                "title": {
-                                  "type": "string"
-                                },
                                 "thumbnail": {
                                   "type": "object",
                                   "properties": {
@@ -11230,9 +11196,6 @@
                                   "format": "float"
                                 },
                                 "relationship": {
-                                  "type": "string"
-                                },
-                                "slug": {
                                   "type": "string"
                                 },
                                 "referent": {
@@ -12145,9 +12108,6 @@
                                   }
                                 }
                               },
-                              "title": {
-                                "type": "string"
-                              },
                               "thumbnail": {
                                 "type": "object",
                                 "properties": {
@@ -12559,9 +12519,6 @@
                               "relationship": {
                                 "type": "string"
                               },
-                              "slug": {
-                                "type": "string"
-                              },
                               "referent": {
                                 "type": "object",
                                 "properties": {
@@ -12781,7 +12738,9 @@
         ],
         "properties": {
           "data": {
-            "required": [],
+            "required": [
+              "companyName"
+            ],
             "type": "object",
             "properties": {
               "lastname": {
@@ -13506,9 +13465,6 @@
                                       }
                                     }
                                   },
-                                  "title": {
-                                    "type": "string"
-                                  },
                                   "thumbnail": {
                                     "type": "object",
                                     "properties": {
@@ -13918,9 +13874,6 @@
                                     "format": "float"
                                   },
                                   "relationship": {
-                                    "type": "string"
-                                  },
-                                  "slug": {
                                     "type": "string"
                                   },
                                   "referent": {
@@ -14842,9 +14795,6 @@
                                     }
                                   }
                                 },
-                                "title": {
-                                  "type": "string"
-                                },
                                 "thumbnail": {
                                   "type": "object",
                                   "properties": {
@@ -15256,9 +15206,6 @@
                                 "relationship": {
                                   "type": "string"
                                 },
-                                "slug": {
-                                  "type": "string"
-                                },
                                 "referent": {
                                   "type": "object",
                                   "properties": {
@@ -15483,7 +15430,7 @@
       "SubCategoryLocalizationRequest": {
         "required": [
           "label",
-          "icon",
+          "image",
           "locale"
         ],
         "type": "object",
@@ -15491,7 +15438,7 @@
           "label": {
             "type": "string"
           },
-          "icon": {
+          "image": {
             "oneOf": [
               {
                 "type": "integer"
@@ -15527,14 +15474,14 @@
           "data": {
             "required": [
               "label",
-              "icon"
+              "image"
             ],
             "type": "object",
             "properties": {
               "label": {
                 "type": "string"
               },
-              "icon": {
+              "image": {
                 "oneOf": [
                   {
                     "type": "integer"
@@ -15572,7 +15519,7 @@
           "label": {
             "type": "string"
           },
-          "icon": {
+          "image": {
             "type": "object",
             "properties": {
               "data": {
@@ -16671,7 +16618,7 @@
                       "label": {
                         "type": "string"
                       },
-                      "icon": {
+                      "image": {
                         "type": "object",
                         "properties": {
                           "data": {
@@ -17058,7 +17005,7 @@
                                     "label": {
                                       "type": "string"
                                     },
-                                    "icon": {
+                                    "image": {
                                       "type": "object",
                                       "properties": {
                                         "data": {
@@ -17632,7 +17579,7 @@
                     "label": {
                       "type": "string"
                     },
-                    "icon": {
+                    "image": {
                       "type": "object",
                       "properties": {
                         "data": {
@@ -18731,7 +18678,7 @@
                                 "label": {
                                   "type": "string"
                                 },
-                                "icon": {
+                                "image": {
                                   "type": "object",
                                   "properties": {
                                     "data": {
@@ -19118,7 +19065,7 @@
                                               "label": {
                                                 "type": "string"
                                               },
-                                              "icon": {
+                                              "image": {
                                                 "type": "object",
                                                 "properties": {
                                                   "data": {
@@ -19718,7 +19665,7 @@
                   "label": {
                     "type": "string"
                   },
-                  "icon": {
+                  "image": {
                     "type": "object",
                     "properties": {
                       "data": {
@@ -20817,7 +20764,7 @@
                               "label": {
                                 "type": "string"
                               },
-                              "icon": {
+                              "image": {
                                 "type": "object",
                                 "properties": {
                                   "data": {
@@ -21204,7 +21151,7 @@
                                             "label": {
                                               "type": "string"
                                             },
-                                            "icon": {
+                                            "image": {
                                               "type": "object",
                                               "properties": {
                                                 "data": {
@@ -22968,7 +22915,7 @@
                         "label": {
                           "type": "string"
                         },
-                        "icon": {
+                        "image": {
                           "type": "object",
                           "properties": {
                             "data": {
@@ -23355,7 +23302,7 @@
                                       "label": {
                                         "type": "string"
                                       },
-                                      "icon": {
+                                      "image": {
                                         "type": "object",
                                         "properties": {
                                           "data": {
@@ -25031,7 +24978,7 @@
                                   "label": {
                                     "type": "string"
                                   },
-                                  "icon": {
+                                  "image": {
                                     "type": "object",
                                     "properties": {
                                       "data": {
@@ -25418,7 +25365,7 @@
                                                 "label": {
                                                   "type": "string"
                                                 },
-                                                "icon": {
+                                                "image": {
                                                   "type": "object",
                                                   "properties": {
                                                     "data": {
@@ -27120,7 +27067,7 @@
                                 "label": {
                                   "type": "string"
                                 },
-                                "icon": {
+                                "image": {
                                   "type": "object",
                                   "properties": {
                                     "data": {
@@ -27507,7 +27454,7 @@
                                               "label": {
                                                 "type": "string"
                                               },
-                                              "icon": {
+                                              "image": {
                                                 "type": "object",
                                                 "properties": {
                                                   "data": {
@@ -29505,9 +29452,6 @@
                                                                 }
                                                               }
                                                             },
-                                                            "title": {
-                                                              "type": "string"
-                                                            },
                                                             "thumbnail": {
                                                               "type": "object",
                                                               "properties": {
@@ -29917,9 +29861,6 @@
                                                               "format": "float"
                                                             },
                                                             "relationship": {
-                                                              "type": "string"
-                                                            },
-                                                            "slug": {
                                                               "type": "string"
                                                             },
                                                             "referent": {
@@ -30812,9 +30753,6 @@
                                                               }
                                                             }
                                                           },
-                                                          "title": {
-                                                            "type": "string"
-                                                          },
                                                           "thumbnail": {
                                                             "type": "object",
                                                             "properties": {
@@ -31224,9 +31162,6 @@
                                                             "format": "float"
                                                           },
                                                           "relationship": {
-                                                            "type": "string"
-                                                          },
-                                                          "slug": {
                                                             "type": "string"
                                                           },
                                                           "referent": {
@@ -32113,9 +32048,6 @@
                                                                               }
                                                                             }
                                                                           },
-                                                                          "title": {
-                                                                            "type": "string"
-                                                                          },
                                                                           "thumbnail": {
                                                                             "type": "object",
                                                                             "properties": {
@@ -32525,9 +32457,6 @@
                                                                             "format": "float"
                                                                           },
                                                                           "relationship": {
-                                                                            "type": "string"
-                                                                          },
-                                                                          "slug": {
                                                                             "type": "string"
                                                                           },
                                                                           "referent": {
@@ -33449,9 +33378,6 @@
                                                                             }
                                                                           }
                                                                         },
-                                                                        "title": {
-                                                                          "type": "string"
-                                                                        },
                                                                         "thumbnail": {
                                                                           "type": "object",
                                                                           "properties": {
@@ -33861,9 +33787,6 @@
                                                                           "format": "float"
                                                                         },
                                                                         "relationship": {
-                                                                          "type": "string"
-                                                                        },
-                                                                        "slug": {
                                                                           "type": "string"
                                                                         },
                                                                         "referent": {
@@ -34898,9 +34821,6 @@
                                                                 }
                                                               }
                                                             },
-                                                            "title": {
-                                                              "type": "string"
-                                                            },
                                                             "thumbnail": {
                                                               "type": "object",
                                                               "properties": {
@@ -35310,9 +35230,6 @@
                                                               "format": "float"
                                                             },
                                                             "relationship": {
-                                                              "type": "string"
-                                                            },
-                                                            "slug": {
                                                               "type": "string"
                                                             },
                                                             "referent": {
@@ -36247,9 +36164,6 @@
                                                               }
                                                             }
                                                           },
-                                                          "title": {
-                                                            "type": "string"
-                                                          },
                                                           "thumbnail": {
                                                             "type": "object",
                                                             "properties": {
@@ -36659,9 +36573,6 @@
                                                             "format": "float"
                                                           },
                                                           "relationship": {
-                                                            "type": "string"
-                                                          },
-                                                          "slug": {
                                                             "type": "string"
                                                           },
                                                           "referent": {

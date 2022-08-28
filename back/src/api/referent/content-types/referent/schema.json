@@ -31,7 +31,9 @@
       "private": true
     },
     "companyName": {
-      "type": "string"
+      "type": "string",
+      "required": true,
+      "unique": true
     },
     "job": {
       "type": "string",

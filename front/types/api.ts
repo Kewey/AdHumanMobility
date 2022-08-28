@@ -1,5 +1,5 @@
 export interface StrapiCall<T> {
-  data: T
+  data: StrapiEntity<T>[]
   meta?: {
     pagination: {
       page: number
@@ -13,6 +13,11 @@ export interface StrapiCall<T> {
 export interface StrapiEntity<T> {
   id: number
   attributes: T
+}
+
+export interface DefaultStrapyEntity {
+  createdAt: string
+  updatedAt: string
 }
 
 export function displayMedia(imageUrl: string) {

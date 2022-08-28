@@ -13,12 +13,16 @@ import UploadPhotos from '../../components/form/Photos'
 import { SearchPlace } from '../../components/form/SearchPlace'
 import { getGeocode } from 'use-places-autocomplete'
 import {
-  getCategories,
   getCategoriesFromTypology,
+  getCompanies,
   getSubCategoriesFromCategory,
   getTypologies,
+  postCompany,
 } from '../api/forms'
 import { StrapiEntity } from '../../types/api'
+import { Category, Subcategory, Typology } from '../../types/typology'
+import { SearchInput } from '../../components/form/Search'
+import { Referent } from '../../types/company'
 
 enum IS_COMPANY {
   TRUE = 'Professionnel',
@@ -45,14 +49,18 @@ export const getServerSideProps = async () => {
 }
 
 interface NewDisturbanceProps {
-  typologies: StrapiEntity<any>[]
+  typologies: StrapiEntity<Typology>[]
 }
 
 function NewDisturbance({ typologies }: NewDisturbanceProps) {
-  const [categories, setCategories] = useState<null | any>(null)
-  const [subCategories, setSubCategories] = useState<null | any>(null)
+  const [categories, setCategories] = useState<StrapiEntity<Category>[]>([])
+  const [subCategories, setSubCategories] = useState<
+    StrapiEntity<Subcategory>[]
+  >([])
+  const [companies, setCompanies] = useState<StrapiEntity<Referent>[]>([])
+  const [companyQuery, setCompanyQuery] = useState('')
 
-  const { register, handleSubmit, control, setValue, watch } =
+  const { register, handleSubmit, control, setValue, getValues, watch } =
     useForm<DisturbanceFormType>({})
   const router = useRouter()
 
@@ -60,14 +68,9 @@ function NewDisturbance({ typologies }: NewDisturbanceProps) {
 
   useEffect(() => {
     const subscription = watch(async (value, { name }) => {
-      console.log('value', value)
-      console.log('name', name)
       if (name === 'typology') {
         const categories = await getCategoriesFromTypology(value[name] || '')
-        console.log('categories', categories)
         setCategories(categories)
-        setValue('category', '', {})
-        setValue('subCategory', '', {})
         return
       }
 
@@ -75,15 +78,26 @@ function NewDisturbance({ typologies }: NewDisturbanceProps) {
         const subCategories = await getSubCategoriesFromCategory(
           value[name] || ''
         )
-        console.log('subCategories', subCategories)
         setSubCategories(subCategories)
-        setValue('subCategory', '', {})
         return
+      }
+
+      if (name === 'company') {
+        console.log('value', value)
       }
     })
 
     return () => subscription.unsubscribe()
   }, [watch])
+
+  useEffect(() => {
+    async function getCompany() {
+      const companies = await getCompanies(companyQuery)
+      setCompanies(companies)
+    }
+
+    getCompany()
+  }, [companyQuery])
 
   const onSubmit = async ({ thumbnail, ...data }: any) => {
     const body = { ...data, author: session?.id }
@@ -114,7 +128,9 @@ function NewDisturbance({ typologies }: NewDisturbanceProps) {
           className="grid lg:grid-cols-2 grid-cols-1 gap-8"
         >
           <div className="col-span-full">
-            <h3>Choissiez une typologie</h3>
+            <label className="mb-2 text-gray-400 font-semibold block w-full">
+              Choissiez une typologie
+            </label>
             {typologies?.map((typology) => (
               <Checkbox
                 iconUrl={typology.attributes?.icon?.data?.attributes?.url}
@@ -127,9 +143,11 @@ function NewDisturbance({ typologies }: NewDisturbanceProps) {
             ))}
           </div>
 
-          {categories && (
+          {categories.length > 0 && (
             <div className="col-span-full">
-              <h3>Choissiez une catégorie</h3>
+              <label className="mb-2 text-gray-400 font-semibold block w-full">
+                Choissiez une catégorie
+              </label>
               {categories?.map((category) => (
                 <Checkbox
                   iconUrl={category.attributes?.icon?.data?.attributes?.url}
@@ -143,9 +161,11 @@ function NewDisturbance({ typologies }: NewDisturbanceProps) {
             </div>
           )}
 
-          {subCategories && (
+          {subCategories.length > 0 && (
             <div className="col-span-full">
-              <h3>Choissiez une sous catégorie</h3>
+              <label className="mb-2 text-gray-400 font-semibold block w-full">
+                Choissiez une sous catégorie
+              </label>
               {subCategories?.map((subCategory) => (
                 <Checkbox
                   iconUrl={subCategory.attributes?.icon?.data?.attributes?.url}
@@ -160,24 +180,14 @@ function NewDisturbance({ typologies }: NewDisturbanceProps) {
           )}
 
           <div className="mb-3">
-            <Input
-              register={register}
-              name="title"
-              label="Nom de la perturbation"
-              placeholder="Passage piéton rue Belvard"
-              type={'text'}
-            />
-          </div>
-
-          <div className="mb-3">
             <label className="mb-2 text-gray-400 font-semibold block w-full">
               Lieu de la perturbation
             </label>
-            <Controller
+            {/* <Controller
               control={control}
               name="location"
               render={() => (
-                <SearchPlace
+                <SearchInput
                   goToLocation={async (location) => {
                     setValue('latitude', location.lat)
                     setValue('longitude', location.lng)
@@ -188,7 +198,7 @@ function NewDisturbance({ typologies }: NewDisturbanceProps) {
                   }}
                 />
               )}
-            />
+            /> */}
             {/* <Input
               register={register}
               name="location"
@@ -218,9 +228,9 @@ function NewDisturbance({ typologies }: NewDisturbanceProps) {
           </div>
 
           <div className="mb-3">
-            <h4 className="mb-2 text-gray-400 font-semibold block w-full">
+            <label className="mb-2 text-gray-400 font-semibold block w-full">
               Entreprise mise en cause ?
-            </h4>
+            </label>
             <div className="grid grid-cols-2 gap-2">
               <Checkbox
                 register={register}
@@ -241,20 +251,28 @@ function NewDisturbance({ typologies }: NewDisturbanceProps) {
 
           {watch('type') === IS_COMPANY.TRUE && (
             <div className="mb-3">
-              <Input
-                register={register}
-                name="company"
-                label="Nom de l'entreprise concernées"
+              <label className="mb-2 text-gray-400 font-semibold block w-full">
+                Nom de l'entreprise concernées
+              </label>
+              <SearchInput
+                displayedProperty="companyName"
                 placeholder="Uber, Lime, ..."
-                type={'text'}
+                options={companies}
+                selectedValue={getValues('company') || ''}
+                query={companyQuery}
+                setQuery={(value) => setCompanyQuery(value)}
+                handleSelectedOption={(value: {
+                  data: StrapiEntity<Referent>
+                }) => setValue('company', value.data.id.toString())}
+                handleAddNewOption={async (value) => await postCompany(value)}
               />
             </div>
           )}
 
           <div className="mb-3 lg:col-span-2">
-            <h4 className="mb-2 text-gray-400 font-semibold block w-full">
+            <label className="mb-2 text-gray-400 font-semibold block w-full">
               Type de véhicule
-            </h4>
+            </label>
             <div className="grid grid-cols-2 gap-2">
               <Checkbox
                 register={register}

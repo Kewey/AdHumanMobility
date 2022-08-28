@@ -2,7 +2,6 @@ import { StrapiCall, StrapiEntity } from './api'
 import { Media } from './media'
 
 export interface Disturbance {
-  title: string
   type: string
   car_type: string
   status: string
@@ -12,7 +11,6 @@ export interface Disturbance {
   latitude: number
   company: string | null
   relationship: string | null
-  slug: string
   thumbnail: StrapiCall<StrapiEntity<Media>>
   createdAt: string
   updatedAt: string

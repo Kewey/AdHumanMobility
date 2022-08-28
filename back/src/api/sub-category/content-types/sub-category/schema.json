@@ -4,8 +4,7 @@
   "info": {
     "singularName": "sub-category",
     "pluralName": "sub-categories",
-    "displayName": "Sous catégories",
-    "description": ""
+    "displayName": "Sous catégories"
   },
   "options": {
     "draftAndPublish": false
@@ -26,18 +25,18 @@
       "required": true,
       "unique": true
     },
-    "icon": {
-      "type": "media",
-      "multiple": false,
-      "required": true,
+    "image": {
       "allowedTypes": [
         "images"
       ],
+      "type": "media",
+      "multiple": false,
       "pluginOptions": {
         "i18n": {
           "localized": false
         }
-      }
+      },
+      "required": true
     },
     "category": {
       "type": "relation",
