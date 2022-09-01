@@ -122,6 +122,7 @@ function NewDisturbance({ typologies }: NewDisturbanceProps) {
   */
 
   const onSubmit = async (data: DisturbanceFormType) => {
+    // @ts-ignore
     const body = { ...data, author: session?.id?.toString() || '' }
 
     try {
