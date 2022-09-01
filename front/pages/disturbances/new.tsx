@@ -6,12 +6,20 @@ import Layout from '../../components/Layout'
 import Textarea from '../../components/form/Textarea'
 import Checkbox from '../../components/form/Checkbox'
 import { postDisturbance } from '../api/disturbances'
-import { DisturbanceFormType } from '../../types/disturbance'
+import {
+  DisturbanceFormType,
+  DISTURBANCE_TYPE,
+  PRIORITY,
+  VEHICULE_TYPE,
+} from '../../types/disturbance'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import UploadPhotos from '../../components/form/Photos'
-import { SearchPlace } from '../../components/form/SearchPlace'
-import { getGeocode } from 'use-places-autocomplete'
+import usePlacesAutocomplete, {
+  getGeocode,
+  getLatLng,
+} from 'use-places-autocomplete'
+import dayjs from 'dayjs'
 import {
   getCategoriesFromTypology,
   getCompanies,
@@ -21,21 +29,9 @@ import {
 } from '../api/forms'
 import { StrapiEntity } from '../../types/api'
 import { Category, Subcategory, Typology } from '../../types/typology'
-import { SearchInput } from '../../components/form/Search'
+import { SearchInput } from '../../components/form/SearchInput'
 import { Referent } from '../../types/company'
-
-enum IS_COMPANY {
-  TRUE = 'Professionnel',
-  FALSE = 'Particulier',
-}
-
-enum VEHICULE_TYPE {
-  WALKER = 'Piéton',
-  BIKE = 'Vélo',
-  SCOOTER = 'Trottinette',
-  CAR = 'Voiture',
-  TRUCK = 'Camion',
-}
+import { SearchGoogleMap } from '../../components/form/SearchGoogleMap'
 
 export const getServerSideProps = async () => {
   const res = await getTypologies()
@@ -66,24 +62,35 @@ function NewDisturbance({ typologies }: NewDisturbanceProps) {
 
   const { data: session } = useSession()
 
+  const {
+    value: locationQuery,
+    setValue: setLocationQuery,
+    suggestions: { data: localisationOptions },
+  } = usePlacesAutocomplete({
+    debounce: 300,
+    requestOptions: {
+      region: 'fr',
+      language: 'fr',
+    },
+  })
+
   useEffect(() => {
     const subscription = watch(async (value, { name }) => {
-      if (name === 'typology') {
-        const categories = await getCategoriesFromTypology(value[name] || '')
-        setCategories(categories)
-        return
-      }
+      console.table(value)
+      switch (name) {
+        case 'typology':
+          const categories = await getCategoriesFromTypology(value[name] || '')
+          setCategories(categories)
+          setValue('subCategory', '')
+          return
 
-      if (name === 'category') {
-        const subCategories = await getSubCategoriesFromCategory(
-          value[name] || ''
-        )
-        setSubCategories(subCategories)
-        return
-      }
-
-      if (name === 'company') {
-        console.log('value', value)
+        case 'category':
+          const subCategories = await getSubCategoriesFromCategory(
+            value[name] || ''
+          )
+          setSubCategories(subCategories)
+          setValue('subCategory', '')
+          return
       }
     })
 
@@ -99,12 +106,27 @@ function NewDisturbance({ typologies }: NewDisturbanceProps) {
     getCompany()
   }, [companyQuery])
 
-  const onSubmit = async ({ thumbnail, ...data }: any) => {
-    const body = { ...data, author: session?.id }
+  const onLocationUpdate = async ({
+    place_id: placeId,
+  }: Partial<google.maps.GeocoderResult>) => {
+    const [res] = await getGeocode({ placeId })
+    const { lat, lng } = await getLatLng(res)
+    setValue('latitude', lat)
+    setValue('longitude', lng)
+  }
+
+  /*
+
+  SUBMIT
+  
+  */
+
+  const onSubmit = async (data: DisturbanceFormType) => {
+    const body = { ...data, author: session?.id?.toString() || '' }
 
     try {
-      await postDisturbance(body, thumbnail)
-      router.back()
+      await postDisturbance(body)
+      // router.back()
     } catch (error) {
       console.error('error', error)
     }
@@ -131,51 +153,76 @@ function NewDisturbance({ typologies }: NewDisturbanceProps) {
             <label className="mb-2 text-gray-400 font-semibold block w-full">
               Choissiez une typologie
             </label>
-            {typologies?.map((typology) => (
-              <Checkbox
-                iconUrl={typology.attributes?.icon?.data?.attributes?.url}
-                register={register}
-                name="typology"
-                label={typology.attributes.label}
-                type={'radio'}
-                value={typology.id.toString()}
-              />
-            ))}
+            <div className="grid md:grid-cols-3 gap-2">
+              {typologies?.map((typology, index) => (
+                <Checkbox
+                  key={index}
+                  iconUrl={typology.attributes?.icon?.data?.attributes?.url}
+                  register={register}
+                  name="typology"
+                  label={typology.attributes.label}
+                  type={'radio'}
+                  value={typology.id.toString()}
+                />
+              ))}
+            </div>
           </div>
 
-          {categories.length > 0 && (
+          {categories.length > 0 ? (
             <div className="col-span-full">
               <label className="mb-2 text-gray-400 font-semibold block w-full">
                 Choissiez une catégorie
               </label>
-              {categories?.map((category) => (
-                <Checkbox
-                  iconUrl={category.attributes?.icon?.data?.attributes?.url}
-                  register={register}
-                  name="category"
-                  label={category.attributes.label}
-                  type={'radio'}
-                  value={category.id.toString()}
-                />
-              ))}
+              <div className="grid md:grid-cols-3 gap-2">
+                {categories?.map((category, index) => (
+                  <Checkbox
+                    key={index}
+                    iconUrl={category.attributes?.icon?.data?.attributes?.url}
+                    register={register}
+                    name="category"
+                    label={category.attributes.label}
+                    type={'radio'}
+                    value={category.id.toString()}
+                  />
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="col-span-full opacity-70">
+              <label className="mb-2 text-gray-400 font-semibold block w-full">
+                Choissiez une catégorie
+              </label>
+              <div className="grid md:grid-cols-3 gap-2">faux block</div>
             </div>
           )}
 
-          {subCategories.length > 0 && (
+          {subCategories.length > 0 ? (
             <div className="col-span-full">
               <label className="mb-2 text-gray-400 font-semibold block w-full">
                 Choissiez une sous catégorie
               </label>
-              {subCategories?.map((subCategory) => (
-                <Checkbox
-                  iconUrl={subCategory.attributes?.icon?.data?.attributes?.url}
-                  register={register}
-                  name="subCategory"
-                  label={subCategory.attributes.label}
-                  type={'radio'}
-                  value={subCategory.id.toString()}
-                />
-              ))}
+              <div className="grid md:grid-cols-3 gap-2">
+                {subCategories?.map((subCategory, index) => (
+                  <Checkbox
+                    key={index}
+                    iconUrl={
+                      subCategory.attributes?.icon?.data?.attributes?.url
+                    }
+                    register={register}
+                    name="subCategory"
+                    label={subCategory.attributes.label}
+                    type={'radio'}
+                    value={subCategory.id.toString()}
+                  />
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="col-span-full opacity-70">
+              <label className="mb-2 text-gray-400 font-semibold block w-full">
+                Choissiez une sous catégorie
+              </label>
+              <div className="grid md:grid-cols-3 gap-2">faux block</div>
             </div>
           )}
 
@@ -183,37 +230,21 @@ function NewDisturbance({ typologies }: NewDisturbanceProps) {
             <label className="mb-2 text-gray-400 font-semibold block w-full">
               Lieu de la perturbation
             </label>
-            {/* <Controller
+            <Controller
               control={control}
               name="location"
-              render={() => (
-                <SearchInput
-                  goToLocation={async (location) => {
-                    setValue('latitude', location.lat)
-                    setValue('longitude', location.lng)
-
-                    const res = await getGeocode({ location })
-                    const { formatted_address } = res[0]
-                    setValue('location', formatted_address)
+              render={({ field: { value: fieldValue, onChange } }) => (
+                <SearchGoogleMap
+                  query={locationQuery}
+                  setQuery={setLocationQuery}
+                  options={localisationOptions}
+                  selectedValue={fieldValue}
+                  handleSelectedOption={(selectedOption) => {
+                    onLocationUpdate(selectedOption)
+                    onChange(selectedOption.description)
                   }}
                 />
               )}
-            /> */}
-            {/* <Input
-              register={register}
-              name="location"
-              label="Lieu de la perturbation"
-              placeholder="2 Quai des Queyries, 33100 Bordeaux"
-              type={'text'}
-            /> */}
-          </div>
-
-          {/* PHOTO TODO */}
-          <div className="mb-3">
-            <UploadPhotos
-              register={register}
-              name="thumbnail"
-              label="Photo de la perturbation ou des lieux"
             />
           </div>
 
@@ -228,8 +259,56 @@ function NewDisturbance({ typologies }: NewDisturbanceProps) {
           </div>
 
           <div className="mb-3">
+            <Input
+              register={register}
+              name="disturbanceAt"
+              label="Date de la perturbation"
+              type="datetime-local"
+              max={dayjs().format('YYYY-MM-DDTHH:mm')}
+            />
+          </div>
+
+          <div className="mb-3 lg:col-span-2">
             <label className="mb-2 text-gray-400 font-semibold block w-full">
-              Entreprise mise en cause ?
+              Priorité de la perturbation
+            </label>
+            <div className="grid grid-cols-3 gap-2">
+              {(Object.keys(PRIORITY) as (keyof typeof PRIORITY)[]).map(
+                (key, index) => (
+                  <Checkbox
+                    key={index}
+                    register={register}
+                    name="priority"
+                    label={PRIORITY[key]}
+                    type={'radio'}
+                    value={key.toLowerCase()}
+                  />
+                )
+              )}
+            </div>
+          </div>
+
+          {/* PHOTO TODO */}
+          <div className="mb-3 col-span-full">
+            <label className="mb-2 text-gray-400 font-semibold block w-full">
+              Photo de la perturbation ou des lieux
+            </label>
+            <Controller
+              control={control}
+              name="evidences"
+              render={({ field: { value: fileValue, onChange } }) => (
+                <>
+                  <UploadPhotos handleSelectedFiles={onChange} />
+                  {fileValue?.length > 0 &&
+                    `${fileValue.length} fichiers sélectionnés`}
+                </>
+              )}
+            />
+          </div>
+
+          <div className="mb-3">
+            <label className="mb-2 text-gray-400 font-semibold block w-full">
+              Une entreprise est elle mise en cause ?
             </label>
             <div className="grid grid-cols-2 gap-2">
               <Checkbox
@@ -237,78 +316,58 @@ function NewDisturbance({ typologies }: NewDisturbanceProps) {
                 name="type"
                 label="Oui"
                 type={'radio'}
-                value={IS_COMPANY.TRUE}
+                value={DISTURBANCE_TYPE.PROFESSIONAL}
               />
               <Checkbox
                 register={register}
                 name="type"
                 label="Non"
                 type={'radio'}
-                value={IS_COMPANY.FALSE}
+                value={DISTURBANCE_TYPE.INDIVIDUAL}
               />
             </div>
           </div>
 
-          {watch('type') === IS_COMPANY.TRUE && (
-            <div className="mb-3">
-              <label className="mb-2 text-gray-400 font-semibold block w-full">
-                Nom de l'entreprise concernées
-              </label>
-              <SearchInput
-                displayedProperty="companyName"
-                placeholder="Uber, Lime, ..."
-                options={companies}
-                selectedValue={getValues('company') || ''}
-                query={companyQuery}
-                setQuery={(value) => setCompanyQuery(value)}
-                handleSelectedOption={(value: {
-                  data: StrapiEntity<Referent>
-                }) => setValue('company', value.data.id.toString())}
-                handleAddNewOption={async (value) => await postCompany(value)}
-              />
-            </div>
-          )}
+          <div
+            className={`mb-3 ${
+              watch('type') === DISTURBANCE_TYPE.INDIVIDUAL ? 'opacity-60' : ''
+            }`}
+          >
+            <label className="mb-2 text-gray-400 font-semibold block w-full">
+              Nom de l'entreprise concernées
+            </label>
+            <SearchInput
+              disabled={watch('type') === DISTURBANCE_TYPE.INDIVIDUAL}
+              displayedProperty="companyName"
+              placeholder="Uber, Lime, ..."
+              options={companies}
+              selectedValue={getValues('referent') || ''}
+              query={companyQuery}
+              setQuery={(value) => setCompanyQuery(value)}
+              handleSelectedOption={(value: StrapiEntity<Referent>) =>
+                setValue('referent', value.id.toString())
+              }
+              handleAddNewOption={async (value) => await postCompany(value)}
+            />
+          </div>
 
           <div className="mb-3 lg:col-span-2">
             <label className="mb-2 text-gray-400 font-semibold block w-full">
               Type de véhicule
             </label>
-            <div className="grid grid-cols-2 gap-2">
-              <Checkbox
-                register={register}
-                name="car_type"
-                label="Piéton"
-                type={'radio'}
-                value={VEHICULE_TYPE.WALKER}
-              />
-              <Checkbox
-                register={register}
-                name="car_type"
-                label="Vélo"
-                type={'radio'}
-                value={VEHICULE_TYPE.BIKE}
-              />
-              <Checkbox
-                register={register}
-                name="car_type"
-                label="Trotinette"
-                type={'radio'}
-                value={VEHICULE_TYPE.SCOOTER}
-              />
-              <Checkbox
-                register={register}
-                name="car_type"
-                label="Voiture"
-                type={'radio'}
-                value={VEHICULE_TYPE.CAR}
-              />
-              <Checkbox
-                register={register}
-                name="car_type"
-                label="Camion / Camionnette"
-                type={'radio'}
-                value={VEHICULE_TYPE.TRUCK}
-              />
+            <div className="grid md:grid-cols-3 grid-cols-2 gap-2">
+              {(
+                Object.keys(VEHICULE_TYPE) as (keyof typeof VEHICULE_TYPE)[]
+              ).map((key, index) => (
+                <Checkbox
+                  key={index}
+                  register={register}
+                  name="car_type"
+                  label={VEHICULE_TYPE[key]}
+                  type={'radio'}
+                  value={VEHICULE_TYPE[key]}
+                />
+              ))}
             </div>
           </div>
 

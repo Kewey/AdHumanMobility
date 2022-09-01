@@ -44,6 +44,16 @@
       "relation": "oneToMany",
       "target": "api::category.category",
       "mappedBy": "typology"
+    },
+    "color": {
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      },
+      "type": "string",
+      "required": true,
+      "regex": "#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})"
     }
   }
 }

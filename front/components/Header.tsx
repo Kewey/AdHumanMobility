@@ -1,36 +1,36 @@
-import { GoogleMap } from '@react-google-maps/api'
 import { signIn, signOut, useSession } from 'next-auth/react'
 import Link from 'next/link'
-import React, { MutableRefObject, Ref } from 'react'
+import React from 'react'
 import Button from './Button'
-import { SearchInput } from './form/Search'
-import { SearchPlace } from './form/SearchPlace'
+import { SearchGoogleMap } from './form/SearchGoogleMap'
 
 interface HeaderProps<T> {
   options: T[]
   selectedValue: string
-  displayedProperty: string
   query: string
   disabled: boolean
-  placeholder: string
   setQuery: (value: string) => void
   handleSelectedOption: (value: any) => void
+  showResearch?: boolean
 }
 
 const Header = ({
   options,
   query,
   selectedValue,
-  displayedProperty,
   disabled,
-  placeholder,
   setQuery,
   handleSelectedOption,
+  showResearch,
 }: HeaderProps<any>) => {
   const { data: session } = useSession()
 
   return (
-    <header className="grid grid-cols-3 py-4 px-8 h-20">
+    <header
+      className={`grid ${
+        showResearch ? 'grid-cols-3' : 'grid-cols-2'
+      } py-4 px-8 h-20`}
+    >
       <div className="flex flex-wrap items-center">
         <Link href="/">
           <a className="block mr-5 font-bold">Logo | Name</a>
@@ -49,54 +49,45 @@ const Header = ({
         </nav>
       </div>
 
-      <div className="w-full max-w-[460px]">
-        <SearchInput
-          options={options}
-          query={query}
-          selectedValue={selectedValue}
-          setQuery={setQuery}
-          placeholder={placeholder}
-          disabled={disabled}
-          displayedProperty={displayedProperty}
-          handleSelectedOption={handleSelectedOption}
-        />
-      </div>
+      {showResearch && (
+        <div className="w-full max-w-[460px]">
+          <SearchGoogleMap
+            options={options}
+            query={query}
+            selectedValue={selectedValue}
+            setQuery={setQuery}
+            disabled={disabled}
+            handleSelectedOption={handleSelectedOption}
+          />
+        </div>
+      )}
 
       <div className="flex place-self-center justify-self-end items-center gap-4">
+        <Link href="/disturbances/new" passHref>
+          <Button size="sm">Déclarer une perturbation</Button>
+        </Link>
         {!session ? (
-          <>
-            <Link href="disturbances/new">
-              <Button size="sm">Déclarer ...</Button>
-            </Link>
-            <Link href="/api/auth/signin">
-              <Button
-                variant="text"
-                type="button"
-                size="sm"
-                onClick={() => signIn()}
-              >
-                Me connecter
-              </Button>
-            </Link>
-            <Link href="/signup">
-              <Button type="button" size="sm">
-                M'inscrire
-              </Button>
-            </Link>
-          </>
-        ) : (
-          <>
-            <Link href="disturbances/new">
-              <Button size="sm">Déclarer un incident ou une pertubation</Button>
-            </Link>
-            <button
-              onClick={() => {
-                signOut()
-              }}
+          <Link href="/api/auth/signin" passHref>
+            <Button
+              variant="text"
+              type="button"
+              size="sm"
+              onClick={() => signIn()}
             >
-              Déconnexion
-            </button>
-          </>
+              Me connecter
+            </Button>
+          </Link>
+        ) : (
+          <Button
+            variant="text"
+            type="button"
+            size="sm"
+            onClick={() => {
+              signOut()
+            }}
+          >
+            Déconnexion
+          </Button>
         )}
       </div>
     </header>

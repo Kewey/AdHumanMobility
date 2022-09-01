@@ -71,16 +71,6 @@ const Home = ({ disturbances }: HomePageProps) => {
     setApproximatedUserLocation()
   }, [])
 
-  const libraries = useMemo<
-    ('places' | 'drawing' | 'geometry' | 'localContext' | 'visualization')[]
-  >(() => ['places'], [])
-
-  const { isLoaded: isMapLoaded } = useLoadScript({
-    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAP_KEY || '',
-    libraries: libraries,
-    language: 'fr',
-  })
-
   const [selectedDisturbance, setSelectedDisturbance] =
     useState<DisturbanceType | null>(null)
 
@@ -93,7 +83,7 @@ const Home = ({ disturbances }: HomePageProps) => {
     setCenterMap({ lat, lng })
   }
 
-  const mapRef = useRef<GoogleMap>()
+  const mapRef = useRef<google.maps.Map>()
 
   const options = useMemo<google.maps.MapOptions>(
     () => ({
@@ -104,16 +94,17 @@ const Home = ({ disturbances }: HomePageProps) => {
     []
   )
 
-  const onLoad = useCallback((map: any) => {
+  const onLoad = useCallback((map: google.maps.Map) => {
     mapRef.current = map
   }, [])
 
   return (
     <Layout
-      callback={(lat, lng) => mapRef.panTo({ lat, lng })}
+      marginHorizontal={false}
+      callback={(lat, lng) => mapRef.current?.panTo({ lat, lng })}
       title={
         !!router.query.slug
-          ? selectedDisturbance?.title || 'Error'
+          ? selectedDisturbance?.location || 'Error'
           : 'Bienvenue'
       }
       description={
@@ -123,22 +114,6 @@ const Home = ({ disturbances }: HomePageProps) => {
       }
     >
       <>
-        <Modal
-          isOpen={!!router.query.slug}
-          onRequestClose={() => router.push('/')}
-          contentLabel={selectedDisturbance?.title}
-          className="absolute lg:top-8 top-0 lg:bottom-8 bottom-0 left-0 right-0 max-w-4xl bg-white mx-auto lg:rounded-xl"
-          style={{
-            overlay: {
-              backgroundColor: 'rgba(0, 0, 0, 0.75)',
-            },
-          }}
-        >
-          {selectedDisturbance && (
-            <Disturbance disturbance={selectedDisturbance} />
-          )}
-        </Modal>
-
         {session && (
           <div className="lg:hidden absolute bottom-0 left-0 right-0 bg-white z-50 grid grid-flow-col border-t border-gray-200 border-solid">
             <button className="flex flex-col items-center justify-center pt-4 pb-2 text-gray-900">
@@ -161,56 +136,45 @@ const Home = ({ disturbances }: HomePageProps) => {
         )}
 
         <div className="bg-slate-100 relative h-[calc(100vh-80px)] -mx-6">
-          {isMapLoaded && (
-            <GoogleMap
-              zoom={12}
-              center={centerMap}
-              mapContainerClassName={'w-full h-full'}
-              options={options}
-              onLoad={onLoad}
-            >
-              <MarkerClusterer>
-                {(clusterer) => {
-                  return (
-                    <>
-                      {disturbances.map(
-                        ({
-                          id,
-                          attributes: {
-                            latitude,
-                            longitude,
-                            slug,
-                            ...disturbance
-                          },
-                        }) => (
-                          <Marker
-                            key={id + 'mark'}
-                            position={{
-                              lat: latitude || 0,
-                              lng: longitude || 0,
-                            }}
-                            clusterer={clusterer}
-                            onClick={() => {
-                              setSelectedDisturbance({
-                                ...disturbance,
-                                latitude,
-                                longitude,
-                                slug,
-                              })
-                              router.push(
-                                makeContextualHref({ slug }),
-                                `disturbances/${slug}`
-                              )
-                            }}
-                          />
-                        )
-                      )}
-                    </>
-                  )
-                }}
-              </MarkerClusterer>
-            </GoogleMap>
-          )}
+          <GoogleMap
+            zoom={15}
+            center={centerMap}
+            mapContainerClassName={'w-full h-full'}
+            options={options}
+            onLoad={onLoad}
+          >
+            <MarkerClusterer>
+              {(clusterer) => {
+                return (
+                  <>
+                    {disturbances.map(
+                      ({
+                        id,
+                        attributes: { latitude, longitude, ...disturbance },
+                      }) => (
+                        <Marker
+                          key={id}
+                          position={{
+                            lat: latitude || 0,
+                            lng: longitude || 0,
+                          }}
+                          clusterer={clusterer}
+                          onClick={() => {
+                            setSelectedDisturbance({
+                              ...disturbance,
+                              latitude,
+                              longitude,
+                            })
+                            router.push(`disturbances/${id}`)
+                          }}
+                        />
+                      )
+                    )}
+                  </>
+                )
+              }}
+            </MarkerClusterer>
+          </GoogleMap>
         </div>
       </>
     </Layout>

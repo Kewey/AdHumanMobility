@@ -15,6 +15,9 @@ export default function Document() {
       <body className="font-sans font-light">
         <Main />
         <NextScript />
+        <script
+          src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAP_KEY}&libraries=places`}
+        ></script>
       </body>
     </Html>
   )

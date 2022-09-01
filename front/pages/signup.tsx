@@ -38,7 +38,16 @@ function Signup() {
   return (
     <Layout title="Inscription">
       <div className="max-w-md m-auto p-4">
-        <Button onClick={() => router.back()}>Retour</Button>
+        <div className="mb-3">
+          <Button
+            variant="text"
+            type="button"
+            size="sm"
+            onClick={() => router.back()}
+          >
+            Retour
+          </Button>
+        </div>
         <h1 className="text-3xl font-extrabold mb-4">Inscription</h1>
         <p className="text-gray-500 mb-5">
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo

@@ -9,7 +9,8 @@ import Header from './Header'
 
 interface LayoutProps {
   title: string
-  description: string
+  description?: string
+  marginHorizontal?: boolean
   children: ReactElement
   sidebar?: ReactElement
   callback?: (lat: number, lng: number) => void
@@ -21,25 +22,28 @@ const Layout = ({
   children,
   sidebar,
   callback,
+  marginHorizontal = true,
 }: LayoutProps) => {
-  const [query, setQuery] = useState('')
-
   const {
     ready,
     value,
     setValue,
     suggestions: { data },
     clearSuggestions,
-  } = usePlacesAutocomplete()
+  } = usePlacesAutocomplete({
+    debounce: 300,
+  })
 
-  const handleSelectedOption = async (selectedOption: string) => {
+  const selectedValue = ''
+
+  const handleSelectedOption = async (
+    selectedOption: google.maps.places.AutocompletePrediction
+  ) => {
     if (!callback) return
 
-    setValue(selectedOption, false)
     clearSuggestions()
-
-    const res = await getGeocode({ address: selectedOption })
-    const { lat, lng } = await getLatLng(res[0])
+    const [res] = await getGeocode({ placeId: selectedOption.place_id })
+    const { lat, lng } = await getLatLng(res)
     callback(lat, lng)
   }
 
@@ -47,31 +51,31 @@ const Layout = ({
     <>
       <Head>
         <title>{title} | APP</title>
-        <meta name="description" content={description} />
+        {!!description && <meta name="description" content={description} />}
       </Head>
 
       <div className="min-h-screen flex flex-col">
         <Header
-          selectedValue={value}
+          showResearch={!!callback}
           disabled={!ready}
-          setQuery={setQuery}
+          setQuery={setValue}
           options={data}
-          query={query}
-          placeholder={'Rechercher une ville, rue, ...'}
-          displayedProperty={''}
+          query={value}
+          selectedValue={selectedValue}
           handleSelectedOption={handleSelectedOption}
         />
-
-        {sidebar ? (
-          <div className="grid lg:grid-cols-[400px_1fr] grid-cols-1 h-full">
-            <aside className="h-[calc(100vh-80px)] overflow-y-hidden">
-              {sidebar}
-            </aside>
+        <div className={`flex-1 ${marginHorizontal ? 'my-8' : ''}`}>
+          {sidebar ? (
+            <div className="grid lg:grid-cols-[400px_1fr] grid-cols-1 h-full">
+              <aside className="h-[calc(100vh-80px)] overflow-y-hidden">
+                {sidebar}
+              </aside>
+              <main className="flex-1 px-6">{children}</main>
+            </div>
+          ) : (
             <main className="flex-1 px-6">{children}</main>
-          </div>
-        ) : (
-          <main className="flex-1 px-6">{children}</main>
-        )}
+          )}
+        </div>
       </div>
     </>
   )

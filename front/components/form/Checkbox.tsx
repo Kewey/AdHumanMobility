@@ -26,7 +26,7 @@ function Checkbox({
   return (
     <label
       htmlFor={`${name}-${value}`}
-      className={`focus:outline-none focus:border-primary-500 inline-flex items-center justify-between px-4 py-3 border rounded-lg ${className}`}
+      className={`focus:outline-none focus:border-primary-500 inline-flex items-center cursor-pointer justify-between px-4 py-3 border rounded-lg ${className}`}
     >
       {iconUrl && (
         <Image

@@ -17,7 +17,7 @@ function Login({ csrfToken }: any) {
   return (
     <Layout title="Connexion">
       <div className="max-w-md m-auto p-4">
-        <h1 className="text-3xl font-extrabold">Connexion </h1>
+        <h1 className="text-3xl font-extrabold">Connexion</h1>
 
         <form method="post" action="/api/auth/callback/credentials">
           <input name="csrfToken" type="hidden" defaultValue={csrfToken} />

@@ -1,5 +1,10 @@
-import { DisturbanceFormType } from '../../../types/disturbance'
+import {
+  Disturbance,
+  DisturbanceFormType,
+  DISTURBANCE_TYPE,
+} from '../../../types/disturbance'
 import { getSession } from 'next-auth/react'
+import { StrapiCall } from '../../../types/api'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL
 
@@ -7,50 +12,36 @@ export function getDisturbances() {
   return fetch(`${API_URL}/disturbances?populate=*`)
 }
 
-export async function getDisturbance(slug: string) {
-  return fetch(`${API_URL}/slugify/slugs/disturbance/${slug}?populate=*`)
+export async function getDisturbance(
+  slug: string
+): Promise<StrapiCall<Disturbance>> {
+  const res = await fetch(`${API_URL}/disturbances/${slug}?populate=*`)
+  const data = await res.json()
+  return data
 }
 
-export async function postDisturbance(
-  {
-    author,
-    instances,
-    title,
-    type,
-    car_type,
-    status,
-    description,
-    location,
-    longitude,
-    latitude,
-    company,
-    relationship,
-  }: DisturbanceFormType,
-  thumbnail: File
-) {
+export async function postDisturbance({
+  referent,
+  evidences,
+  type,
+  ...data
+}: DisturbanceFormType & { author: string }) {
   const session = await getSession()
   const jwt = session?.jwt
 
   const formdata = new FormData()
-  formdata.append('ref', 'api::disturbance.disturbance')
+  // formdata.append('ref', 'api::disturbance.disturbance')
+  Array.from(evidences).forEach((file) => {
+    formdata.append('files.evidences', file, file.name)
+  })
   formdata.append(
     'data',
     JSON.stringify({
-      author,
-      instances,
-      title,
+      ...data,
       type,
-      car_type,
-      status,
-      description,
-      location,
-      longitude,
-      latitude,
-      company,
-      relationship,
+      referent: type === DISTURBANCE_TYPE.PROFESSIONAL ? referent : null,
     })
   )
-  formdata.append('files.thumbnail', thumbnail)
 
   return fetch(`${API_URL}/disturbances`, {
     method: 'Post',

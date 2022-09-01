@@ -24,12 +24,13 @@
       "target": "api::instance.instance",
       "mappedBy": "perturbation"
     },
-    "thumbnail": {
+    "evidences": {
       "type": "media",
-      "multiple": false,
-      "required": false,
+      "multiple": true,
+      "required": true,
       "allowedTypes": [
-        "images"
+        "images",
+        "videos"
       ]
     },
     "type": {
@@ -85,6 +86,28 @@
       "relation": "manyToOne",
       "target": "api::referent.referent",
       "inversedBy": "perturbations"
+    },
+    "priority": {
+      "type": "enumeration",
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "required": true
+    },
+    "disturbanceAt": {
+      "type": "datetime",
+      "required": true
+    },
+    "blurredEvidences": {
+      "type": "media",
+      "multiple": true,
+      "required": false,
+      "allowedTypes": [
+        "images",
+        "videos"
+      ]
     }
   }
 }

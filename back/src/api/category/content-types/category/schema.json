@@ -50,6 +50,16 @@
       "relation": "oneToMany",
       "target": "api::sub-category.sub-category",
       "mappedBy": "category"
+    },
+    "color": {
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      },
+      "type": "string",
+      "required": true,
+      "regex": "#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})"
     }
   }
 }

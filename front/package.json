@@ -15,6 +15,7 @@
     "@headlessui/react": "^1.6.6",
     "@react-google-maps/api": "^2.12.0",
     "cookies-next": "^2.0.5",
+    "dayjs": "^1.11.5",
     "isomorphic-fetch": "^3.0.0",
     "next": "12.1.6",
     "next-auth": "^4.5.0",

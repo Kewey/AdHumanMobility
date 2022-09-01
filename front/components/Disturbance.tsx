@@ -4,6 +4,7 @@ import { Disturbance as DisturbanceType } from '../types/disturbance'
 import Badge from './Badge'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
+  faAngleLeft,
   faBuilding,
   faMapPin,
   faTimes,
@@ -16,46 +17,44 @@ interface DisturbanceProps {
 
 export const Disturbance = ({
   disturbance: {
-    title,
     description,
-    thumbnail,
     type,
     car_type,
     status,
     location,
     company,
+    evidences,
     ...disturbance
   },
 }: DisturbanceProps) => {
-  console.log('disturbance', disturbance)
   return (
-    <div className="flex flex-col lg:h-full h-screen">
-      <div className="relative p-4 border-b border-gray-200 border-solid">
-        <h1 className="text-center">{title}</h1>
-        <div>
-          <Link href={'/'}>
-            <FontAwesomeIcon
-              icon={faTimes}
-              className="absolute right-4 top-5 text-xl"
-            />
-          </Link>
-        </div>
+    <div>
+      <div className="flex gap-2">
+        <Link href={'/'}>
+          <FontAwesomeIcon icon={faAngleLeft} />
+        </Link>
+        <h1>{location}</h1>
       </div>
+
       <div className="p-4 overflow-y-auto flex-1">
-        {thumbnail.data && (
-          <div className="mb-3">
-            <Image
-              src={displayMedia(thumbnail.data.attributes.url)}
-              alt={title}
-              height={175}
-              layout="responsive"
-              width={335}
-              className="rounded-xl"
-              objectFit="cover"
-              objectPosition={'50% 50%'}
-            />
-          </div>
-        )}
+        {evidences.data.map((evidence) => (
+          <>
+            {evidence.attributes.mime.includes('image') && (
+              <div className="mb-3">
+                <Image
+                  src={displayMedia(evidence.attributes.url)}
+                  alt={evidence.attributes.name}
+                  height={175}
+                  layout="responsive"
+                  width={335}
+                  className="rounded-xl"
+                  objectFit="cover"
+                  objectPosition={'50% 50%'}
+                />
+              </div>
+            )}
+          </>
+        ))}
         <div className="inline-grid grid-flow-col gap-3 mb-4">
           <Badge>{type}</Badge>
           <Badge>{car_type}</Badge>
