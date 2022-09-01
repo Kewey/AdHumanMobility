@@ -74,8 +74,8 @@ export const SearchInput = ({
               >
                 <button
                   onClick={async () => {
-                    const option = await handleAddNewOption(query)
-                    if (!option.data) {
+                    const option: any = await handleAddNewOption(query)
+                    if (!option?.data) {
                       return
                     }
                     handleSelectedOption(option)
