@@ -1,14 +1,4 @@
 module.exports = ({ env }) => ({
-  upload: {
-    config: {
-      providerOptions: {
-        sizeLimit: 100 * 1024 * 1024,
-        localServer: {
-          maxage: 300000,
-        },
-      },
-    },
-  },
   email: {
     config: {
       provider: "strapi-provider-email-sendinblue",
