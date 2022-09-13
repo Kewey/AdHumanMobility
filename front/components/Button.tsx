@@ -4,6 +4,7 @@ interface ButtonProps {
   block?: boolean
   variant?: 'primary' | 'secondary' | 'text'
   size?: 'md' | 'sm' | 'lg'
+  textAlign?: 'center' | 'left' | 'right'
 }
 
 const Button = forwardRef(
@@ -14,6 +15,7 @@ const Button = forwardRef(
       size = 'md',
       block,
       href,
+      textAlign,
       ...props
     }: ButtonProps & any,
     ref: ForwardedRef<any>
@@ -44,13 +46,26 @@ const Button = forwardRef(
       }
     }
 
+    const buttonTextAlign = () => {
+      switch (textAlign) {
+        case 'center':
+          return 'text-center'
+
+        case 'right':
+          return 'text-right'
+
+        default:
+          return 'text-left'
+      }
+    }
+
     return !!href ? (
       <a
         {...props}
         ref={ref}
         className={`${
           block ? 'w-full justify-center flex' : 'inline-flex'
-        } items-center cursor-pointer rounded-md text-base font-medium ${buttonVariant()} ${buttonSize()}`}
+        } items-center cursor-pointer rounded-md text-base font-medium ${buttonVariant()} ${buttonSize()} ${buttonTextAlign()}`}
       >
         {children}
       </a>
@@ -60,7 +75,7 @@ const Button = forwardRef(
         ref={ref}
         className={`${
           block ? 'w-full justify-center flex' : 'inline-flex'
-        } items-center cursor-pointer rounded-md text-base font-medium ${buttonVariant()} ${buttonSize()}`}
+        } items-center cursor-pointer rounded-md text-base font-medium ${buttonVariant()} ${buttonSize()} ${buttonTextAlign()}`}
       >
         {children}
       </button>

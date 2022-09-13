@@ -34,7 +34,7 @@ const Layout = ({
     debounce: 300,
   })
 
-  const selectedValue = ''
+  const [selectedValue, setSelectedValue] = useState('')
 
   const handleSelectedOption = async (
     selectedOption: google.maps.places.AutocompletePrediction
@@ -70,10 +70,10 @@ const Layout = ({
               <aside className="h-[calc(100vh-80px)] overflow-y-hidden">
                 {sidebar}
               </aside>
-              <main className="flex-1 px-6">{children}</main>
+              <main className="flex-1 px-6 relative">{children}</main>
             </div>
           ) : (
-            <main className="flex-1 px-6">{children}</main>
+            <main className="flex-1 px-6 relative">{children}</main>
           )}
         </div>
       </div>

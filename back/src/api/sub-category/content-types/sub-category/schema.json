@@ -54,6 +54,12 @@
       "type": "string",
       "required": true,
       "regex": "#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})"
+    },
+    "perturbations": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::disturbance.disturbance",
+      "inversedBy": "sub_categories"
     }
   }
 }

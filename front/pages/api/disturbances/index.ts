@@ -13,9 +13,9 @@ export function getDisturbances() {
 }
 
 export async function getDisturbance(
-  slug: string
+  uuid: string
 ): Promise<StrapiCall<Disturbance>> {
-  const res = await fetch(`${API_URL}/disturbances/${slug}?populate=*`)
+  const res = await fetch(`${API_URL}/disturbances/${uuid}?populate=*`)
   const data = await res.json()
   return data
 }

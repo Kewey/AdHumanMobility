@@ -1,4 +1,5 @@
 import { StrapiCall, StrapiEntity } from './api'
+import { Referent } from './company'
 import { Media } from './media'
 
 export interface Disturbance {
@@ -10,7 +11,7 @@ export interface Disturbance {
   location: string
   longitude: number
   latitude: number
-  company: string | null
+  referent: { data: StrapiEntity<Referent> }
   relationship: string | null
   evidences: StrapiCall<Media>
   blurredEvidences?: StrapiCall<Media>
@@ -23,7 +24,7 @@ export interface Disturbance {
 export interface DisturbanceFormType {
   type: DISTURBANCE_TYPE
   car_type: VEHICULE_TYPE
-  priority: PRIORITY
+  priority: keyof PRIORITY
   evidences: FileList
   typology: string
   category: string

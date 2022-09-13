@@ -1,5 +1,4 @@
 import { NextPage } from 'next'
-import Head from 'next/head'
 import { Disturbance } from '../../components/Disturbance'
 import Layout from '../../components/Layout'
 import { StrapiEntity } from '../../types/api'
@@ -11,6 +10,7 @@ interface PostPageProps {
 }
 
 const DisturbancePage: NextPage<PostPageProps> = ({ disturbance }) => {
+  console.log('disturbance', disturbance)
   return (
     <Layout title={disturbance?.attributes?.location}>
       {disturbance && <Disturbance disturbance={disturbance?.attributes} />}
@@ -19,13 +19,13 @@ const DisturbancePage: NextPage<PostPageProps> = ({ disturbance }) => {
 }
 
 export async function getServerSideProps({
-  query: { slug },
+  query: { uuid },
 }: {
-  query: { slug: string }
+  query: { uuid: string }
 }) {
-  if (!slug || Array.isArray(slug)) return
+  if (!uuid || Array.isArray(uuid)) return
 
-  const { data } = await getDisturbance(slug)
+  const { data } = await getDisturbance(uuid)
   return { props: { disturbance: data } }
 }
 

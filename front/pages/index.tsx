@@ -22,6 +22,11 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Pin } from '../components/Pin'
 import Layout from '../components/Layout'
+import { SearchGoogleMap } from '../components/form/SearchGoogleMap'
+import usePlacesAutocomplete, {
+  getGeocode,
+  getLatLng,
+} from 'use-places-autocomplete'
 
 Modal.setAppElement('#__next')
 
@@ -74,7 +79,6 @@ const Home = ({ disturbances }: HomePageProps) => {
   const [selectedDisturbance, setSelectedDisturbance] =
     useState<DisturbanceType | null>(null)
 
-  const { makeContextualHref, returnHref } = useContextualRouting()
   const router = useRouter()
 
   const onPinClicked = (key: number, childProps: any) => {
@@ -98,6 +102,27 @@ const Home = ({ disturbances }: HomePageProps) => {
     mapRef.current = map
   }, [])
 
+  const {
+    ready,
+    value,
+    setValue,
+    suggestions: { data },
+    clearSuggestions,
+  } = usePlacesAutocomplete({
+    debounce: 300,
+  })
+
+  const [selectedValue, setSelectedValue] = useState('')
+
+  const handleSelectedOption = async (
+    selectedOption: google.maps.places.AutocompletePrediction
+  ) => {
+    clearSuggestions()
+    const [res] = await getGeocode({ placeId: selectedOption.place_id })
+    const { lat, lng } = await getLatLng(res)
+    mapRef.current?.panTo({ lat, lng })
+  }
+
   return (
     <Layout
       marginHorizontal={false}
@@ -115,24 +140,39 @@ const Home = ({ disturbances }: HomePageProps) => {
     >
       <>
         {session && (
-          <div className="lg:hidden absolute bottom-0 left-0 right-0 bg-white z-50 grid grid-flow-col border-t border-gray-200 border-solid">
-            <button className="flex flex-col items-center justify-center pt-4 pb-2 text-gray-900">
-              <FontAwesomeIcon icon={faMapLocation} className="text-2xl mb-1" />
-              <span className="text-sm">Carte</span>
-            </button>
-            <Link href={'disturbances/new'}>
-              <button className="py-3">
+          <>
+            <div className="lg:hidden absolute top-3 left-4 right-4 z-40">
+              <SearchGoogleMap
+                options={data}
+                query={value}
+                selectedValue={selectedValue}
+                setQuery={setValue}
+                disabled={ready}
+                handleSelectedOption={handleSelectedOption}
+              />
+            </div>
+            <div className="lg:hidden absolute bottom-0 left-0 right-0 bg-white z-50 grid grid-flow-col border-t border-gray-200 border-solid">
+              <button className="flex flex-col items-center justify-center pt-4 pb-2 text-gray-900">
                 <FontAwesomeIcon
-                  icon={faPlusSquare}
-                  className="text-5xl text-primary-500"
+                  icon={faMapLocation}
+                  className="text-2xl mb-1"
                 />
+                <span className="text-sm">Carte</span>
               </button>
-            </Link>
-            <button className="flex flex-col items-center justify-center pt-4 pb-2 text-gray-500">
-              <FontAwesomeIcon icon={faFolder} className="text-2xl mb-1" />
-              <span className="text-sm">Dossiers</span>
-            </button>
-          </div>
+              <Link href={'disturbances/new'}>
+                <button className="py-3">
+                  <FontAwesomeIcon
+                    icon={faPlusSquare}
+                    className="text-5xl text-primary-500"
+                  />
+                </button>
+              </Link>
+              <button className="flex flex-col items-center justify-center pt-4 pb-2 text-gray-500">
+                <FontAwesomeIcon icon={faFolder} className="text-2xl mb-1" />
+                <span className="text-sm">Dossiers</span>
+              </button>
+            </div>
+          </>
         )}
 
         <div className="bg-slate-100 relative h-[calc(100vh-80px)] -mx-6">

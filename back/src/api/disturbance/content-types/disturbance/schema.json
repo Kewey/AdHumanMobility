@@ -108,6 +108,28 @@
         "images",
         "videos"
       ]
+    },
+    "blurWaitingKey": {
+      "type": "string",
+      "private": true
+    },
+    "typology": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::typologie.typologie",
+      "inversedBy": "perturbations"
+    },
+    "category": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::category.category",
+      "inversedBy": "perturbations"
+    },
+    "sub_categories": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::sub-category.sub-category",
+      "inversedBy": "perturbations"
     }
   }
 }

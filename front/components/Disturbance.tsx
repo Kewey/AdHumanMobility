@@ -1,15 +1,18 @@
 import Image from 'next/image'
 import { displayMedia } from '../types/api'
-import { Disturbance as DisturbanceType } from '../types/disturbance'
+import { Disturbance as DisturbanceType, PRIORITY } from '../types/disturbance'
 import Badge from './Badge'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faAngleLeft,
   faBuilding,
+  faCalendar,
+  faClock,
   faMapPin,
   faTimes,
 } from '@fortawesome/free-solid-svg-icons'
 import Link from 'next/link'
+import dayjs from 'dayjs'
 
 interface DisturbanceProps {
   disturbance: DisturbanceType
@@ -22,22 +25,24 @@ export const Disturbance = ({
     car_type,
     status,
     location,
-    company,
-    evidences,
+    referent,
+    createdAt,
+    disturbanceAt,
+    priority,
+    blurredEvidences,
     ...disturbance
   },
-}: DisturbanceProps) => {
-  return (
-    <div>
-      <div className="flex gap-2">
-        <Link href={'/'}>
-          <FontAwesomeIcon icon={faAngleLeft} />
-        </Link>
-        <h1>{location}</h1>
-      </div>
-
-      <div className="p-4 overflow-y-auto flex-1">
-        {evidences.data.map((evidence) => (
+}: DisturbanceProps) => (
+  <div className="max-w-4xl mx-auto">
+    <Link href={'/'}>
+      <a>
+        <FontAwesomeIcon icon={faAngleLeft} className="mr-1" />
+        <span>Retour</span>
+      </a>
+    </Link>
+    <div className="mt-4">
+      {blurredEvidences?.data?.length > 0 ? (
+        blurredEvidences?.data?.map((evidence) => (
           <>
             {evidence.attributes.mime.includes('image') && (
               <div className="mb-3">
@@ -54,35 +59,74 @@ export const Disturbance = ({
               </div>
             )}
           </>
-        ))}
-        <div className="inline-grid grid-flow-col gap-3 mb-4">
-          <Badge>{type}</Badge>
-          <Badge>{car_type}</Badge>
-          {status && <Badge>{status}</Badge>}
+        ))
+      ) : (
+        <div className="w-full h-48 bg-slate-300 rounded-lg flex items-center justify-center p-6 text-center">
+          <p className="text-slate-800">
+            Aucun apercu disponible pour le moment
+          </p>
         </div>
-        <h5>Description</h5>
-        <p
-          dangerouslySetInnerHTML={{ __html: description }}
-          className="text-gray-600 mb-8"
-        />
-        <div className="flex items-center py-3">
-          <FontAwesomeIcon icon={faMapPin} className="mr-2 text-gray-600" />
-          <p className="text-gray-600">{location}</p>
-        </div>
-        <hr />
-        {company && (
-          <>
-            <div className="flex items-center py-3">
-              <FontAwesomeIcon
-                icon={faBuilding}
-                className="mr-2 text-gray-600"
-              />
-              <p className="text-gray-600">{company}</p>
-            </div>
-            <hr />
-          </>
-        )}
+      )}
+    </div>
+
+    <h1 className="mt-4">{location}</h1>
+
+    <div className="inline-grid grid-flow-col gap-3 mb-4">
+      <Badge>{type}</Badge>
+      <Badge>{car_type}</Badge>
+      {status && <Badge>{status}</Badge>}
+    </div>
+    <h5>Description</h5>
+    <p
+      dangerouslySetInnerHTML={{ __html: description }}
+      className="text-gray-600 mb-8"
+    />
+
+    <h5>Informations complementaires</h5>
+    <div className="flex items-center py-3">
+      <div>
+        <h6 className="text-sm text-gray-400">Date de le perturbation</h6>
+        <p className="text-gray-600">
+          {dayjs(disturbanceAt).format('dddd DD MMMM YYYY')}
+        </p>
       </div>
     </div>
-  )
-}
+    <hr />
+    <div className="flex items-center py-3">
+      <div>
+        <h6 className="text-sm text-gray-400">Date de publication</h6>
+        <p className="text-gray-600">
+          {dayjs(createdAt).format('dddd DD MMMM YYYY')}
+        </p>
+      </div>
+    </div>
+    <hr />
+    <div className="flex items-center py-3">
+      <div>
+        <h6 className="text-sm text-gray-400">Localisation</h6>
+        <p className="text-gray-600">{location}</p>
+      </div>
+    </div>
+    <hr />
+    <div className="flex items-center py-3">
+      <div>
+        <h6 className="text-sm text-gray-400">Priorité</h6>
+        <p className="text-gray-600">{PRIORITY[priority.toUpperCase()]}</p>
+      </div>
+    </div>
+    <hr />
+    {referent && (
+      <>
+        <div className="flex items-center py-3">
+          <div>
+            <h6 className="text-sm text-gray-400">Société en cause</h6>
+            <p className="text-gray-600">
+              {referent.data.attributes.companyName}
+            </p>
+          </div>
+        </div>
+        <hr />
+      </>
+    )}
+  </div>
+)
