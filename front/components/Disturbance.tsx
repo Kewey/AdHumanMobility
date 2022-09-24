@@ -41,7 +41,7 @@ export const Disturbance = ({
       </a>
     </Link>
     <div className="mt-4">
-      {blurredEvidences?.data?.length > 0 ? (
+      {blurredEvidences && blurredEvidences?.data?.length > 0 ? (
         blurredEvidences?.data?.map((evidence) => (
           <>
             {evidence.attributes.mime.includes('image') && (
@@ -111,6 +111,7 @@ export const Disturbance = ({
     <div className="flex items-center py-3">
       <div>
         <h6 className="text-sm text-gray-400">Priorité</h6>
+        {/* @ts-ignore */}
         <p className="text-gray-600">{PRIORITY[priority.toUpperCase()]}</p>
       </div>
     </div>
