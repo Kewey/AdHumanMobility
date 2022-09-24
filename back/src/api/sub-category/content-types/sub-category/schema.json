@@ -26,7 +26,7 @@
       "required": true,
       "unique": true
     },
-    "image": {
+    "icon": {
       "type": "media",
       "multiple": false,
       "required": true,
@@ -59,7 +59,7 @@
       "type": "relation",
       "relation": "manyToMany",
       "target": "api::disturbance.disturbance",
-      "inversedBy": "sub_categories"
+      "mappedBy": "sub_categories"
     }
   }
 }

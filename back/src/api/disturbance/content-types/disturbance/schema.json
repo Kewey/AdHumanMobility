@@ -18,12 +18,6 @@
       "target": "plugin::users-permissions.user",
       "inversedBy": "perturbations"
     },
-    "instances": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::instance.instance",
-      "mappedBy": "perturbation"
-    },
     "evidences": {
       "type": "media",
       "multiple": true,
@@ -31,7 +25,8 @@
       "allowedTypes": [
         "images",
         "videos"
-      ]
+      ],
+      "private": true
     },
     "type": {
       "type": "enumeration",

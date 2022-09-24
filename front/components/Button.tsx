@@ -73,7 +73,7 @@ const Button = forwardRef(
       <button
         {...props}
         ref={ref}
-        className={`${
+        className={`disabled:bg-slate-200 disabled:text-slate-500 ${
           block ? 'w-full justify-center flex' : 'inline-flex'
         } items-center cursor-pointer rounded-md text-base font-medium ${buttonVariant()} ${buttonSize()} ${buttonTextAlign()}`}
       >

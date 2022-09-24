@@ -29,14 +29,16 @@ function Checkbox({
       className={`focus:outline-none focus:border-primary-500 inline-flex items-center cursor-pointer justify-between px-4 py-3 border rounded-lg ${className}`}
     >
       {iconUrl && (
-        <Image
-          src={displayMedia(iconUrl)}
-          layout="fixed"
-          height={50}
-          width={50}
-        />
+        <div className="mr-2">
+          <Image
+            src={displayMedia(iconUrl)}
+            layout="fixed"
+            height={50}
+            width={50}
+          />
+        </div>
       )}
-      <span>{label}</span>
+      <span className="flex-1">{label}</span>
       <input
         {...(register && register(name, { required }))}
         className="ml-4"

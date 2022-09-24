@@ -3,16 +3,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { ChangeEvent } from 'react'
 
 interface UploadFilesComponentProps {
-  handleSelectedFiles: (filesId: FileList) => void
+  handleSelectedFiles: (event: ChangeEvent<HTMLInputElement>) => void
 }
 
 const UploadFiles = ({ handleSelectedFiles }: UploadFilesComponentProps) => {
-  async function uploadSelectedFile(event: ChangeEvent<HTMLInputElement>) {
-    const files = event?.target?.files
-    if (!files) return
-    handleSelectedFiles(files)
-  }
-
   return (
     <div>
       <label
@@ -25,7 +19,7 @@ const UploadFiles = ({ handleSelectedFiles }: UploadFilesComponentProps) => {
         </div>
       </label>
       <input
-        onChange={uploadSelectedFile}
+        onChange={handleSelectedFiles}
         id="filesUploader"
         hidden={true}
         multiple={true}

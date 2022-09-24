@@ -9,7 +9,9 @@ export function getTypologies() {
 }
 
 export async function getCategoriesFromTypology(typologyId: string) {
-  const res = await fetch(`${API_URL}/typologies/${typologyId}?populate=*`)
+  const res = await fetch(
+    `${API_URL}/typologies/${typologyId}?populate[categories][populate][0]=icon`
+  )
 
   const {
     data: { attributes },
