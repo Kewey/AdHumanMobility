@@ -187,7 +187,7 @@ const Home = ({ disturbances }: HomePageProps) => {
               {(clusterer) => {
                 return (
                   <>
-                    {disturbances.map(
+                    {disturbances?.map(
                       ({
                         id,
                         attributes: { latitude, longitude, ...disturbance },
