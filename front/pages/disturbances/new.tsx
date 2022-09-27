@@ -114,13 +114,6 @@ function NewDisturbance({ typologies }: NewDisturbanceProps) {
     setValue('longitude', lng)
   }
 
-  const haveSelectedTypologies = (): boolean => {
-    return (
-      (getValues('category') && subCategories.length === 0) ||
-      !!getValues('subCategory')
-    )
-  }
-
   /*
 
   SUBMIT
@@ -219,159 +212,157 @@ function NewDisturbance({ typologies }: NewDisturbanceProps) {
             </div>
           )}
 
-          {haveSelectedTypologies() && (
-            <>
-              <div className="mb-3">
-                <label className="mb-2 text-gray-400 font-semibold block w-full">
-                  Lieu de la perturbation
-                </label>
-                <Controller
-                  control={control}
-                  name="location"
-                  render={({ field: { value: fieldValue, onChange } }) => (
-                    <SearchGoogleMap
-                      query={locationQuery}
-                      setQuery={setLocationQuery}
-                      options={localisationOptions}
-                      selectedValue={fieldValue}
-                      handleSelectedOption={(selectedOption) => {
-                        onLocationUpdate(selectedOption)
-                        onChange(selectedOption.description)
-                      }}
-                    />
-                  )}
-                />
-              </div>
-
-              <div className="mb-3">
-                <Input
-                  register={register}
-                  name="relationship"
-                  label="Votre lien de parenté"
-                  placeholder="Parent, ami, collègue, passant, ..."
-                  type={'text'}
-                />
-              </div>
-
-              <div className="mb-3">
-                <Input
-                  register={register}
-                  name="disturbanceAt"
-                  label="Date de la perturbation"
-                  type="datetime-local"
-                  max={dayjs().format('YYYY-MM-DDTHH:mm')}
-                />
-              </div>
-
-              <div className="mb-3 lg:col-span-2">
-                <label className="mb-2 text-gray-400 font-semibold block w-full">
-                  Priorité de la perturbation
-                </label>
-                <div className="grid md:grid-cols-3 gap-2">
-                  {(Object.keys(PRIORITY) as (keyof typeof PRIORITY)[]).map(
-                    (key, index) => (
-                      <Checkbox
-                        key={index}
-                        register={register}
-                        name="priority"
-                        label={PRIORITY[key]}
-                        type={'radio'}
-                        value={key.toLowerCase()}
-                      />
-                    )
-                  )}
-                </div>
-              </div>
-
-              <div className="mb-3 col-span-full">
-                <label className="mb-2 text-gray-400 font-semibold block w-full">
-                  Photo de la perturbation ou des lieux
-                </label>
-                <input
-                  {...register('evidences', { required: true })}
-                  type={'file'}
-                  multiple={true}
-                />
-              </div>
-
-              <div className="mb-3">
-                <label className="mb-2 text-gray-400 font-semibold block w-full">
-                  Une entreprise est elle mise en cause ?
-                </label>
-                <div className="grid grid-cols-2 gap-2">
-                  <Checkbox
-                    register={register}
-                    name="type"
-                    label="Oui"
-                    type={'radio'}
-                    value={DISTURBANCE_TYPE.PROFESSIONAL}
+          <>
+            <div className="mb-3">
+              <label className="mb-2 text-gray-400 font-semibold block w-full">
+                Lieu de la perturbation
+              </label>
+              <Controller
+                control={control}
+                name="location"
+                render={({ field: { value: fieldValue, onChange } }) => (
+                  <SearchGoogleMap
+                    query={locationQuery}
+                    setQuery={setLocationQuery}
+                    options={localisationOptions}
+                    selectedValue={fieldValue}
+                    handleSelectedOption={(selectedOption) => {
+                      onLocationUpdate(selectedOption)
+                      onChange(selectedOption.description)
+                    }}
                   />
-                  <Checkbox
-                    register={register}
-                    name="type"
-                    label="Non"
-                    type={'radio'}
-                    value={DISTURBANCE_TYPE.INDIVIDUAL}
-                  />
-                </div>
-              </div>
+                )}
+              />
+            </div>
 
-              <div
-                className={`mb-3 ${
-                  watch('type') === DISTURBANCE_TYPE.INDIVIDUAL
-                    ? 'opacity-60'
-                    : ''
-                }`}
-              >
-                <label className="mb-2 text-gray-400 font-semibold block w-full">
-                  Nom de l'entreprise concernées
-                </label>
-                <SearchInput
-                  disabled={watch('type') === DISTURBANCE_TYPE.INDIVIDUAL}
-                  displayedProperty="companyName"
-                  placeholder="Uber, Lime, ..."
-                  options={companies}
-                  selectedValue={getValues('referent') || ''}
-                  query={companyQuery}
-                  setQuery={(value) => setCompanyQuery(value)}
-                  handleSelectedOption={(value: StrapiEntity<Referent>) =>
-                    setValue('referent', value.id.toString())
-                  }
-                  handleAddNewOption={async (value) => await postCompany(value)}
-                />
-              </div>
+            <div className="mb-3">
+              <Input
+                register={register}
+                name="relationship"
+                label="Votre lien de parenté"
+                placeholder="Parent, ami, collègue, passant, ..."
+                type={'text'}
+              />
+            </div>
 
-              <div className="mb-3 lg:col-span-2">
-                <label className="mb-2 text-gray-400 font-semibold block w-full">
-                  Type de véhicule
-                </label>
-                <div className="grid md:grid-cols-3 grid-cols-2 gap-2">
-                  {(
-                    Object.keys(VEHICULE_TYPE) as (keyof typeof VEHICULE_TYPE)[]
-                  ).map((key, index) => (
+            <div className="mb-3">
+              <Input
+                register={register}
+                name="disturbanceAt"
+                label="Date de la perturbation"
+                type="datetime-local"
+                max={dayjs().format('YYYY-MM-DDTHH:mm')}
+              />
+            </div>
+
+            <div className="mb-3 lg:col-span-2">
+              <label className="mb-2 text-gray-400 font-semibold block w-full">
+                Priorité de la perturbation
+              </label>
+              <div className="grid md:grid-cols-3 gap-2">
+                {(Object.keys(PRIORITY) as (keyof typeof PRIORITY)[]).map(
+                  (key, index) => (
                     <Checkbox
                       key={index}
                       register={register}
-                      name="car_type"
-                      label={VEHICULE_TYPE[key]}
+                      name="priority"
+                      label={PRIORITY[key]}
                       type={'radio'}
-                      value={VEHICULE_TYPE[key]}
+                      value={key.toLowerCase()}
                     />
-                  ))}
-                </div>
+                  )
+                )}
               </div>
+            </div>
 
-              <div className="mb-3 lg:col-span-2">
-                <Textarea
+            <div className="mb-3 col-span-full">
+              <label className="mb-2 text-gray-400 font-semibold block w-full">
+                Photo de la perturbation ou des lieux
+              </label>
+              <input
+                {...register('evidences', { required: true })}
+                type={'file'}
+                multiple={true}
+              />
+            </div>
+
+            <div className="mb-3">
+              <label className="mb-2 text-gray-400 font-semibold block w-full">
+                Une entreprise est elle mise en cause ?
+              </label>
+              <div className="grid grid-cols-2 gap-2">
+                <Checkbox
                   register={register}
-                  name="description"
-                  label="Description de la perturbation"
-                  placeholder="Décrivez les lieux, si une ou plusieurs personnes sont bléssées, ..."
-                  rows={4}
+                  name="type"
+                  label="Oui"
+                  type={'radio'}
+                  value={DISTURBANCE_TYPE.PROFESSIONAL}
+                />
+                <Checkbox
+                  register={register}
+                  name="type"
+                  label="Non"
+                  type={'radio'}
+                  value={DISTURBANCE_TYPE.INDIVIDUAL}
                 />
               </div>
-            </>
-          )}
+            </div>
+
+            <div
+              className={`mb-3 ${
+                watch('type') === DISTURBANCE_TYPE.INDIVIDUAL
+                  ? 'opacity-60'
+                  : ''
+              }`}
+            >
+              <label className="mb-2 text-gray-400 font-semibold block w-full">
+                Nom de l'entreprise concernées
+              </label>
+              <SearchInput
+                disabled={watch('type') === DISTURBANCE_TYPE.INDIVIDUAL}
+                displayedProperty="companyName"
+                placeholder="Uber, Lime, ..."
+                options={companies}
+                selectedValue={getValues('referent') || ''}
+                query={companyQuery}
+                setQuery={(value) => setCompanyQuery(value)}
+                handleSelectedOption={(value: StrapiEntity<Referent>) =>
+                  setValue('referent', value.id.toString())
+                }
+                handleAddNewOption={async (value) => await postCompany(value)}
+              />
+            </div>
+
+            <div className="mb-3 lg:col-span-2">
+              <label className="mb-2 text-gray-400 font-semibold block w-full">
+                Type de véhicule
+              </label>
+              <div className="grid md:grid-cols-3 grid-cols-2 gap-2">
+                {(
+                  Object.keys(VEHICULE_TYPE) as (keyof typeof VEHICULE_TYPE)[]
+                ).map((key, index) => (
+                  <Checkbox
+                    key={index}
+                    register={register}
+                    name="car_type"
+                    label={VEHICULE_TYPE[key]}
+                    type={'radio'}
+                    value={VEHICULE_TYPE[key]}
+                  />
+                ))}
+              </div>
+            </div>
+
+            <div className="mb-3 lg:col-span-2">
+              <Textarea
+                register={register}
+                name="description"
+                label="Description de la perturbation"
+                placeholder="Décrivez les lieux, si une ou plusieurs personnes sont bléssées, ..."
+                rows={4}
+              />
+            </div>
+          </>
         </form>
         <div className="mt-6">
           <Button
