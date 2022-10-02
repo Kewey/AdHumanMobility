@@ -51,21 +51,21 @@
       "target": "api::sub-category.sub-category",
       "mappedBy": "category"
     },
+    "perturbations": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::disturbance.disturbance",
+      "mappedBy": "category"
+    },
     "color": {
       "pluginOptions": {
         "i18n": {
           "localized": false
         }
       },
-      "type": "string",
-      "required": true,
-      "regex": "#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})"
-    },
-    "perturbations": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::disturbance.disturbance",
-      "mappedBy": "category"
+      "type": "customField",
+      "customField": "plugin::color-picker.color",
+      "required": true
     }
   }
 }
