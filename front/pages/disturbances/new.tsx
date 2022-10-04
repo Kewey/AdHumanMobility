@@ -5,7 +5,7 @@ import Input from '../../components/form/Input'
 import Layout from '../../components/Layout'
 import Textarea from '../../components/form/Textarea'
 import Checkbox from '../../components/form/Checkbox'
-import { postDisturbance } from '../api/disturbances'
+import { postDisturbance } from '../../services/disturbanceService'
 import {
   DisturbanceFormType,
   DISTURBANCE_TYPE,
@@ -13,8 +13,6 @@ import {
   VEHICULE_TYPE,
 } from '../../types/disturbance'
 import { useSession } from 'next-auth/react'
-import { useRouter } from 'next/router'
-import UploadPhotos from '../../components/form/Photos'
 import usePlacesAutocomplete, {
   getGeocode,
   getLatLng,
@@ -26,12 +24,13 @@ import {
   getSubCategoriesFromCategory,
   getTypologies,
   postCompany,
-} from '../api/forms'
+} from '../../services/categorieServices'
 import { StrapiEntity } from '../../types/api'
 import { Category, Subcategory, Typology } from '../../types/typology'
 import { SearchInput } from '../../components/form/SearchInput'
 import { Referent } from '../../types/company'
 import { SearchGoogleMap } from '../../components/form/SearchGoogleMap'
+import axios from 'axios'
 
 export const getServerSideProps = async () => {
   const res = await getTypologies()
@@ -75,7 +74,6 @@ function NewDisturbance({ typologies }: NewDisturbanceProps) {
 
   useEffect(() => {
     const subscription = watch(async (value, { name }) => {
-      console.table(value)
       switch (name) {
         case 'typology':
           const categories = await getCategoriesFromTypology(value[name] || '')
@@ -125,7 +123,7 @@ function NewDisturbance({ typologies }: NewDisturbanceProps) {
     const body = { ...data, author: session?.id?.toString() || '' }
 
     try {
-      await postDisturbance(body)
+      await axios.post('/api/form/disturbance', body)
       // router.back()
     } catch (error) {
       console.error(error)

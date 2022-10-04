@@ -3,7 +3,7 @@ import { Disturbance } from '../../components/Disturbance'
 import Layout from '../../components/Layout'
 import { StrapiEntity } from '../../types/api'
 import { Disturbance as DisturbanceType } from '../../types/disturbance'
-import { getDisturbance } from '../api/disturbances'
+import { getDisturbance } from '../../services/disturbanceService'
 
 interface PostPageProps {
   disturbance: StrapiEntity<DisturbanceType>

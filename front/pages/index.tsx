@@ -1,26 +1,18 @@
 import Link from 'next/link'
 import { useSession } from 'next-auth/react'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { getDisturbances } from './api/disturbances'
+import { getDisturbances } from '../services/disturbanceService'
 import { StrapiEntity } from '../types/api'
 import { Disturbance as DisturbanceType } from '../types/disturbance'
-import { useContextualRouting } from 'next-use-contextual-routing'
 import Modal from 'react-modal'
 import { useRouter } from 'next/router'
-import { Disturbance } from '../components/Disturbance'
-import {
-  GoogleMap,
-  Marker,
-  MarkerClusterer,
-  useLoadScript,
-} from '@react-google-maps/api'
+import { GoogleMap, Marker, MarkerClusterer } from '@react-google-maps/api'
 import {
   faFolder,
   faMapLocation,
   faPlusSquare,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Pin } from '../components/Pin'
 import Layout from '../components/Layout'
 import { SearchGoogleMap } from '../components/form/SearchGoogleMap'
 import usePlacesAutocomplete, {

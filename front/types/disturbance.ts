@@ -3,6 +3,7 @@ import { Referent } from './company'
 import { Media } from './media'
 
 export interface Disturbance {
+  uuid: string
   type: DISTURBANCE_TYPE
   car_type: VEHICULE_TYPE
   priority: PRIORITY
