@@ -21,11 +21,11 @@ module.exports = createCoreController(
       }
 
       try {
-        const blurWaitingKey = await strapi
-          .service("api::disturbance.disturbance")
-          .blurMedia(files.evidences);
+        // const blurWaitingKey = await strapi
+        //   .service("api::disturbance.disturbance")
+        //   .blurMedia(files.evidences);
 
-        ctx.request.body.blurWaitingKey = blurWaitingKey;
+        // ctx.request.body.blurWaitingKey = blurWaitingKey;
         const response = await super.create(ctx);
 
         if (response.data.attributes.priority !== "low") {
