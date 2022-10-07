@@ -30,7 +30,7 @@ import { Category, Subcategory, Typology } from '../../types/typology'
 import { SearchInput } from '../../components/form/SearchInput'
 import { Referent } from '../../types/company'
 import { SearchGoogleMap } from '../../components/form/SearchGoogleMap'
-import axios from 'axios'
+import { useRouter } from 'next/router'
 
 export const getServerSideProps = async () => {
   const res = await getTypologies()
@@ -59,6 +59,7 @@ function NewDisturbance({ typologies }: NewDisturbanceProps) {
     useForm<DisturbanceFormType>({})
 
   const { data: session } = useSession()
+  const router = useRouter()
 
   const {
     value: locationQuery,
@@ -123,8 +124,9 @@ function NewDisturbance({ typologies }: NewDisturbanceProps) {
     const body = { ...data, author: session?.id?.toString() || '' }
 
     try {
-      await axios.post('/api/form/disturbance', body)
-      // router.back()
+      await postDisturbance(body)
+      // await axios.post('/api/form/disturbance', body)
+      router.back()
     } catch (error) {
       console.error(error)
     }
