@@ -48,7 +48,7 @@ export const SearchInput = ({
         />
         {query.length > 2 && (
           <Combobox.Options className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-64 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
-            {options.map((option, index) => (
+            {options?.map((option, index) => (
               <Combobox.Option
                 key={index}
                 value={option}
@@ -66,7 +66,7 @@ export const SearchInput = ({
               <Combobox.Option
                 value={null}
                 disabled={
-                  !!options.find(
+                  !!options?.find(
                     (option) =>
                       option?.attributes?.[displayedProperty] === query
                   )
