@@ -30,18 +30,14 @@
       "type": "media",
       "multiple": false,
       "required": true,
-      "allowedTypes": ["images"],
+      "allowedTypes": [
+        "images"
+      ],
       "pluginOptions": {
         "i18n": {
           "localized": false
         }
       }
-    },
-    "categories": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::category.category",
-      "mappedBy": "typology"
     },
     "color": {
       "pluginOptions": {
@@ -53,11 +49,17 @@
       "customField": "plugin::color-picker.color",
       "required": true
     },
+    "categories": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::category.category",
+      "mappedBy": "typologies"
+    },
     "perturbations": {
       "type": "relation",
-      "relation": "oneToMany",
+      "relation": "manyToMany",
       "target": "api::disturbance.disturbance",
-      "mappedBy": "typology"
+      "mappedBy": "typologies"
     }
   }
 }

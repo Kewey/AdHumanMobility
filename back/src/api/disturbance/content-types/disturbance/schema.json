@@ -44,7 +44,7 @@
         "Voiture",
         "Camion"
       ],
-      "required": true
+      "required": false
     },
     "status": {
       "type": "enumeration",
@@ -107,9 +107,9 @@
       "type": "string",
       "private": true
     },
-    "typology": {
+    "typologies": {
       "type": "relation",
-      "relation": "manyToOne",
+      "relation": "manyToMany",
       "target": "api::typologie.typologie",
       "inversedBy": "perturbations"
     },

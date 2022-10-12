@@ -16,9 +16,9 @@
     }
   },
   "attributes": {
-    "typology": {
+    "typologies": {
       "type": "relation",
-      "relation": "manyToOne",
+      "relation": "manyToMany",
       "target": "api::typologie.typologie",
       "inversedBy": "categories"
     },
@@ -45,11 +45,11 @@
         }
       }
     },
-    "subCategories": {
+    "sub_categories": {
       "type": "relation",
-      "relation": "oneToMany",
+      "relation": "manyToMany",
       "target": "api::sub-category.sub-category",
-      "mappedBy": "category"
+      "inversedBy": "categories"
     },
     "perturbations": {
       "type": "relation",

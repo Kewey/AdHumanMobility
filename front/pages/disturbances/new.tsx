@@ -31,6 +31,8 @@ import { SearchInput } from '../../components/form/SearchInput'
 import { Referent } from '../../types/company'
 import { SearchGoogleMap } from '../../components/form/SearchGoogleMap'
 import { useRouter } from 'next/router'
+import dynamic from 'next/dynamic'
+import axios from 'axios'
 
 export const getServerSideProps = async () => {
   const res = await getTypologies()
@@ -42,6 +44,13 @@ export const getServerSideProps = async () => {
     },
   }
 }
+
+const MapWithNoSSR = dynamic(
+  () => import('../../components/map/SelectPosition'),
+  {
+    ssr: false,
+  }
+)
 
 interface NewDisturbanceProps {
   typologies: StrapiEntity<Typology>[]
@@ -56,7 +65,12 @@ function NewDisturbance({ typologies }: NewDisturbanceProps) {
   const [companyQuery, setCompanyQuery] = useState('')
 
   const { register, handleSubmit, control, setValue, getValues, watch } =
-    useForm<DisturbanceFormType>({})
+    useForm<DisturbanceFormType>({
+      defaultValues: {
+        latitude: 0,
+        longitude: 0,
+      },
+    })
 
   const { data: session } = useSession()
   const router = useRouter()
@@ -80,6 +94,7 @@ function NewDisturbance({ typologies }: NewDisturbanceProps) {
           const categories = await getCategoriesFromTypology(value[name] || '')
           setCategories(categories)
           setValue('subCategory', '')
+          setValue('category', '')
           return
 
         case 'category':
@@ -133,15 +148,13 @@ function NewDisturbance({ typologies }: NewDisturbanceProps) {
   }
 
   return (
-    <Layout title="Déclaration" description="">
+    <Layout title="Nouvelle déclaration" description="">
       <div className="max-w-4xl mx-auto">
         <div className="mb-8">
           <h1 className="mb-3">Déclarer une perturbation</h1>
           <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Totam
-            voluptas repellat praesentium laboriosam accusamus numquam fuga
-            eveniet ullam, nostrum deserunt, sapiente similique! Ipsum mollitia
-            animi, commodi in a delectus libero.
+            Afin d'enregistrer votre déclaration, remplissez les champs si
+            dessous avec le plus d'information possible.
           </p>
         </div>
         <form
@@ -212,30 +225,34 @@ function NewDisturbance({ typologies }: NewDisturbanceProps) {
             </div>
           )}
 
-          <>
-            <div className="mb-3">
-              <label className="mb-2 text-gray-400 font-semibold block w-full">
-                Lieu de la perturbation
-              </label>
-              <Controller
-                control={control}
-                name="location"
-                render={({ field: { value: fieldValue, onChange } }) => (
-                  <SearchGoogleMap
-                    query={locationQuery}
-                    setQuery={setLocationQuery}
-                    options={localisationOptions}
-                    selectedValue={fieldValue}
-                    handleSelectedOption={(selectedOption) => {
-                      onLocationUpdate(selectedOption)
-                      onChange(selectedOption.description)
+          {watch('subCategory') && (
+            <>
+              <div className="mb-3 col-span-2">
+                <label className="mb-2 text-gray-400 font-semibold block w-full">
+                  Lieu de la perturbation
+                </label>
+                <div className="h-[500px] rounded-xl overflow-hidden">
+                  <MapWithNoSSR
+                    selectedPosition={watch(['latitude', 'longitude'])}
+                    onChange={async ([lat, lng]: [number, number]) => {
+                      const {
+                        data: { address },
+                      } = await axios.get(
+                        `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=jsonv2`
+                      )
+
+                      setValue(
+                        'location',
+                        `${address.house_number} ${address.road}, ${address.city}, ${address.country}`
+                      )
+                      setValue('latitude', lat)
+                      setValue('longitude', lng)
                     }}
                   />
-                )}
-              />
-            </div>
+                </div>
+              </div>
 
-            <div className="mb-3">
+              {/* <div className="mb-3">
               <Input
                 register={register}
                 name="relationship"
@@ -243,97 +260,97 @@ function NewDisturbance({ typologies }: NewDisturbanceProps) {
                 placeholder="Parent, ami, collègue, passant, ..."
                 type={'text'}
               />
-            </div>
+            </div> */}
 
-            <div className="mb-3">
-              <Input
-                register={register}
-                name="disturbanceAt"
-                label="Date de la perturbation"
-                type="datetime-local"
-                max={dayjs().format('YYYY-MM-DDTHH:mm')}
-              />
-            </div>
-
-            <div className="mb-3 lg:col-span-2">
-              <label className="mb-2 text-gray-400 font-semibold block w-full">
-                Priorité de la perturbation
-              </label>
-              <div className="grid md:grid-cols-3 gap-2">
-                {(Object.keys(PRIORITY) as (keyof typeof PRIORITY)[]).map(
-                  (key, index) => (
-                    <Checkbox
-                      key={index}
-                      register={register}
-                      name="priority"
-                      label={PRIORITY[key]}
-                      type={'radio'}
-                      value={key.toLowerCase()}
-                    />
-                  )
-                )}
-              </div>
-            </div>
-
-            <div className="mb-3 col-span-full">
-              <label className="mb-2 text-gray-400 font-semibold block w-full">
-                Photo de la perturbation ou des lieux
-              </label>
-              <input
-                {...register('evidences', { required: true })}
-                type={'file'}
-                multiple={true}
-              />
-            </div>
-
-            <div className="mb-3">
-              <label className="mb-2 text-gray-400 font-semibold block w-full">
-                Une entreprise est elle mise en cause ?
-              </label>
-              <div className="grid grid-cols-2 gap-2">
-                <Checkbox
+              <div className="mb-3">
+                <Input
                   register={register}
-                  name="type"
-                  label="Oui"
-                  type={'radio'}
-                  value={DISTURBANCE_TYPE.PROFESSIONAL}
-                />
-                <Checkbox
-                  register={register}
-                  name="type"
-                  label="Non"
-                  type={'radio'}
-                  value={DISTURBANCE_TYPE.INDIVIDUAL}
+                  name="disturbanceAt"
+                  label="Date de la perturbation"
+                  type="datetime-local"
+                  max={dayjs().format('YYYY-MM-DDTHH:mm')}
                 />
               </div>
-            </div>
 
-            <div
-              className={`mb-3 ${
-                watch('type') === DISTURBANCE_TYPE.INDIVIDUAL
-                  ? 'opacity-60'
-                  : ''
-              }`}
-            >
-              <label className="mb-2 text-gray-400 font-semibold block w-full">
-                Nom de l'entreprise concernées
-              </label>
-              <SearchInput
-                disabled={watch('type') === DISTURBANCE_TYPE.INDIVIDUAL}
-                displayedProperty="companyName"
-                placeholder="Uber, Lime, ..."
-                options={companies}
-                selectedValue={getValues('referent') || ''}
-                query={companyQuery}
-                setQuery={(value) => setCompanyQuery(value)}
-                handleSelectedOption={(value: StrapiEntity<Referent>) =>
-                  setValue('referent', value.id.toString())
-                }
-                handleAddNewOption={async (value) => await postCompany(value)}
-              />
-            </div>
+              <div className="mb-3 lg:col-span-2">
+                <label className="mb-2 text-gray-400 font-semibold block w-full">
+                  Priorité de la perturbation
+                </label>
+                <div className="grid md:grid-cols-3 gap-2">
+                  {(Object.keys(PRIORITY) as (keyof typeof PRIORITY)[]).map(
+                    (key, index) => (
+                      <Checkbox
+                        key={index}
+                        register={register}
+                        name="priority"
+                        label={PRIORITY[key]}
+                        type={'radio'}
+                        value={key.toLowerCase()}
+                      />
+                    )
+                  )}
+                </div>
+              </div>
 
-            <div className="mb-3 lg:col-span-2">
+              <div className="mb-3 col-span-full">
+                <label className="mb-2 text-gray-400 font-semibold block w-full">
+                  Photo de la perturbation ou des lieux
+                </label>
+                <input
+                  {...register('evidences', { required: true })}
+                  type={'file'}
+                  multiple={true}
+                />
+              </div>
+
+              <div className="mb-3">
+                <label className="mb-2 text-gray-400 font-semibold block w-full">
+                  Une entreprise est elle mise en cause ?
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  <Checkbox
+                    register={register}
+                    name="type"
+                    label="Oui"
+                    type={'radio'}
+                    value={DISTURBANCE_TYPE.PROFESSIONAL}
+                  />
+                  <Checkbox
+                    register={register}
+                    name="type"
+                    label="Non"
+                    type={'radio'}
+                    value={DISTURBANCE_TYPE.INDIVIDUAL}
+                  />
+                </div>
+              </div>
+
+              <div
+                className={`mb-3 ${
+                  watch('type') === DISTURBANCE_TYPE.INDIVIDUAL
+                    ? 'opacity-60'
+                    : ''
+                }`}
+              >
+                <label className="mb-2 text-gray-400 font-semibold block w-full">
+                  Nom de l'entreprise concernées
+                </label>
+                <SearchInput
+                  disabled={watch('type') === DISTURBANCE_TYPE.INDIVIDUAL}
+                  displayedProperty="companyName"
+                  placeholder="Uber, Lime, ..."
+                  options={companies}
+                  selectedValue={getValues('referent') || ''}
+                  query={companyQuery}
+                  setQuery={(value) => setCompanyQuery(value)}
+                  handleSelectedOption={(value: StrapiEntity<Referent>) =>
+                    setValue('referent', value.id.toString())
+                  }
+                  handleAddNewOption={async (value) => await postCompany(value)}
+                />
+              </div>
+
+              {/* <div className="mb-3 lg:col-span-2">
               <label className="mb-2 text-gray-400 font-semibold block w-full">
                 Type de véhicule
               </label>
@@ -351,18 +368,19 @@ function NewDisturbance({ typologies }: NewDisturbanceProps) {
                   />
                 ))}
               </div>
-            </div>
+            </div> */}
 
-            <div className="mb-3 lg:col-span-2">
-              <Textarea
-                register={register}
-                name="description"
-                label="Description de la perturbation"
-                placeholder="Décrivez les lieux, si une ou plusieurs personnes sont bléssées, ..."
-                rows={4}
-              />
-            </div>
-          </>
+              <div className="mb-3 lg:col-span-2">
+                <Textarea
+                  register={register}
+                  name="description"
+                  label="Description de la perturbation"
+                  placeholder="Décrivez les lieux, si une ou plusieurs personnes sont bléssées, ..."
+                  rows={4}
+                />
+              </div>
+            </>
+          )}
         </form>
         <div className="mt-6">
           <Button
