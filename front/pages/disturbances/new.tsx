@@ -183,7 +183,7 @@ function NewDisturbance({ typologies }: NewDisturbanceProps) {
 
           {categories.length > 0 && (
             <div className="col-span-full">
-              <label className="mb-2 text-gray-400 font-semibold block w-full">
+              <label className="mb-2 text-gray-400  font-semibold block w-full">
                 Choissiez une catégorie
               </label>
               <div className="grid md:grid-cols-3 gap-2">
