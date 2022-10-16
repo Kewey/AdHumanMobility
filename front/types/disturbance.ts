@@ -1,5 +1,5 @@
 import { StrapiCall, StrapiEntity } from './api'
-import { Referent } from './company'
+import { Referent } from './referent'
 import { Media } from './media'
 
 export interface Disturbance {
@@ -12,7 +12,7 @@ export interface Disturbance {
   location: string
   longitude: number
   latitude: number
-  referent: { data: StrapiEntity<Referent> }
+  referent?: { data: StrapiEntity<Referent> }
   relationship: string | null
   evidences: StrapiCall<Media>
   blurredEvidences?: StrapiCall<Media>

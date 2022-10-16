@@ -4,6 +4,7 @@ import { Media } from './media'
 export interface DisturbanceTypes extends DefaultStrapyEntity {
   label: string
   icon: { data: StrapiEntity<Media> }
+  color: string
 }
 
 export interface Typology extends DisturbanceTypes {

@@ -1,4 +1,4 @@
-import { DefaultStrapyEntity } from './api'
+import { DefaultStrapyEntity, StrapiEntity } from './api'
 import { Disturbance } from './disturbance'
 
 export interface Referent extends DefaultStrapyEntity {
@@ -10,5 +10,4 @@ export interface Referent extends DefaultStrapyEntity {
   job?: string
   postalAdresse?: string
   mail?: string
-  pertubations?: Disturbance[]
 }

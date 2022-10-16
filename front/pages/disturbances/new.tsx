@@ -28,7 +28,7 @@ import {
 import { StrapiEntity } from '../../types/api'
 import { Category, Subcategory, Typology } from '../../types/typology'
 import { SearchInput } from '../../components/form/SearchInput'
-import { Referent } from '../../types/company'
+import { Referent } from '../../types/referent'
 import { SearchGoogleMap } from '../../components/form/SearchGoogleMap'
 import { useRouter } from 'next/router'
 import dynamic from 'next/dynamic'

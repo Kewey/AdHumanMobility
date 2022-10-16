@@ -1,5 +1,5 @@
 import { StrapiCall, StrapiEntity } from '../types/api'
-import { Referent } from '../types/company'
+import { Referent } from '../types/referent'
 import { Category, Typology } from '../types/typology'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL
