@@ -229,7 +229,7 @@ function NewDisturbance({ typologies }: NewDisturbanceProps) {
 
           {watch('subCategory') && (
             <>
-              <div className="mb-3 col-span-2">
+              <div className="mb-3 lg:col-span-2">
                 <label className="mb-2 text-gray-400 font-semibold block w-full">
                   Lieu de la perturbation
                 </label>
