@@ -37,7 +37,7 @@ export interface DisturbanceFormType {
   location: string
   longitude: number
   latitude: number
-  referent?: string
+  referent?: StrapiEntity<Referent>
   relationship: string
   disturbanceAt: string
 }

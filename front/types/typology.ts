@@ -12,7 +12,7 @@ export interface Typology extends DisturbanceTypes {
 
 export interface Category extends DisturbanceTypes {
   typologies: { data: StrapiEntity<Typology>[] }
-  subCategories: { data: StrapiEntity<Typology>[] }
+  sub_categories: { data: StrapiEntity<Typology>[] }
 }
 
 export interface Subcategory extends DisturbanceTypes {

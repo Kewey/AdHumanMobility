@@ -104,6 +104,8 @@ function NewDisturbance({ typologies }: NewDisturbanceProps) {
           setSubCategories(subCategories)
           setValue('subCategory', '')
           return
+        default:
+          return
       }
     })
 
@@ -243,7 +245,7 @@ function NewDisturbance({ typologies }: NewDisturbanceProps) {
 
                       setValue(
                         'location',
-                        `${address.house_number} ${address.road}, ${address.city}, ${address.country}`
+                        `${address?.house_number} ${address?.road}, ${address?.city}, ${address?.country}`
                       )
                       setValue('latitude', lat)
                       setValue('longitude', lng)
@@ -336,17 +338,20 @@ function NewDisturbance({ typologies }: NewDisturbanceProps) {
                   Nom de l'entreprise concernées
                 </label>
                 <SearchInput
-                  disabled={watch('type') === DISTURBANCE_TYPE.INDIVIDUAL}
+                  disabled={watch('type') !== DISTURBANCE_TYPE.PROFESSIONAL}
                   displayedProperty="companyName"
                   placeholder="Uber, Lime, ..."
                   options={companies}
-                  selectedValue={getValues('referent') || ''}
+                  selectedValue={watch('referent')}
                   query={companyQuery}
                   setQuery={(value) => setCompanyQuery(value)}
                   handleSelectedOption={(value: StrapiEntity<Referent>) =>
-                    setValue('referent', value.id.toString())
+                    setValue('referent', value)
                   }
-                  handleAddNewOption={async (value) => await postCompany(value)}
+                  handleAddNewOption={async (value) => {
+                    const newCompany = await postCompany(value)
+                    setValue('referent', newCompany)
+                  }}
                 />
               </div>
 

@@ -8,7 +8,7 @@ function classNames(...classes: string[]) {
 
 interface SearchProps<T> {
   options: T[]
-  selectedValue: string
+  selectedValue: any
   displayedProperty: string
   query: string
   disabled?: boolean
@@ -42,9 +42,12 @@ export const SearchInput = ({
           onChange={(e) => {
             setQuery(e.target.value)
           }}
-          displayValue={(selected: StrapiEntity<any>) =>
-            selected.attributes?.[displayedProperty]
-          }
+          displayValue={(selected: any) => {
+            return (
+              selected?.attributes?.[displayedProperty] ||
+              selectedValue?.attributes?.[displayedProperty]
+            )
+          }}
         />
         {query.length > 2 && (
           <Combobox.Options className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-64 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">

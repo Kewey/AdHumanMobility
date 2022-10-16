@@ -1,4 +1,5 @@
 import { signIn, signOut, useSession } from 'next-auth/react'
+import Image from 'next/image'
 import Link from 'next/link'
 import React, { useState } from 'react'
 import Button from './Button'
@@ -30,7 +31,10 @@ const Header = ({
     <header className="flex justify-between items-center py-4 px-8 h-20 relative">
       <div className="flex flex-wrap items-center">
         <Link href="/">
-          <a className="block mr-5 font-bold">Logo | Name</a>
+          <a className="flex items-center mr-8 font-bold">
+            <Image src="/favicon.svg" width="24" height="24" alt="App Name" />
+            <span className="ml-1 text-xl">App Name</span>
+          </a>
         </Link>
 
         <nav className="lg:flex hidden gap-4 items-center">

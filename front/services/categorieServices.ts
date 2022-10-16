@@ -31,16 +31,16 @@ export async function getSubCategoriesFromCategory(categoryId: string) {
     data: { attributes },
   }: { data: StrapiEntity<Category> } = await res.json()
 
-  if (!attributes?.subCategories) {
+  if (!attributes?.sub_categories) {
     return []
   }
 
-  return attributes.subCategories.data
+  return attributes.sub_categories.data
 }
 
 export async function getCompanies(query: string) {
   const res = await fetch(
-    `${API_URL}/referents?filters[companyName][$containsi]=${query}`
+    `${API_URL}/referents?publicationState=preview&filters[companyName][$containsi]=${query}`
   )
 
   const { data }: StrapiCall<Referent> = await res.json()
@@ -57,7 +57,7 @@ export async function postCompany(
     headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
   })
 
-  const referent = await res.json()
+  const { data } = await res.json()
 
-  return referent
+  return data
 }

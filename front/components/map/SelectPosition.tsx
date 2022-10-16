@@ -1,16 +1,26 @@
 import { useState, useEffect } from 'react'
 import { MapContainer, Marker, TileLayer, useMapEvents } from 'react-leaflet'
+import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
+
+const iconMarker = new L.Icon({
+  iconUrl: '/marker-shadow.png',
+  iconAnchor: [20, 41],
+  shadowUrl: '',
+  shadowSize: undefined,
+  shadowAnchor: undefined,
+  iconSize: new L.Point(41, 41),
+})
 
 interface SelectPositionProps {
   selectedPosition: [number, number]
-  onChange: () => void
+  onChange: ([]: [number, number]) => void
 }
 
 export default function SelectPosition({
   selectedPosition: selectedPositionInit,
   onChange,
-}: any) {
+}: SelectPositionProps) {
   const [geoData, setGeoData] = useState<[number, number]>([0, 0])
 
   //   MARCHE PO
@@ -30,6 +40,7 @@ export default function SelectPosition({
 
     return selectedPositionInit ? (
       <Marker
+        icon={iconMarker}
         key={selectedPositionInit[0]}
         position={selectedPositionInit}
         interactive={false}
