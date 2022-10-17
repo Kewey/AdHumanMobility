@@ -386,7 +386,7 @@ function NewDisturbance({ typologies }: NewDisturbanceProps) {
                 <Textarea
                   register={register}
                   name="description"
-                  label="Description de la perturbation"
+                  label="Description de la perturbation (250 caractères minimum)"
                   placeholder="Décrivez les lieux, si une ou plusieurs personnes sont bléssées, ..."
                   rows={4}
                 />
