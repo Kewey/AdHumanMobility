@@ -6,7 +6,7 @@ import {
   useMap,
   useMapEvents,
 } from 'react-leaflet'
-import L, { Map } from 'leaflet'
+import { Map, Point, Icon } from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import axios from 'axios'
 import { Combobox } from '@headlessui/react'
@@ -14,13 +14,13 @@ import { Adress } from '../../types/ops'
 import { faCrosshairs, faSpinner } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
-const iconMarker = new L.Icon({
+const iconMarker = new Icon({
   iconUrl: '/marker-shadow.png',
   iconAnchor: [20, 41],
   shadowUrl: '',
   shadowSize: undefined,
   shadowAnchor: undefined,
-  iconSize: new L.Point(41, 41),
+  iconSize: new Point(41, 41),
 })
 
 interface SelectPositionProps {
@@ -49,7 +49,7 @@ export default function SelectPosition({
   const [selectedLocationOptions, setSelectedLocationOptions] =
     useState<Adress | null>(null)
 
-  const mapRef = useRef<Map>()
+  const mapRef = useRef<Map | null>(null)
 
   useEffect(() => {
     async function searchPosition() {
