@@ -156,7 +156,7 @@ function NewDisturbance({ typologies }: NewDisturbanceProps) {
           <h1 className="mb-3">Déclarer une perturbation</h1>
           <p>
             Afin d'enregistrer votre déclaration, remplissez les champs si
-            dessous avec le plus d'information possible.
+            dessous avec le plus d'informations possible.
           </p>
         </div>
         <form
@@ -240,7 +240,14 @@ function NewDisturbance({ typologies }: NewDisturbanceProps) {
                       const {
                         data: { address },
                       } = await axios.get(
-                        `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=jsonv2`
+                        'https://nominatim.openstreetmap.org/reverse',
+                        {
+                          params: {
+                            lat,
+                            lon: lng,
+                            format: 'jsonv2',
+                          },
+                        }
                       )
 
                       setValue(

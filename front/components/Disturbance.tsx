@@ -116,13 +116,13 @@ export const Disturbance = ({
       </div>
     </div>
     <hr />
-    {referent && (
+    {referent?.data && (
       <>
         <div className="flex items-center py-3">
           <div>
             <h6 className="text-sm text-gray-400">Société en cause</h6>
             <p className="text-gray-600">
-              {referent.data.attributes.companyName}
+              {referent?.data?.attributes?.companyName}
             </p>
           </div>
         </div>
