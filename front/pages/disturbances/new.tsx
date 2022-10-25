@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
+import { useRouter } from 'next/router'
+import dynamic from 'next/dynamic'
+import { useSession } from 'next-auth/react'
+import axios, { AxiosError } from 'axios'
+import toast from 'react-hot-toast'
+
 import Button from '../../components/Button'
 import Input from '../../components/form/Input'
 import Layout from '../../components/Layout'
@@ -12,11 +18,6 @@ import {
   PRIORITY,
   VEHICULE_TYPE,
 } from '../../types/disturbance'
-import { useSession } from 'next-auth/react'
-import usePlacesAutocomplete, {
-  getGeocode,
-  getLatLng,
-} from 'use-places-autocomplete'
 import dayjs from 'dayjs'
 import {
   getCategoriesFromTypology,
@@ -29,10 +30,6 @@ import { StrapiEntity } from '../../types/api'
 import { Category, Subcategory, Typology } from '../../types/typology'
 import { SearchInput } from '../../components/form/SearchInput'
 import { Referent } from '../../types/referent'
-import { SearchGoogleMap } from '../../components/form/SearchGoogleMap'
-import { useRouter } from 'next/router'
-import dynamic from 'next/dynamic'
-import axios from 'axios'
 
 export const getServerSideProps = async () => {
   const res = await getTypologies()
@@ -45,12 +42,9 @@ export const getServerSideProps = async () => {
   }
 }
 
-const MapWithNoSSR = dynamic(
-  () => import('../../components/map/SelectPosition'),
-  {
-    ssr: false,
-  }
-)
+const Map = dynamic(() => import('../../components/map/SelectPosition'), {
+  ssr: false,
+})
 
 interface NewDisturbanceProps {
   typologies: StrapiEntity<Typology>[]
@@ -75,18 +69,6 @@ function NewDisturbance({ typologies }: NewDisturbanceProps) {
   const { data: session } = useSession()
   const router = useRouter()
 
-  const {
-    value: locationQuery,
-    setValue: setLocationQuery,
-    suggestions: { data: localisationOptions },
-  } = usePlacesAutocomplete({
-    debounce: 300,
-    requestOptions: {
-      region: 'fr',
-      language: 'fr',
-    },
-  })
-
   useEffect(() => {
     const subscription = watch(async (value, { name }) => {
       switch (name) {
@@ -110,9 +92,11 @@ function NewDisturbance({ typologies }: NewDisturbanceProps) {
     })
 
     return () => subscription.unsubscribe()
-  }, [watch])
+  }, [watch('typology'), watch('category')])
 
   useEffect(() => {
+    if (!companyQuery) return
+
     async function getCompany() {
       const companies = await getCompanies(companyQuery)
       setCompanies(companies)
@@ -120,15 +104,6 @@ function NewDisturbance({ typologies }: NewDisturbanceProps) {
 
     getCompany()
   }, [companyQuery])
-
-  const onLocationUpdate = async ({
-    place_id: placeId,
-  }: Partial<google.maps.GeocoderResult>) => {
-    const [res] = await getGeocode({ placeId })
-    const { lat, lng } = await getLatLng(res)
-    setValue('latitude', lat)
-    setValue('longitude', lng)
-  }
 
   /*
 
@@ -141,11 +116,15 @@ function NewDisturbance({ typologies }: NewDisturbanceProps) {
     const body = { ...data, author: session?.id?.toString() || '' }
 
     try {
-      await postDisturbance(body)
+      const res = await postDisturbance(body)
+
       // await axios.post('/api/form/disturbance', body)
-      router.back()
+      router.push(`/disturbances/${res?.id}`)
     } catch (error) {
+      const { message } = error as AxiosError
       console.error(error)
+
+      toast.error(message)
     }
   }
 
@@ -234,9 +213,9 @@ function NewDisturbance({ typologies }: NewDisturbanceProps) {
                   Lieu de la perturbation
                 </label>
                 <div className="h-[500px] rounded-xl overflow-hidden">
-                  <MapWithNoSSR
+                  <Map
                     selectedPosition={watch(['latitude', 'longitude'])}
-                    onChange={async ([lat, lng]: [number, number]) => {
+                    onChange={async ([lat, lon]: [number, number]) => {
                       const {
                         data: { address },
                       } = await axios.get(
@@ -244,7 +223,7 @@ function NewDisturbance({ typologies }: NewDisturbanceProps) {
                         {
                           params: {
                             lat,
-                            lon: lng,
+                            lon,
                             format: 'jsonv2',
                           },
                         }
@@ -255,7 +234,7 @@ function NewDisturbance({ typologies }: NewDisturbanceProps) {
                         `${address?.house_number} ${address?.road}, ${address?.city}, ${address?.country}`
                       )
                       setValue('latitude', lat)
-                      setValue('longitude', lng)
+                      setValue('longitude', lon)
                     }}
                   />
                 </div>

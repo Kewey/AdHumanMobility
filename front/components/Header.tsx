@@ -5,25 +5,9 @@ import React, { useState } from 'react'
 import Button from './Button'
 import { SearchGoogleMap } from './form/SearchGoogleMap'
 
-interface HeaderProps<T> {
-  options: T[]
-  selectedValue: string
-  query: string
-  disabled: boolean
-  setQuery: (value: string) => void
-  handleSelectedOption: (value: any) => void
-  showResearch?: boolean
-}
+interface HeaderProps<T> {}
 
-const Header = ({
-  options,
-  query,
-  selectedValue,
-  disabled,
-  setQuery,
-  handleSelectedOption,
-  showResearch,
-}: HeaderProps<any>) => {
+const Header = ({}: HeaderProps<any>) => {
   const { data: session } = useSession()
   const [menuIsOpen, setMenuIsOpen] = useState(false)
 
@@ -33,7 +17,7 @@ const Header = ({
         <Link href="/">
           <a className="flex items-center mr-8 font-bold">
             <Image src="/favicon.svg" width="24" height="24" alt="App Name" />
-            <span className="ml-1 text-xl">App Name</span>
+            <span className="ml-1 text-xl">ADMobility</span>
           </a>
         </Link>
 
@@ -49,19 +33,6 @@ const Header = ({
           </Link>
         </nav>
       </div>
-
-      {showResearch && (
-        <div className="lg:block hidden w-full max-w-[460px]">
-          <SearchGoogleMap
-            options={options}
-            query={query}
-            selectedValue={selectedValue}
-            setQuery={setQuery}
-            disabled={disabled}
-            handleSelectedOption={handleSelectedOption}
-          />
-        </div>
-      )}
 
       <div className="lg:flex hidden place-self-center justify-self-end items-center gap-4">
         <Link href="/disturbances/new" passHref>

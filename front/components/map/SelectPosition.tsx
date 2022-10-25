@@ -10,9 +10,10 @@ import { Map, Point, Icon } from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import axios from 'axios'
 import { Combobox } from '@headlessui/react'
-import { Adress } from '../../types/ops'
 import { faCrosshairs, faSpinner } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+
+import { Adress } from '../../types/ops'
 
 const iconMarker = new Icon({
   iconUrl: '/marker-shadow.png',
@@ -101,7 +102,10 @@ export default function SelectPosition({
           onChange={(selected) => {
             if (!mapRef.current) return
             mapRef.current.flyTo(
-              [parseInt(selected?.lat || ''), parseInt(selected?.lon || '')],
+              [
+                parseFloat(selected?.lat || ''),
+                parseFloat(selected?.lon || ''),
+              ],
               mapRef.current.getZoom()
             )
             setSelectedLocationOptions(selected)
@@ -116,6 +120,7 @@ export default function SelectPosition({
               />
             )}
             <Combobox.Input
+              onSubmit={() => {}}
               className="focus:outline-none focus:border-primary-500 px-4 py-3 w-full border border-slate-300 rounded-lg"
               placeholder={'Cherchez une ville, rue, ...'}
               onChange={(e) => setQuery(e.target.value)}
@@ -141,6 +146,7 @@ export default function SelectPosition({
           </div>
         </Combobox>
         <button
+          type="button"
           className="focus:outline-none focus:border-primary-500 bg-white px-4 py-3 ml-2 border border-slate-300 rounded-lg"
           onClick={() => {
             if (!mapRef.current) return

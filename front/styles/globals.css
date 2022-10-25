@@ -27,28 +27,15 @@
     @apply text-sm font-semibold text-gray-700 uppercase mb-1;
   }
 
-  .ReactModal__Overlay {
-    opacity: 0;
-    transition: opacity 300ms ease-in-out;
+  .map-popup .leaflet-popup-content-wrapper {
+    @apply rounded-md;
   }
 
-  .ReactModal__Overlay--after-open {
-    opacity: 1;
+  .map-popup .leaflet-popup-content {
+    @apply m-4;
   }
 
-  .ReactModal__Overlay--before-closen {
-    opacity: 0;
+  .map-popup .leaflet-popup-content p {
+    margin: 0;
   }
-
-  .ReactModal__Overlay > .ReactModal__Content {
-    transition: transform 300ms ease-in-out;
-    transform: translateY(100px);
-  }
-
-  .ReactModal__Overlay--after-open > .ReactModal__Content {
-    transform: translateY(0);
-  }
-  .ReactModal__Overlay--before-closen > .ReactModal__Content {
-    transform: translateY(100px);
-  } 
 }
