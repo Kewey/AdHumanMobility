@@ -3,7 +3,6 @@ import Image from 'next/image'
 import Link from 'next/link'
 import React, { useState } from 'react'
 import Button from './Button'
-import { SearchGoogleMap } from './form/SearchGoogleMap'
 
 interface HeaderProps<T> {}
 
