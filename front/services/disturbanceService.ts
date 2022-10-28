@@ -5,7 +5,7 @@ import {
   DISTURBANCE_TYPE,
 } from '../types/disturbance'
 import { getSession } from 'next-auth/react'
-import { StrapiCall } from '../types/api'
+import { StrapiCall, StrapiEntity } from '../types/api'
 import FormData from 'form-data'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL
@@ -27,7 +27,9 @@ export async function postDisturbance({
   evidences,
   type,
   ...data
-}: DisturbanceFormType & { author: string }): Promise<Disturbance> {
+}: DisturbanceFormType & { author: string }): Promise<
+  StrapiEntity<Disturbance>
+> {
   const session = await getSession()
   const jwt = session?.jwt
 

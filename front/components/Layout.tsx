@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import React, { forwardRef, ReactElement, useState } from 'react'
+import React, { ReactElement } from 'react'
 import { Toaster } from 'react-hot-toast'
 
 import Header from './Header'
@@ -10,7 +10,7 @@ interface LayoutProps {
   marginHorizontal?: boolean
   children: ReactElement
   sidebar?: ReactElement
-  callback?: (lat: number, lng: number) => void
+  searchBar?: ReactElement
 }
 
 const Layout = ({
@@ -18,11 +18,9 @@ const Layout = ({
   description,
   children,
   sidebar,
-  callback,
+  searchBar,
   marginHorizontal = true,
 }: LayoutProps) => {
-  const [selectedValue, setSelectedValue] = useState('')
-
   return (
     <>
       <Head>
@@ -31,7 +29,7 @@ const Layout = ({
       </Head>
 
       <div className="min-h-screen flex flex-col">
-        <Header />
+        <Header searchBar={searchBar} />
         <div className={`flex-1 ${marginHorizontal ? 'my-8' : ''}`}>
           {sidebar ? (
             <div className="grid lg:grid-cols-[400px_1fr] grid-cols-1 h-full">

@@ -1,12 +1,10 @@
 import { signIn, signOut, useSession } from 'next-auth/react'
 import Image from 'next/image'
 import Link from 'next/link'
-import React, { useState } from 'react'
+import React, { ReactElement, useState } from 'react'
 import Button from './Button'
 
-interface HeaderProps<T> {}
-
-const Header = ({}: HeaderProps<any>) => {
+const Header = ({ searchBar }: any) => {
   const { data: session } = useSession()
   const [menuIsOpen, setMenuIsOpen] = useState(false)
 
@@ -32,6 +30,8 @@ const Header = ({}: HeaderProps<any>) => {
           </Link>
         </nav>
       </div>
+
+      {searchBar}
 
       <div className="lg:flex hidden place-self-center justify-self-end items-center gap-4">
         <Link href="/disturbances/new" passHref>

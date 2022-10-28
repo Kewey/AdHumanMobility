@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { ForwardedRef, useEffect, useRef } from 'react'
 import { Icon, Map, Point } from 'leaflet'
 import { MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet'
 import { Disturbance } from '../../types/disturbance'
@@ -15,16 +15,25 @@ const iconMarker = new Icon({
   iconSize: new Point(41, 41),
 })
 
-interface MapDisturbancesProps {
-  position: [number, number]
+export interface MapDisturbancesProps {
+  position?: [number, number]
   disturbances?: StrapiEntity<Disturbance>[]
 }
 
-const MapDisturbances = ({ position, disturbances }: MapDisturbancesProps) => {
+const MapDisturbances = ({
+  forwardedRef,
+  position,
+  disturbances,
+}: MapDisturbancesProps & { forwardedRef: ForwardedRef<Map | null> }) => {
   const router = useRouter()
 
   return (
-    <MapContainer center={position} zoom={13} className="h-full">
+    <MapContainer
+      ref={forwardedRef}
+      center={position}
+      zoom={13}
+      className="h-full"
+    >
       {disturbances?.map(
         ({ id, attributes: { latitude, longitude, ...disturbance } }) => (
           <Marker
