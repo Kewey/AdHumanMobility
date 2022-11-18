@@ -31,7 +31,7 @@ const Header = ({ searchBar }: any) => {
         </nav>
       </div>
 
-      {searchBar}
+      <div className="hidden lg:block">{searchBar}</div>
 
       <div className="lg:flex hidden place-self-center justify-self-end items-center gap-4">
         <Link href="/disturbances/new" passHref>
@@ -72,8 +72,9 @@ const Header = ({ searchBar }: any) => {
         </Button>
       </div>
       {menuIsOpen && (
-        <div className="absolute z-50 top-full left-0 w-full bg-white p-6">
+        <div className="absolute z-[1050] lg:hidden top-full left-0 w-full bg-white p-6">
           <nav className="flex flex-col gap-4">
+            {searchBar}
             <Link href="/about-us">
               <a>Qui somme nous ?</a>
             </Link>
