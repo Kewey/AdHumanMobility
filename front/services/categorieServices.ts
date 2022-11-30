@@ -1,4 +1,4 @@
-import { StrapiCall, StrapiEntity } from '../types/api'
+import { StrapiCall, StrapiCallArray, StrapiEntity } from '../types/api'
 import { Referent } from '../types/referent'
 import { Category, Typology } from '../types/typology'
 
@@ -43,7 +43,7 @@ export async function getCompanies(query: string) {
     `${API_URL}/referents?publicationState=preview&filters[companyName][$containsi]=${query}`
   )
 
-  const { data }: StrapiCall<Referent> = await res.json()
+  const { data }: StrapiCallArray<Referent> = await res.json()
 
   return data
 }

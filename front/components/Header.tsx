@@ -1,7 +1,7 @@
 import { signIn, signOut, useSession } from 'next-auth/react'
 import Image from 'next/image'
 import Link from 'next/link'
-import React, { ReactElement, useState } from 'react'
+import React, { useState } from 'react'
 import Button from './Button'
 
 const Header = ({ searchBar }: any) => {
@@ -35,7 +35,13 @@ const Header = ({ searchBar }: any) => {
 
       <div className="lg:flex hidden place-self-center justify-self-end items-center gap-4">
         <Link href="/disturbances/new" passHref>
-          <Button size="sm">Déclarer une perturbation</Button>
+          <Button
+            size="sm"
+            data-tip="Vous devez vous connecter pour créer une perturbation"
+            onClick={!session ? () => signIn() : null}
+          >
+            Déclarer une perturbation
+          </Button>
         </Link>
         {!session ? (
           <Link href="/api/auth/signin" passHref>
@@ -86,7 +92,12 @@ const Header = ({ searchBar }: any) => {
             </Link>
             <hr />
             <Link href="/disturbances/new" passHref>
-              <Button size="sm" textAlign="center">
+              <Button
+                data-for="disturbance-unauthenticated"
+                size="sm"
+                textAlign="center"
+                disabled={!session}
+              >
                 Déclarer une perturbation
               </Button>
             </Link>

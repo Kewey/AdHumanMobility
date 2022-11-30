@@ -28,7 +28,7 @@ export async function postDisturbance({
   type,
   ...data
 }: DisturbanceFormType & { author: string }): Promise<
-  StrapiEntity<Disturbance>
+  StrapiCall<StrapiEntity<Disturbance>>
 > {
   const session = await getSession()
   const jwt = session?.jwt

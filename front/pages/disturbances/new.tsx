@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useRouter } from 'next/router'
 import dynamic from 'next/dynamic'
-import { useSession } from 'next-auth/react'
+import { getSession, GetSessionParams, useSession } from 'next-auth/react'
 import axios, { AxiosError } from 'axios'
 import toast from 'react-hot-toast'
 
@@ -26,12 +26,29 @@ import {
   getTypologies,
   postCompany,
 } from '../../services/categorieServices'
-import { StrapiEntity } from '../../types/api'
+import { StrapiEntity, StrapiError } from '../../types/api'
 import { Category, Subcategory, Typology } from '../../types/typology'
 import { SearchInput } from '../../components/form/SearchInput'
 import { Referent } from '../../types/referent'
 
-export const getServerSideProps = async () => {
+const Map = dynamic(() => import('../../components/map/SelectPosition'), {
+  ssr: false,
+})
+
+export const getServerSideProps = async (
+  context: GetSessionParams | undefined
+) => {
+  const session = await getSession(context)
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    }
+  }
+
   const res = await getTypologies()
   const typologies = await res.json()
 
@@ -41,10 +58,6 @@ export const getServerSideProps = async () => {
     },
   }
 }
-
-const Map = dynamic(() => import('../../components/map/SelectPosition'), {
-  ssr: false,
-})
 
 interface NewDisturbanceProps {
   typologies: StrapiEntity<Typology>[]
@@ -119,10 +132,15 @@ function NewDisturbance({ typologies }: NewDisturbanceProps) {
       const res = await postDisturbance(body)
 
       // await axios.post('/api/form/disturbance', body)
-      router.push(`/disturbances/${res?.id}`)
+      router.push(`/disturbances/${res.data.id}`)
     } catch (error) {
-      const { message } = error as AxiosError
+      const { message, response } = error as AxiosError<StrapiError>
       console.error(error)
+
+      if (response?.status === 400) {
+        toast.error(response.data.error.message)
+        return
+      }
 
       toast.error(message)
     }
@@ -252,11 +270,12 @@ function NewDisturbance({ typologies }: NewDisturbanceProps) {
 
               <div className="mb-3">
                 <Input
-                  register={register}
+                  {...register('disturbanceAt', {
+                    max: dayjs().format('YYYY-MM-DDTHH:mm'),
+                  })}
                   name="disturbanceAt"
                   label="Date de la perturbation"
                   type="datetime-local"
-                  max={dayjs().format('YYYY-MM-DDTHH:mm')}
                 />
               </div>
 

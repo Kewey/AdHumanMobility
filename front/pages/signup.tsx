@@ -1,38 +1,63 @@
 import { useRouter } from 'next/router'
-import React from 'react'
+import React, { useRef, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import toast from 'react-hot-toast'
 import Button from '../components/Button'
 import Input from '../components/form/Input'
 import Layout from '../components/Layout'
 
+interface UserForm {
+  lastname: string
+  firstname: string
+  email: string
+  password: string
+  confirmPassword: string
+  phone: string
+}
+
 function Signup() {
   const router = useRouter()
+  const [isLoading, setIsLoading] = useState(false)
 
-  const registerUser = async (event: any) => {
-    event.preventDefault()
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<UserForm>()
 
-    const fields = Array.prototype.slice
-      .call(event.target)
-      .filter((el) => el.name)
-      .reduce(
-        (form, el) => ({
-          ...form,
-          [el.name]: el.value,
-        }),
-        {}
-      )
+  const password = useRef({})
+  password.current = watch('password', '')
 
+  const registerUser = async (data: UserForm) => {
     const body = {
-      ...fields,
-      username: `${fields.firstname} ${fields.lastname}`,
+      ...data,
+      username: `${data.firstname} ${data.lastname}`,
     }
 
-    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/local/register`, {
-      method: 'post',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(body),
-    })
+    setIsLoading(true)
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/auth/local/register`,
+      {
+        method: 'post',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+      }
+    )
+
+    setIsLoading(false)
+
+    const resData = await response.json()
+
+    if (response.status === 400) {
+      toast.error(resData.error.message)
+      return
+    }
+
+    toast.success('Votre compte a bien était crée !')
+    router.back()
   }
 
   return (
@@ -55,69 +80,99 @@ function Signup() {
           vero repellat corrupti.
         </p>
 
-        <form onSubmit={registerUser}>
+        <form onSubmit={handleSubmit(registerUser)}>
           <div className="mb-3">
             <Input
-              required
+              {...register('lastname', {
+                required: 'Vous devez renseigner votre nom',
+                minLength: 3,
+              })}
               label="Nom"
               placeholder="Dupont"
-              name="lastname"
               type="text"
+              error={errors.lastname}
             />
           </div>
 
           <div className="mb-3">
             <Input
-              required
+              {...register('firstname', {
+                required: 'Vous devez renseigner votre prénom',
+                minLength: 3,
+              })}
               label="Prénom"
               placeholder="Jean"
-              name="firstname"
               type="text"
+              error={errors.firstname}
             />
           </div>
 
           <div className="mb-3">
             <Input
-              required
+              {...register('email', {
+                required: 'Vous devez renseigner une adresse mail.',
+                pattern: {
+                  value:
+                    /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+                  message: 'Ceci ne ressemble pas à une adresse mail.',
+                },
+              })}
               label="Adresse mail"
               placeholder="adresse@mail.com"
-              name="email"
               type="email"
+              error={errors.email}
             />
           </div>
 
           <div className="mb-3">
             <Input
-              required
+              {...register('password', {
+                required: 'Vous devez renseigner votre mot de passe.',
+                minLength: {
+                  value: 8,
+                  message:
+                    'Votre mot de passe doit avoir au moins 8 caractères.',
+                },
+              })}
               label="Mot de passe"
               placeholder="**********"
-              name="password"
               type="password"
+              error={errors.password}
             />
           </div>
 
           <div className="mb-3">
             <Input
-              required
+              {...register('confirmPassword', {
+                validate: (value) =>
+                  value === password.current ||
+                  'Les mots de passe ne sont pas identiques',
+              })}
               label="Confirmation de mot de passe"
               placeholder="**********"
-              name="confirmPassword"
               type="password"
+              error={errors.confirmPassword}
             />
           </div>
 
           <div className="mb-6">
             <Input
-              required
+              {...register('phone', {
+                required: 'Vous devez renseigner votre numéro de téléphone',
+                pattern: {
+                  value: /^(?:(?:\+|00)33|0)\s*[1-9](?:[\s.-]*\d{2}){4}$/gim,
+                  message: 'Ceci ne ressemble pas à un numéro de téléphone',
+                },
+              })}
               label="Téléphone"
               placeholder="00 00 00 00 00"
-              name="phone"
               type="tel"
+              error={errors.phone}
             />
           </div>
 
-          <Button type="submit" variant="primary" block>
-            Inscription
+          <Button type="submit" variant="primary" block disabled={isLoading}>
+            {isLoading ? <span>...</span> : 'Inscription'}
           </Button>
         </form>
       </div>

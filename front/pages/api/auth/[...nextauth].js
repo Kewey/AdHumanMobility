@@ -43,9 +43,10 @@ const options = {
   ],
   session: {
     jwt: true,
+    strategy: 'jwt',
   },
   callbacks: {
-    async jwt({ token, user }) {
+    jwt({ token, user }) {
       if (user) {
         token.jwt = user.jwt
         token.id = user.id
@@ -54,7 +55,7 @@ const options = {
       }
       return token
     },
-    async session({ session, token }) {
+    session({ session, token }) {
       session.id = token.id
       session.jwt = token.jwt
       return session

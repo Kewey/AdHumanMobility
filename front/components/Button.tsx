@@ -65,7 +65,9 @@ const Button = forwardRef(
         ref={ref}
         className={`${
           block ? 'w-full justify-center flex' : 'inline-flex'
-        } items-center cursor-pointer rounded-md text-base font-medium ${buttonVariant()} ${buttonSize()} ${buttonTextAlign()}`}
+        } items-center cursor-pointer rounded-md text-base font-medium ${buttonVariant()} ${buttonSize()} ${buttonTextAlign()}${
+          props?.disabled ? 'opacity-40' : ''
+        }`}
       >
         {children}
       </a>
@@ -75,7 +77,7 @@ const Button = forwardRef(
         ref={ref}
         className={`disabled:bg-slate-200 disabled:text-slate-500 ${
           block ? 'w-full justify-center flex' : 'inline-flex'
-        } items-center cursor-pointer rounded-md text-base font-medium ${buttonVariant()} ${buttonSize()} ${buttonTextAlign()}`}
+        } items-center cursor-pointer rounded-md text-base font-medium ${buttonVariant()} ${buttonSize()} ${buttonTextAlign()} disabled:opacity-40`}
       >
         {children}
       </button>
