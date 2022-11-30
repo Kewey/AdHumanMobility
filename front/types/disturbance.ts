@@ -1,4 +1,4 @@
-import { StrapiCall, StrapiEntity } from './api'
+import { StrapiCall, StrapiCallArray, StrapiEntity } from './api'
 import { Referent } from './referent'
 import { Media } from './media'
 
@@ -14,8 +14,8 @@ export interface Disturbance {
   latitude: number
   referent?: { data: StrapiEntity<Referent> }
   relationship: string | null
-  evidences: StrapiCall<Media>
-  blurredEvidences?: StrapiCall<Media>
+  evidences: StrapiCallArray<Media>
+  blurredEvidences?: StrapiCallArray<Media>
   createdAt: string
   updatedAt: string
   publishedAt: string
