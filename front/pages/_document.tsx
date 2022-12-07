@@ -14,7 +14,7 @@ export default function Document() {
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <link rel="icon" type="image/png" href="/favicon.png" />
       </Head>
-      <body className="font-sans font-light">
+      <body className="font-sans font-light min-h-screen">
         <Main />
         <NextScript />
       </body>
