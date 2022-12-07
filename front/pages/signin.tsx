@@ -1,5 +1,6 @@
-import { getCsrfToken } from 'next-auth/react'
+import { getCsrfToken, signIn } from 'next-auth/react'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import React from 'react'
 import Button from '../components/Button'
 import Input from '../components/form/Input'
@@ -14,12 +15,30 @@ export async function getServerSideProps(context: any) {
 }
 
 function Login({ csrfToken }: any) {
+  const router = useRouter()
+
+  const onSubmit = async (e: any) => {
+    e.preventDefault()
+
+    signIn('credentials', {
+      email: e.target.email.value,
+      password: e.target.password.value,
+      redirect: false,
+    }).then(({ ok, error }: any) => {
+      if (ok) {
+        router.push('/')
+      } else {
+        console.warn('error: ', error)
+      }
+    })
+  }
+
   return (
     <Layout title="Connexion">
       <div className="max-w-md m-auto p-4">
         <h1 className="text-3xl font-extrabold">Connexion</h1>
 
-        <form method="post" action="/api/auth/callback/credentials">
+        <form method="post" onSubmit={onSubmit}>
           <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
           <div className="mb-3">
             <Input
