@@ -19,7 +19,6 @@ function Login({ csrfToken }: any) {
 
   const onSubmit = async (e: any) => {
     e.preventDefault()
-
     signIn('credentials', {
       email: e.target.email.value,
       password: e.target.password.value,
