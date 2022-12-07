@@ -1,0 +1,95 @@
+version: '3'
+
+services:
+  traefik:
+    image: 'traefik:v2.6'
+    container_name: 'traefik'
+    command:
+      - '--api.insecure=true'
+      - '--api.dashboard=true'
+      - '--providers.docker=true'
+      - '--providers.docker.exposedbydefault=false'
+      - '--providers.file.directory=/etc/traefik'
+      - '--providers.file.watch=true'
+      - '--entrypoints.web.address=:80'
+      - '--entrypoints.web.http.redirections.entryPoint.to=websecure'
+      - '--entrypoints.websecure.address=:443'
+      - '--certificatesresolvers.myresolver.acme.tlschallenge=true'
+      - '--certificatesresolvers.myresolver.acme.email=some.admin@jbuget.fr'
+      - '--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json'
+    ports:
+      - '80:80'
+      - '443:443'
+      - '8080:8080'
+    volumes:
+      - './letsencrypt:/letsencrypt'
+      - '/var/run/docker.sock:/var/run/docker.sock:ro'
+      - '.:/etc/traefik'
+    networks:
+      - web
+
+  strapi:
+    container_name: strapi
+    build: .
+    image: sergeapp:latest
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DATABASE_CLIENT: ${DATABASE_CLIENT}
+      DATABASE_HOST: postgresDB
+      DATABASE_NAME: ${DATABASE_NAME}
+      DATABASE_USERNAME: ${DATABASE_USERNAME}
+      DATABASE_PORT: ${DATABASE_PORT}
+      JWT_SECRET: ${JWT_SECRET}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      NODE_ENV: ${NODE_ENV}
+    links:
+      - postgresDB:postgresDB
+    volumes:
+      - ./config:/opt/app/config
+      - ./src:/opt/app/src
+      - ./package.json:/opt/app/package.json
+      - ./yarn.lock:/opt/app/yarn.lock
+      - ./.env:/opt/app/.env
+    ports:
+      - '1337:1337'
+    networks:
+      - strapi
+      - web
+    depends_on:
+      - postgresDB
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.api.rule=Host(`api.adhumanmobility.com`)'
+      - 'traefik.http.routers.api.entrypoints=websecure'
+      - 'traefik.http.routers.api.tls.certresolver=myresolver'
+
+  postgresDB:
+    image: postgres:12.0-alpine
+    container_name: DB
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      POSTGRES_USER: ${DATABASE_USERNAME}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_DB: ${DATABASE_NAME}
+    volumes:
+      - ./data:/var/lib/postgresql/data/
+    ports:
+      - '5432:5432'
+    networks:
+      - strapi
+
+  mails:
+    image: schickling/mailcatcher
+    restart: always
+    ports:
+      - 1080:1080
+
+networks:
+  strapi:
+    name: Strapi
+    driver: bridge
+  web:
+    name: web
+    external:
