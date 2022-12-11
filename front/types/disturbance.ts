@@ -57,6 +57,6 @@ export enum VEHICULE_TYPE {
 
 export enum PRIORITY {
   LOW = 'Faible',
-  MEDIUM = 'Genante',
-  HIGH = 'Dangeureuse',
+  MEDIUM = 'Gênante',
+  HIGH = 'Dangereuse',
 }
