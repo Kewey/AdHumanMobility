@@ -391,18 +391,18 @@ function NewDisturbance({ typologies }: NewDisturbanceProps) {
               </div>
             </>
           )}
+          <div className="mt-6">
+            <Button
+              type="submit"
+              variant="primary"
+              block
+              form="disturbanceForm"
+              disabled={!getValues('typology')}
+            >
+              Envoyer le dossier
+            </Button>
+          </div>
         </form>
-        <div className="mt-6">
-          <Button
-            type="submit"
-            variant="primary"
-            block
-            form="disturbanceForm"
-            disabled={!getValues('typology')}
-          >
-            Envoyer le dossier
-          </Button>
-        </div>
       </div>
     </Layout>
   )
