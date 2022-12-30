@@ -1,1 +1,4 @@
-memo.yml
+.idea
+.vscode
+
+apps/oscarapi
