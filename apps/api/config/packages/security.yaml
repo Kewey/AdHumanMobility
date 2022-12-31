@@ -36,4 +36,5 @@ security:
     - { path: ^/signin, roles: PUBLIC_ACCESS }
     - { path: ^/signup, roles: PUBLIC_ACCESS }
     - { path: ^/disruptions, roles: PUBLIC_ACCESS }
+    - { path: ^/media, roles: PUBLIC_ACCESS }
     - { path: ^/, roles: IS_AUTHENTICATED_FULLY }

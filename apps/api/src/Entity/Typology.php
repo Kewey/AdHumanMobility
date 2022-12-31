@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
@@ -11,39 +12,20 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
-use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[Vich\Uploadable]
 #[ORM\Entity(repositoryClass: TypologyRepository::class)]
 #[ApiResource(
-    normalizationContext: ['groups' => ['media_object:read']],
-    types: ['https://schema.org/MediaObject'],
     operations: [
         new Get(),
         new GetCollection(),
-        new Post(
-            deserialize: false,
-            validationContext: ['groups' => ['Default', 'media_object_create']],
-            openapiContext: [
-                'requestBody' => [
-                    'content' => [
-                        'multipart/form-data' => [
-                            'schema' => [
-                                'type' => 'object',
-                                'properties' => [
-                                    'file' => [
-                                        'type' => 'string',
-                                        'format' => 'binary'
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
-            ]
-        )
-    ]
+        new Post()
+    ],
+    normalizationContext: ['groups' => ['typology:read']],
+    denormalizationContext: ['groups' => ['typology:create']],
 )]
 class Typology
 {
@@ -52,22 +34,30 @@ class Typology
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Groups(['typology:read', 'typology:create'])]
+    #[Assert\NotBlank]
     #[ORM\Column(length: 255)]
     private ?string $label = null;
 
+    #[Groups(['typology:read', 'typology:create'])]
     #[ORM\Column(length: 255)]
     private ?string $color = null;
 
-    #[Vich\UploadableField(mapping: "media_object", fileNameProperty: "filePath")]
-    #[Assert\NotNull]
-    private ?File $file = null;
+    #[Assert\NotBlank(groups: ['typology:create'])]
+    #[Groups(['typology:read', 'typology:create'])]
+    #[ORM\ManyToOne(targetEntity: MediaObject::class)]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?MediaObject $file = null;
 
-    #[ORM\ManyToMany(targetEntity: TypologyCategory::class, mappedBy: 'parent')]
-    private Collection $categories;
+    #[Groups(['typology:read', 'typology:create'])]
+    #[ORM\ManyToMany(targetEntity: self::class, inversedBy: 'typologies')]
+    private Collection $parent;
 
     public function __construct()
     {
         $this->categories = new ArrayCollection();
+        $this->parent = new ArrayCollection();
+        $this->typologies = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -112,28 +102,25 @@ class Typology
     }
 
     /**
-     * @return Collection<int, TypologyCategory>
+     * @return Collection<int, self>
      */
-    public function getCategories(): Collection
+    public function getParent(): Collection
     {
-        return $this->categories;
+        return $this->parent;
     }
 
-    public function addCategory(TypologyCategory $category): self
+    public function addParent(self $parent): self
     {
-        if (!$this->categories->contains($category)) {
-            $this->categories->add($category);
-            $category->addParent($this);
+        if (!$this->parent->contains($parent)) {
+            $this->parent->add($parent);
         }
 
         return $this;
     }
 
-    public function removeCategory(TypologyCategory $category): self
+    public function removeParent(self $parent): self
     {
-        if ($this->categories->removeElement($category)) {
-            $category->removeParent($this);
-        }
+        $this->parent->removeElement($parent);
 
         return $this;
     }
