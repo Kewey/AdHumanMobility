@@ -1,7 +1,7 @@
 import React, { ForwardedRef, useEffect, useRef } from 'react'
 import { Icon, Map, Point } from 'leaflet'
 import { MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet'
-import { Disturbance } from '../../types/disturbance'
+import { Disruption } from '../../types/disruption'
 import { StrapiEntity } from '../../types/api'
 import Button from '../Button'
 import { useRouter } from 'next/router'
@@ -15,16 +15,16 @@ const iconMarker = new Icon({
   iconSize: new Point(41, 41),
 })
 
-export interface MapDisturbancesProps {
+export interface MapDisruptionsProps {
   position?: [number, number]
-  disturbances?: StrapiEntity<Disturbance>[]
+  disruptions?: StrapiEntity<Disruption>[]
 }
 
-const MapDisturbances = ({
+const MapDisruptions = ({
   forwardedRef,
   position,
-  disturbances,
-}: MapDisturbancesProps & { forwardedRef: ForwardedRef<Map | null> }) => {
+  disruptions,
+}: MapDisruptionsProps & { forwardedRef: ForwardedRef<Map | null> }) => {
   const router = useRouter()
 
   return (
@@ -34,8 +34,8 @@ const MapDisturbances = ({
       zoom={13}
       className="h-full"
     >
-      {disturbances?.map(
-        ({ id, attributes: { latitude, longitude, ...disturbance } }) => (
+      {disruptions?.map(
+        ({ id, attributes: { latitude, longitude, ...disruption } }) => (
           <Marker
             key={id}
             icon={iconMarker}
@@ -55,15 +55,15 @@ const MapDisturbances = ({
                 alt="WIP"
                 className="h-[150px] w-full bg-slate-100 rounded-md mb-2"
               />
-              <h4 className="mb-2">{disturbance.location}</h4>
+              <h4 className="mb-2">{disruption.location}</h4>
               <div className="mb-4">
-                <p>{disturbance.description.slice(0, 120)}...</p>
+                <p>{disruption.description.slice(0, 120)}...</p>
               </div>
               <Button
                 variant="secondary"
                 size="sm"
                 block
-                onClick={() => router.push(`/disturbances/${id}`)}
+                onClick={() => router.push(`/disruptions/${id}`)}
               >
                 Voir le details
               </Button>
@@ -79,4 +79,4 @@ const MapDisturbances = ({
   )
 }
 
-export default MapDisturbances
+export default MapDisruptions

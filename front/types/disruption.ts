@@ -1,10 +1,10 @@
-import { StrapiCall, StrapiCallArray, StrapiEntity } from './api'
+import { StrapiCallArray, StrapiEntity } from './api'
 import { Referent } from './referent'
 import { Media } from './media'
 
-export interface Disturbance {
+export interface Disruption {
   uuid: string
-  type: DISTURBANCE_TYPE
+  type: Disruption_TYPE
   car_type: VEHICULE_TYPE
   priority: PRIORITY
   status: string
@@ -19,11 +19,11 @@ export interface Disturbance {
   createdAt: string
   updatedAt: string
   publishedAt: string
-  disturbanceAt: string
+  disruptionAt: string
 }
 
-export interface DisturbanceFormType {
-  type: DISTURBANCE_TYPE
+export interface DisruptionFormType {
+  type: Disruption_TYPE
   car_type: VEHICULE_TYPE
   priority: keyof PRIORITY
   evidences: FileList
@@ -39,10 +39,10 @@ export interface DisturbanceFormType {
   latitude: number
   referent?: StrapiEntity<Referent>
   relationship: string
-  disturbanceAt: string
+  disruptionAt: string
 }
 
-export enum DISTURBANCE_TYPE {
+export enum Disruption_TYPE {
   PROFESSIONAL = 'Professionnel',
   INDIVIDUAL = 'Particulier',
 }

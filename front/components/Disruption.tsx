@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import { displayMedia } from '../types/api'
-import { Disturbance as DisturbanceType, PRIORITY } from '../types/disturbance'
+import { Disruption as disruptionType, PRIORITY } from '../types/disruption'
 import Badge from './Badge'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
@@ -14,12 +14,12 @@ import {
 import Link from 'next/link'
 import dayjs from 'dayjs'
 
-interface DisturbanceProps {
-  disturbance: DisturbanceType
+interface DisruptionProps {
+  disruption: disruptionType
 }
 
-export const Disturbance = ({
-  disturbance: {
+export const Disruption = ({
+  disruption: {
     description,
     type,
     car_type,
@@ -27,12 +27,12 @@ export const Disturbance = ({
     location,
     referent,
     createdAt,
-    disturbanceAt,
+    disruptionAt,
     priority,
     blurredEvidences,
-    ...disturbance
+    ...disruption
   },
-}: DisturbanceProps) => (
+}: DisruptionProps) => (
   <div className="max-w-4xl mx-auto">
     <Link href={'/'}>
       <a>
@@ -87,7 +87,7 @@ export const Disturbance = ({
       <div>
         <h6 className="text-sm text-gray-400">Date de le perturbation</h6>
         <p className="text-gray-600">
-          {dayjs(disturbanceAt).format('dddd DD MMMM YYYY')}
+          {dayjs(disruptionAt).format('dddd DD MMMM YYYY')}
         </p>
       </div>
     </div>

@@ -34,7 +34,7 @@ const Header = ({ searchBar }: any) => {
       <div className="hidden lg:block">{searchBar}</div>
 
       <div className="lg:flex hidden place-self-center justify-self-end items-center gap-4">
-        <Link href="/disturbances/new" passHref>
+        <Link href="/disruptions/new" passHref>
           <Button
             size="sm"
             data-tip="Vous devez vous connecter pour créer une perturbation"
@@ -91,9 +91,9 @@ const Header = ({ searchBar }: any) => {
               <a>Contact</a>
             </Link>
             <hr />
-            <Link href="/disturbances/new" passHref>
+            <Link href="/disruptions/new" passHref>
               <Button
-                data-for="disturbance-unauthenticated"
+                data-for="disruption-unauthenticated"
                 size="sm"
                 textAlign="center"
                 disabled={!session}

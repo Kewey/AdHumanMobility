@@ -11,13 +11,13 @@ import Input from '../../components/form/Input'
 import Layout from '../../components/Layout'
 import Textarea from '../../components/form/Textarea'
 import Checkbox from '../../components/form/Checkbox'
-import { postDisturbance } from '../../services/disturbanceService'
+import { disruptionService } from '../../services'
 import {
-  DisturbanceFormType,
-  DISTURBANCE_TYPE,
+  DisruptionFormType,
+  Disruption_TYPE,
   PRIORITY,
   VEHICULE_TYPE,
-} from '../../types/disturbance'
+} from '../../types/disruption'
 import dayjs from 'dayjs'
 import {
   getCategoriesFromTypology,
@@ -26,7 +26,6 @@ import {
   getTypologies,
   postCompany,
 } from '../../services/categorieServices'
-import { StrapiEntity, StrapiError } from '../../types/api'
 import { Category, Subcategory, Typology } from '../../types/typology'
 import { SearchInput } from '../../components/form/SearchInput'
 import { Referent } from '../../types/referent'
@@ -59,11 +58,11 @@ export const getServerSideProps = async (
   }
 }
 
-interface NewDisturbanceProps {
+interface NewdisruptionProps {
   typologies: StrapiEntity<Typology>[]
 }
 
-function NewDisturbance({ typologies }: NewDisturbanceProps) {
+function Newdisruption({ typologies }: NewdisruptionProps) {
   const [categories, setCategories] = useState<StrapiEntity<Category>[]>([])
   const [subCategories, setSubCategories] = useState<
     StrapiEntity<Subcategory>[]
@@ -72,7 +71,7 @@ function NewDisturbance({ typologies }: NewDisturbanceProps) {
   const [companyQuery, setCompanyQuery] = useState('')
 
   const { register, handleSubmit, control, setValue, getValues, watch } =
-    useForm<DisturbanceFormType>({
+    useForm<DisruptionFormType>({
       defaultValues: {
         latitude: 0,
         longitude: 0,
@@ -124,15 +123,15 @@ function NewDisturbance({ typologies }: NewDisturbanceProps) {
   
   */
 
-  const onSubmit = async (data: DisturbanceFormType) => {
+  const onSubmit = async (data: disruptionFormType) => {
     // @ts-ignore
     const body = { ...data, author: session?.id?.toString() || '' }
 
     try {
-      const res = await postDisturbance(body)
+      const res = await postdisruption(body)
 
-      // await axios.post('/api/form/disturbance', body)
-      router.push(`/disturbances/${res.data.id}`)
+      // await axios.post('/api/form/disruption', body)
+      router.push(`/disruptions/${res.data.id}`)
     } catch (error) {
       const { message, response } = error as AxiosError<StrapiError>
       console.error(error)
@@ -157,7 +156,7 @@ function NewDisturbance({ typologies }: NewDisturbanceProps) {
           </p>
         </div>
         <form
-          id="disturbanceForm"
+          id="disruptionForm"
           onSubmit={handleSubmit(onSubmit)}
           className="grid lg:grid-cols-2 grid-cols-1 gap-8"
         >
@@ -270,10 +269,10 @@ function NewDisturbance({ typologies }: NewDisturbanceProps) {
 
               <div className="mb-3">
                 <Input
-                  {...register('disturbanceAt', {
+                  {...register('disruptionAt', {
                     max: dayjs().format('YYYY-MM-DDTHH:mm'),
                   })}
-                  name="disturbanceAt"
+                  name="disruptionAt"
                   label="Date de la perturbation"
                   type="datetime-local"
                 />
@@ -320,21 +319,21 @@ function NewDisturbance({ typologies }: NewDisturbanceProps) {
                     name="type"
                     label="Oui"
                     type={'radio'}
-                    value={DISTURBANCE_TYPE.PROFESSIONAL}
+                    value={Disruption_TYPE.PROFESSIONAL}
                   />
                   <Checkbox
                     register={register}
                     name="type"
                     label="Non"
                     type={'radio'}
-                    value={DISTURBANCE_TYPE.INDIVIDUAL}
+                    value={Disruption_TYPE.INDIVIDUAL}
                   />
                 </div>
               </div>
 
               <div
                 className={`mb-3 ${
-                  watch('type') === DISTURBANCE_TYPE.INDIVIDUAL
+                  watch('type') === Disruption_TYPE.INDIVIDUAL
                     ? 'opacity-60'
                     : ''
                 }`}
@@ -343,7 +342,7 @@ function NewDisturbance({ typologies }: NewDisturbanceProps) {
                   Nom de l'entreprise concernées
                 </label>
                 <SearchInput
-                  disabled={watch('type') !== DISTURBANCE_TYPE.PROFESSIONAL}
+                  disabled={watch('type') !== Disruption_TYPE.PROFESSIONAL}
                   displayedProperty="companyName"
                   placeholder="Uber, Lime, ..."
                   options={companies}
@@ -397,7 +396,7 @@ function NewDisturbance({ typologies }: NewDisturbanceProps) {
             type="submit"
             variant="primary"
             block
-            form="disturbanceForm"
+            form="disruptionForm"
             disabled={!getValues('typology')}
           >
             Envoyer le dossier
@@ -408,4 +407,4 @@ function NewDisturbance({ typologies }: NewDisturbanceProps) {
   )
 }
 
-export default NewDisturbance
+export default Newdisruption

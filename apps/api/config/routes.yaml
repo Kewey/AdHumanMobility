@@ -1,0 +1,3 @@
+auth:
+  path: /signin
+  methods: ['POST']

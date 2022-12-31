@@ -1,0 +1,18 @@
+App\Entity\User:
+  user_test:
+    email: jojo@test.fr
+    password: <hashPassword('test')>
+    roles: ['ROLE_ADMIN']
+    firstname: Jordan
+    lastname: Souchez
+    username: Jordan Souchez
+    phone: <fr_FR:phoneNumber()>
+
+  user_{1..20}:
+    email: <fr_FR:email()>
+    password: <hashPassword('123456')>
+    roles: ['ROLE_USER']
+    firstname: <fr_FR:firstname()>
+    lastname: <fr_FR:lastname()>
+    username: <fr_FR:firstName()> <fr_FR:lastName()>
+    phone: <fr_FR:phoneNumber()>
