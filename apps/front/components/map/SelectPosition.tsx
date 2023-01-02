@@ -13,7 +13,7 @@ import { Combobox } from '@headlessui/react'
 import { faCrosshairs, faSpinner } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
-import { Adress } from '../../types/ops'
+import { Adress } from '../../types/openStreetMap'
 
 const iconMarker = new Icon({
   iconUrl: '/marker-shadow.png',

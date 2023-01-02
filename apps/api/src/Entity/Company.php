@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiProperty;
 use App\Repository\CompanyRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -17,11 +18,11 @@ class Company
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, unique: true)]
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $status = null;
+    private ?CompanyStatus $status = null;
 
     #[ORM\OneToMany(mappedBy: 'company', targetEntity: Contact::class, orphanRemoval: true)]
     private Collection $contacts;
@@ -48,12 +49,12 @@ class Company
         return $this;
     }
 
-    public function getStatus(): ?string
+    public function getStatus(): ?CompanyStatus
     {
         return $this->status;
     }
 
-    public function setStatus(string $status): self
+    public function setStatus(CompanyStatus $status): self
     {
         $this->status = $status;
 
@@ -89,4 +90,11 @@ class Company
 
         return $this;
     }
+}
+
+enum CompanyStatus: string
+{
+    case DRAFT = 'draft';
+    case PUBLISHED = 'published';
+    case ARCHIVED = 'archived';
 }

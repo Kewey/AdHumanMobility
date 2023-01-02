@@ -11,7 +11,7 @@ import Input from '../../components/form/Input'
 import Layout from '../../components/Layout'
 import Textarea from '../../components/form/Textarea'
 import Checkbox from '../../components/form/Checkbox'
-import { disruptionService } from '../../services'
+import { disruptionService, typologyService } from '../../services'
 import {
   DisruptionFormType,
   Disruption_TYPE,
@@ -19,16 +19,10 @@ import {
   VEHICULE_TYPE,
 } from '../../types/disruption'
 import dayjs from 'dayjs'
-import {
-  getCategoriesFromTypology,
-  getCompanies,
-  getSubCategoriesFromCategory,
-  getTypologies,
-  postCompany,
-} from '../../services/categorieServices'
-import { Category, Subcategory, Typology } from '../../types/typology'
+import { Typology, TYPOLOGY_ENUM } from '../../types/typology'
 import { SearchInput } from '../../components/form/SearchInput'
 import { Referent } from '../../types/referent'
+import { HydraRessource } from '../../types/api'
 
 const Map = dynamic(() => import('../../components/map/SelectPosition'), {
   ssr: false,
@@ -48,27 +42,24 @@ export const getServerSideProps = async (
     }
   }
 
-  const res = await getTypologies()
-  const typologies = await res.json()
+  const { typologies } = await typologyService.getMainTypologies()
 
   return {
     props: {
-      typologies: typologies.data,
+      typologies,
     },
   }
 }
 
-interface NewdisruptionProps {
-  typologies: StrapiEntity<Typology>[]
+interface NewDisruptionProps {
+  typologies: Typology[]
 }
 
-function Newdisruption({ typologies }: NewdisruptionProps) {
-  const [categories, setCategories] = useState<StrapiEntity<Category>[]>([])
-  const [subCategories, setSubCategories] = useState<
-    StrapiEntity<Subcategory>[]
-  >([])
-  const [companies, setCompanies] = useState<StrapiEntity<Referent>[]>([])
-  const [companyQuery, setCompanyQuery] = useState('')
+function Newdisruption({ typologies }: NewDisruptionProps) {
+  const [categories, setCategories] = useState<Typology[]>([])
+  const [subCategories, setSubCategories] = useState<Typology[]>([])
+  const [companies, setCompanies] = useState<Referent[]>([])
+  const [companyQuery, setCompanyQuery] = useState<string>('')
 
   const { register, handleSubmit, control, setValue, getValues, watch } =
     useForm<DisruptionFormType>({
@@ -84,19 +75,20 @@ function Newdisruption({ typologies }: NewdisruptionProps) {
   useEffect(() => {
     const subscription = watch(async (value, { name }) => {
       switch (name) {
-        case 'typology':
-          const categories = await getCategoriesFromTypology(value[name] || '')
-          setCategories(categories)
-          setValue('subCategory', '')
-          setValue('category', '')
-          return
-
-        case 'category':
-          const subCategories = await getSubCategoriesFromCategory(
-            value[name] || ''
+        case TYPOLOGY_ENUM.TYPOLOGY:
+          const categories = await typologyService.getCategoriesFromTypology(
+            value[name]
           )
+
+          setCategories(categories)
+          setValue(TYPOLOGY_ENUM.SUB_CATEGORY, '')
+          setValue(TYPOLOGY_ENUM.CATEGORY, '')
+          return
+        case TYPOLOGY_ENUM.CATEGORY:
+          const subCategories =
+            await typologyService.getSubCategoriesFromCategory(value[name])
           setSubCategories(subCategories)
-          setValue('subCategory', '')
+          setValue(TYPOLOGY_ENUM.SUB_CATEGORY, '')
           return
         default:
           return
@@ -104,18 +96,18 @@ function Newdisruption({ typologies }: NewdisruptionProps) {
     })
 
     return () => subscription.unsubscribe()
-  }, [watch('typology'), watch('category')])
+  }, [watch(TYPOLOGY_ENUM.TYPOLOGY), watch(TYPOLOGY_ENUM.CATEGORY)])
 
-  useEffect(() => {
-    if (!companyQuery) return
+  // useEffect(() => {
+  //   if (!companyQuery) return
 
-    async function getCompany() {
-      const companies = await getCompanies(companyQuery)
-      setCompanies(companies)
-    }
+  //   async function getCompany() {
+  //     const companies = await getCompanies(companyQuery)
+  //     setCompanies(companies)
+  //   }
 
-    getCompany()
-  }, [companyQuery])
+  //   getCompany()
+  // }, [companyQuery])
 
   /*
 
@@ -123,21 +115,17 @@ function Newdisruption({ typologies }: NewdisruptionProps) {
   
   */
 
-  const onSubmit = async (data: disruptionFormType) => {
-    // @ts-ignore
-    const body = { ...data, author: session?.id?.toString() || '' }
-
+  const onSubmit = async (data: DisruptionFormType) => {
     try {
-      const res = await postdisruption(body)
-
+      // const res = await postDisruption(data)
       // await axios.post('/api/form/disruption', body)
-      router.push(`/disruptions/${res.data.id}`)
+      // router.push(`/disruptions/${resd}`)
     } catch (error) {
-      const { message, response } = error as AxiosError<StrapiError>
+      const { message, response } = error as AxiosError<any>
       console.error(error)
 
       if (response?.status === 400) {
-        toast.error(response.data.error.message)
+        // toast.error(response)
         return
       }
 
@@ -168,12 +156,12 @@ function Newdisruption({ typologies }: NewdisruptionProps) {
               {typologies?.map((typology, index) => (
                 <Checkbox
                   key={index}
-                  iconUrl={typology.attributes?.icon?.data?.attributes?.url}
+                  iconUrl={typology?.icon?.contentUrl}
                   register={register}
                   name="typology"
-                  label={typology.attributes.label}
+                  label={typology.label}
                   type={'radio'}
-                  value={typology.id.toString()}
+                  value={typology.id}
                 />
               ))}
             </div>
@@ -182,41 +170,39 @@ function Newdisruption({ typologies }: NewdisruptionProps) {
           {categories.length > 0 && (
             <div className="col-span-full">
               <label className="mb-2 text-gray-400  font-semibold block w-full">
-                Choissiez une catégorie
+                Choisissez une catégorie
               </label>
               <div className="grid md:grid-cols-3 gap-2">
                 {categories?.map((category, index) => (
                   <Checkbox
                     key={index}
-                    iconUrl={category.attributes?.icon?.data?.attributes?.url}
+                    iconUrl={category?.icon?.contentUrl}
                     register={register}
                     name="category"
-                    label={category.attributes.label}
+                    label={category.label}
                     type={'radio'}
-                    value={category.id.toString()}
+                    value={category.id}
                   />
                 ))}
               </div>
             </div>
           )}
 
-          {subCategories.length > 0 && (
+          {subCategories?.length > 0 && (
             <div className="col-span-full">
               <label className="mb-2 text-gray-400 font-semibold block w-full">
-                Choissiez une sous catégorie
+                Choisissez une sous catégorie
               </label>
               <div className="grid md:grid-cols-3 gap-2">
                 {subCategories?.map((subCategory, index) => (
                   <Checkbox
                     key={index}
-                    iconUrl={
-                      subCategory.attributes?.icon?.data?.attributes?.url
-                    }
+                    iconUrl={subCategory?.icon?.contentUrl}
                     register={register}
                     name="subCategory"
-                    label={subCategory.attributes.label}
+                    label={subCategory.label}
                     type={'radio'}
-                    value={subCategory.id.toString()}
+                    value={subCategory.id}
                   />
                 ))}
               </div>
@@ -349,12 +335,12 @@ function Newdisruption({ typologies }: NewdisruptionProps) {
                   selectedValue={watch('referent')}
                   query={companyQuery}
                   setQuery={(value) => setCompanyQuery(value)}
-                  handleSelectedOption={(value: StrapiEntity<Referent>) =>
+                  handleSelectedOption={(value: Referent) =>
                     setValue('referent', value)
                   }
                   handleAddNewOption={async (value) => {
-                    const newCompany = await postCompany(value)
-                    setValue('referent', newCompany)
+                    // const newCompany = await postCompany(value)
+                    // setValue('referent', newCompany)
                   }}
                 />
               </div>

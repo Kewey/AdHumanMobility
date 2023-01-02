@@ -1,3 +1,4 @@
+import axios from 'axios'
 import NextAuth from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 
@@ -15,27 +16,23 @@ const options = {
       async authorize(credentials, req) {
         // Add logic here to look up the user from the credentials supplied
         try {
-          const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/auth/local`,
+          const fetchAuth = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/signin`,
             {
               method: 'POST',
-              body: JSON.stringify({
-                identifier: credentials.email.toLowerCase(),
-                password: credentials.password,
-              }),
-              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(credentials),
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: null,
+              },
             }
           )
 
-          const { user, jwt } = await res.json()
+          const { token } = await fetchAuth.json()
 
-          if (user) {
-            return { ...user, jwt }
-          } else {
-            return null
-          }
+          return token
         } catch (error) {
-          console.log('caught error', error)
+          console.log('CredentialsProvider', error)
           return null
         }
       },
@@ -46,17 +43,18 @@ const options = {
     strategy: 'jwt',
   },
   callbacks: {
-    jwt({ token, user }) {
-      if (user) {
-        token.jwt = user.jwt
-        token.id = user.id
-        token.name = user.username
-        token.email = user.email
-      }
-      return token
+    jwt(token) {
+      return { token }
     },
-    session({ session, token }) {
+    async session({ session, token, user }) {
+      console.log('{ session, token, user }', { session, token, user })
+
+      axios.defaults.headers.common['Authorization'] = null
+
+      session.accessToken = token.accessToken
+
       session.id = token.id
+      session.userId = user?.userId
       session.jwt = token.jwt
       return session
     },

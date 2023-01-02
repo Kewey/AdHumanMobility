@@ -24,8 +24,13 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[UniqueEntity('email')]
 #[ApiResource(
     operations: [
+        new Post(
+            processor: UserPasswordHasher::class,
+            uriTemplate: '/signup',
+            openapi: false,
+            denormalizationContext: ['groups' => ['user:create']],
+        ),
         new GetCollection(security: "is_granted('ROLE_ADMIN')"),
-        new Post(processor: UserPasswordHasher::class, uriTemplate: '/signup'),
         new Get(security: "is_granted('ROLE_USER')"),
         new Put(processor: UserPasswordHasher::class, security: "is_granted('ROLE_ADMIN') or object.owner == user"),
         new Delete(security: "is_granted('ROLE_ADMIN') or object == user"),
@@ -41,7 +46,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Groups(['user:read', 'user:create', 'user:update'])]
+    #[Groups(['user:create', 'user:update'])]
     #[Assert\NotBlank]
     #[Assert\Email]
     #[ORM\Column(length: 180, unique: true)]
@@ -54,7 +59,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var string The hashed password
      */
     #[Assert\NotBlank(groups: ['user:create'])]
-    #[Groups(['user:create', 'user:update'])]
     #[ORM\Column]
     private ?string $password = null;
 
@@ -66,15 +70,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $disruptions;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['user:read', 'user:create', 'user:update'])]
+    #[Groups(['user:create', 'user:update'])]
     private ?string $phone = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['user:read', 'user:create', 'user:update'])]
+    #[Groups(['user:create', 'user:update'])]
     private ?string $firstname = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['user:read', 'user:create', 'user:update'])]
+    #[Groups(['user:create', 'user:update'])]
     private ?string $lastname = null;
 
     #[ORM\Column(length: 255)]

@@ -1,3 +1,4 @@
 import disruptionService from './disruptionService'
+import typologyService from './typologyService'
 
-export { disruptionService }
+export { disruptionService, typologyService }

@@ -2,9 +2,15 @@ import { getCsrfToken, signIn } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React from 'react'
+import { useForm } from 'react-hook-form'
 import Button from '../components/Button'
 import Input from '../components/form/Input'
 import Layout from '../components/Layout'
+
+interface AuthenticationFormType {
+  email: string
+  password: string
+}
 
 export async function getServerSideProps(context: any) {
   return {
@@ -17,19 +23,29 @@ export async function getServerSideProps(context: any) {
 function Login({ csrfToken }: any) {
   const router = useRouter()
 
-  const onSubmit = async (e: any) => {
-    e.preventDefault()
-    signIn('credentials', {
-      email: e.target.email.value,
-      password: e.target.password.value,
-      redirect: false,
-    }).then(({ ok, error }: any) => {
-      if (ok) {
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<AuthenticationFormType>()
+
+  const onSubmit = async ({ email, password }: AuthenticationFormType) => {
+    try {
+      await signIn('credentials', {
+        email,
+        password,
+        redirect: false,
+      }).then(({ ok, error }: any) => {
+        if (!ok) {
+          throw new Error(error)
+        }
+
         router.push('/')
-      } else {
-        console.warn('error: ', error)
-      }
-    })
+      })
+    } catch (error) {
+      console.warn(error)
+    }
   }
 
   return (
@@ -37,23 +53,31 @@ function Login({ csrfToken }: any) {
       <div className="max-w-md m-auto p-4">
         <h1 className="text-3xl font-extrabold">Connexion</h1>
 
-        <form method="post" onSubmit={onSubmit}>
+        <form method="post" onSubmit={handleSubmit(onSubmit)}>
           <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
           <div className="mb-3">
             <Input
+              {...register('email', {
+                required: 'Vous devez renseigner votre adresse mail',
+              })}
               label="Adresse mail"
               placeholder="adresse@mail.com"
               name="email"
               type={'email'}
+              error={errors.email}
             />
           </div>
 
           <div className="mb-3">
             <Input
+              {...register('password', {
+                required: 'Vous devez renseigner votre mot de passe',
+              })}
               label="Mot de passe"
               placeholder="******"
               name="password"
               type={'password'}
+              error={errors.password}
             />
           </div>
 

@@ -1,7 +1,6 @@
 import { icon } from '@fortawesome/fontawesome-svg-core'
 import Image from 'next/image'
 import React, { InputHTMLAttributes } from 'react'
-import { displayMedia } from '../../types/api'
 
 interface CheckboxComponentProps extends InputHTMLAttributes<HTMLInputElement> {
   type: 'radio' | 'checkbox'
@@ -30,12 +29,7 @@ function Checkbox({
     >
       {iconUrl && (
         <div className="mr-2">
-          <Image
-            src={displayMedia(iconUrl)}
-            layout="fixed"
-            height={50}
-            width={50}
-          />
+          <Image src={iconUrl} layout="fixed" height={50} width={50} />
         </div>
       )}
       <span className="flex-1">{label}</span>

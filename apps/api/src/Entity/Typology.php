@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
@@ -11,8 +13,8 @@ use App\Repository\TypologyRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -22,13 +24,15 @@ use Symfony\Component\Validator\Constraints as Assert;
     operations: [
         new Get(),
         new GetCollection(),
-        new Post()
+        new Post(security: "is_granted('ROLE_ADMIN')")
     ],
     normalizationContext: ['groups' => ['typology:read']],
     denormalizationContext: ['groups' => ['typology:create']],
 )]
+#[ApiFilter(SearchFilter::class, properties: ['label' => 'exact'])]
 class Typology
 {
+    #[Groups(['typology:read'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -43,21 +47,28 @@ class Typology
     #[ORM\Column(length: 255)]
     private ?string $color = null;
 
-    #[Assert\NotBlank(groups: ['typology:create'])]
+    #[Assert\NotBlank]
     #[Groups(['typology:read', 'typology:create'])]
     #[ORM\ManyToOne(targetEntity: MediaObject::class)]
     #[ORM\JoinColumn(nullable: false)]
-    private ?MediaObject $file = null;
+    private ?MediaObject $icon = null;
 
-    #[Groups(['typology:read', 'typology:create'])]
-    #[ORM\ManyToMany(targetEntity: self::class, inversedBy: 'typologies')]
-    private Collection $parent;
+    #[Groups(['typology:create'])]
+    #[ORM\ManyToMany(targetEntity: self::class, inversedBy: 'childrens')]
+    #[ORM\JoinTable(name: "typology_parent")]
+    #[ORM\JoinColumn(name: "typology_id", referencedColumnName: "id")]
+    #[ORM\InverseJoinColumn(name: "parent_id", referencedColumnName: "id")]
+    private Collection $parents;
+
+    #[ApiProperty(writableLink: false, readableLink: true)]
+    #[MaxDepth(1)]
+    #[Groups(['typology:read'])]
+    #[ORM\ManyToMany(targetEntity: self::class, mappedBy: 'parents')]
+    private Collection $children;
 
     public function __construct()
     {
-        $this->categories = new ArrayCollection();
-        $this->parent = new ArrayCollection();
-        $this->typologies = new ArrayCollection();
+        $this->parents = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -89,14 +100,42 @@ class Typology
         return $this;
     }
 
-    public function getFile(): ?File
+    public function getIcon(): ?MediaObject
     {
-        return $this->file;
+        return $this->icon;
     }
 
-    public function setFile(File $file): self
+    public function setIcon(MediaObject $icon): self
     {
-        $this->file = $file;
+        $this->icon = $icon;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|self[]
+     */
+    public function getChildren(): Collection
+    {
+        return $this->children;
+    }
+
+    public function addChild(self $child): self
+    {
+        if (!$this->children->contains($child)) {
+            $this->children[] = $child;
+            $child->addParents($this);
+        }
+
+        return $this;
+    }
+
+    public function removeChild(self $child): self
+    {
+        if ($this->children->contains($child)) {
+            $this->children->removeElement($child);
+            $child->removeParents($this);
+        }
 
         return $this;
     }
@@ -104,23 +143,23 @@ class Typology
     /**
      * @return Collection<int, self>
      */
-    public function getParent(): Collection
+    public function getParents(): Collection
     {
-        return $this->parent;
+        return $this->parents;
     }
 
-    public function addParent(self $parent): self
+    public function addParents(self $parents): self
     {
-        if (!$this->parent->contains($parent)) {
-            $this->parent->add($parent);
+        if (!$this->parents->contains($parents)) {
+            $this->parents->add($parents);
         }
 
         return $this;
     }
 
-    public function removeParent(self $parent): self
+    public function removeParents(self $parents): self
     {
-        $this->parent->removeElement($parent);
+        $this->parents->removeElement($parents);
 
         return $this;
     }

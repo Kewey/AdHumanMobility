@@ -28,6 +28,8 @@ final class JwtDecorator implements OpenApiFactoryInterface
                 ],
             ],
         ]);
+
+
         $schemas['Credentials'] = new \ArrayObject([
             'type' => 'object',
             'properties' => [
@@ -49,7 +51,7 @@ final class JwtDecorator implements OpenApiFactoryInterface
             'bearerFormat' => 'JWT',
         ]);
 
-        $pathItem = new Model\PathItem(
+        $pathSignIn = new Model\PathItem(
             ref: 'JWT Token',
             post: new Model\Operation(
                 operationId: 'postCredentialsItem',
@@ -80,7 +82,41 @@ final class JwtDecorator implements OpenApiFactoryInterface
                 security: [],
             ),
         );
-        $openApi->getPaths()->addPath('/signin', $pathItem);
+        $openApi->getPaths()->addPath('/signin', $pathSignIn);
+
+        $pathSignUp = new Model\PathItem(
+            ref: 'JWT Token',
+            post: new Model\Operation(
+                summary: 'Register a new user.',
+                description: 'Registers a new user',
+                operationId: 'postUsersItem',
+                tags: ['Token'],
+                requestBody: new Model\RequestBody(
+                    description: 'Creates a User resource.',
+                    content: new \ArrayObject([
+                        'application/json' => [
+                            'schema' => [
+                                '$ref' => '#/components/schemas/User-user.create_user.update',
+                            ],
+                        ],
+                    ]),
+                ),
+                responses: [
+                    '201' => [
+                        'description' => 'Get JWT token',
+                        'content' => [
+                            'application/json' => [
+                                'schema' => [
+                                    '$ref' => '#/components/schemas/User-user.create_user.update',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                security: [],
+            ),
+        );
+        $openApi->getPaths()->addPath('/signup', $pathSignUp);
 
         return $openApi;
     }
