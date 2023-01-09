@@ -1,43 +1,41 @@
-import { StrapiCallArray, StrapiEntity } from './api'
-import { Referent } from './referent'
 import { Media } from './media'
+import { User } from './user'
 
 export interface Disruption {
-  uuid: string
-  type: Disruption_TYPE
-  car_type: VEHICULE_TYPE
+  // uuid: string
+  id: number
+  // type: Disruption_TYPE
+  transportType: VEHICULE_TYPE
   priority: PRIORITY
+  author: User
   status: string
-  description: string
-  location: string
-  longitude: number
-  latitude: number
-  referent?: { data: StrapiEntity<Referent> }
-  relationship: string | null
-  evidences: StrapiCallArray<Media>
-  blurredEvidences?: StrapiCallArray<Media>
+  content: string
+  // location: string
+  long: number
+  lat: number
+  // company: any
+  // relationship: string | null
+  contentUrl?: string
   createdAt: string
   updatedAt: string
-  publishedAt: string
-  disruptionAt: string
+  // disruptionAt: string
 }
 
 export interface DisruptionFormType {
   type: Disruption_TYPE
   car_type: VEHICULE_TYPE
-  priority: keyof PRIORITY
+  priority: PRIORITY
   evidences: FileList
+  company: string
   typology: string
   category: string
   subCategory: string
-  author: string
   instances: string[]
   status: string
   description: string
   location: string
   longitude: number
   latitude: number
-  referent?: StrapiEntity<Referent>
   relationship: string
   disruptionAt: string
 }

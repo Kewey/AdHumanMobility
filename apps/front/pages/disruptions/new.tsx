@@ -116,10 +116,12 @@ function Newdisruption({ typologies }: NewDisruptionProps) {
   */
 
   const onSubmit = async (data: DisruptionFormType) => {
+    console.log(data)
+
     try {
-      // const res = await postDisruption(data)
-      // await axios.post('/api/form/disruption', body)
-      // router.push(`/disruptions/${resd}`)
+      const res = await disruptionService.post(data)
+      await axios.post('/api/form/disruption', body)
+      router.push(`/disruptions/${resd}`)
     } catch (error) {
       const { message, response } = error as AxiosError<any>
       console.error(error)
@@ -134,7 +136,7 @@ function Newdisruption({ typologies }: NewDisruptionProps) {
   }
 
   return (
-    <Layout title="Nouvelle déclaration" description="">
+    <Layout title="Nouvelle déclaration">
       <div className="max-w-4xl mx-auto">
         <div className="mb-8">
           <h1 className="mb-3">Déclarer une perturbation</h1>
@@ -376,18 +378,12 @@ function Newdisruption({ typologies }: NewDisruptionProps) {
               </div>
             </>
           )}
+          <div className="mt-6 col-span-2">
+            <Button block variant="primary" disabled={!getValues('typology')}>
+              Envoyer le dossier
+            </Button>
+          </div>
         </form>
-        <div className="mt-6">
-          <Button
-            type="submit"
-            variant="primary"
-            block
-            form="disruptionForm"
-            disabled={!getValues('typology')}
-          >
-            Envoyer le dossier
-          </Button>
-        </div>
       </div>
     </Layout>
   )

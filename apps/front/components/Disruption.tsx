@@ -1,6 +1,5 @@
 import Image from 'next/image'
-import { displayMedia } from '../types/api'
-import { Disruption as disruptionType, PRIORITY } from '../types/disruption'
+import { Disruption as DisruptionType, PRIORITY } from '../types/disruption'
 import Badge from './Badge'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
@@ -14,25 +13,21 @@ import {
 import Link from 'next/link'
 import dayjs from 'dayjs'
 
-interface DisruptionProps {
-  disruption: disruptionType
+interface DisruptionPageProps {
+  disruption: DisruptionType
 }
 
 export const Disruption = ({
   disruption: {
-    description,
-    type,
-    car_type,
+    content,
+    transportType,
     status,
-    location,
-    referent,
     createdAt,
-    disruptionAt,
     priority,
-    blurredEvidences,
+    contentUrl,
     ...disruption
   },
-}: DisruptionProps) => (
+}: DisruptionPageProps) => (
   <div className="max-w-4xl mx-auto">
     <Link href={'/'}>
       <a>
@@ -41,25 +36,18 @@ export const Disruption = ({
       </a>
     </Link>
     <div className="mt-4">
-      {blurredEvidences && blurredEvidences?.data?.length > 0 ? (
-        blurredEvidences?.data?.map((evidence) => (
-          <>
-            {evidence.attributes.mime.includes('image') && (
-              <div className="mb-3">
-                <Image
-                  src={displayMedia(evidence.attributes.url)}
-                  alt={evidence.attributes.name}
-                  height={175}
-                  layout="responsive"
-                  width={335}
-                  className="rounded-xl"
-                  objectFit="cover"
-                  objectPosition={'50% 50%'}
-                />
-              </div>
-            )}
-          </>
-        ))
+      {contentUrl ? (
+        <div className="mb-3">
+          <Image
+            src={contentUrl}
+            height={175}
+            layout="responsive"
+            width={335}
+            className="rounded-xl"
+            objectFit="cover"
+            objectPosition={'50% 50%'}
+          />
+        </div>
       ) : (
         <div className="w-full h-48 bg-slate-300 rounded-lg flex items-center justify-center p-6 text-center">
           <p className="text-slate-800">
@@ -69,16 +57,15 @@ export const Disruption = ({
       )}
     </div>
 
-    <h1 className="mt-4">{location}</h1>
+    <h1 className="mt-4">{content?.slice(0, 50)}</h1>
 
     <div className="inline-grid grid-flow-col gap-3 mb-4">
-      <Badge>{type}</Badge>
-      <Badge>{car_type}</Badge>
-      {status && <Badge>{status}</Badge>}
+      {/* <Badge>{type}</Badge> */}
+      <Badge>{transportType}</Badge>
     </div>
     <h5>Description</h5>
     <p
-      dangerouslySetInnerHTML={{ __html: description }}
+      dangerouslySetInnerHTML={{ __html: content }}
       className="text-gray-600 mb-8"
     />
 
@@ -87,7 +74,7 @@ export const Disruption = ({
       <div>
         <h6 className="text-sm text-gray-400">Date de le perturbation</h6>
         <p className="text-gray-600">
-          {dayjs(disruptionAt).format('dddd DD MMMM YYYY')}
+          {/* {dayjs(disruptionAt).format('dddd DD MMMM YYYY')} */}
         </p>
       </div>
     </div>
@@ -104,7 +91,7 @@ export const Disruption = ({
     <div className="flex items-center py-3">
       <div>
         <h6 className="text-sm text-gray-400">Localisation</h6>
-        <p className="text-gray-600">{location}</p>
+        {/* <p className="text-gray-600">{location}</p> */}
       </div>
     </div>
     <hr />
@@ -112,11 +99,11 @@ export const Disruption = ({
       <div>
         <h6 className="text-sm text-gray-400">Priorité</h6>
         {/* @ts-ignore */}
-        <p className="text-gray-600">{PRIORITY[priority.toUpperCase()]}</p>
+        <p className="text-gray-600">{PRIORITY[priority?.toUpperCase()]}</p>
       </div>
     </div>
     <hr />
-    {referent?.data && (
+    {/* {referent?.data && (
       <>
         <div className="flex items-center py-3">
           <div>
@@ -128,6 +115,6 @@ export const Disruption = ({
         </div>
         <hr />
       </>
-    )}
+    )} */}
   </div>
 )

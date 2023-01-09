@@ -1,31 +1,29 @@
 import { NextPage } from 'next'
 import { Disruption } from '../../components/Disruption'
 import Layout from '../../components/Layout'
-import { StrapiEntity } from '../../types/api'
 import { Disruption as disruptionType } from '../../types/disruption'
 import { disruptionService } from '../../services'
 
 interface PostPageProps {
-  disruption: StrapiEntity<disruptionType>
+  disruption: disruptionType
 }
 
 const disruptionPage: NextPage<PostPageProps> = ({ disruption }) => {
-  console.log('disruption', disruption)
   return (
-    <Layout title={disruption?.attributes?.location}>
-      {disruption && <Disruption disruption={disruption?.attributes} />}
+    <Layout title={disruption.content}>
+      <Disruption disruption={disruption} />
     </Layout>
   )
 }
 
 export async function getServerSideProps({
-  query: { uuid },
+  query: { id },
 }: {
-  query: { uuid: string }
+  query: { id: string }
 }) {
-  if (!uuid || Array.isArray(uuid)) return
+  if (!id || Array.isArray(id)) return
 
-  const disruption = await disruptionService.get(uuid)
+  const disruption = await disruptionService.get(id)
   return { props: { disruption } }
 }
 

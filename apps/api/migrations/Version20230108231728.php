@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20230102231236 extends AbstractMigration
+final class Version20230108231728 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -20,12 +20,14 @@ final class Version20230102231236 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('CREATE UNIQUE INDEX UNIQ_4FBF094F5E237E06 ON company (name)');
+        $this->addSql('ALTER TABLE disruption ALTER lat TYPE VARCHAR(255)');
+        $this->addSql('ALTER TABLE disruption ALTER long TYPE VARCHAR(255)');
     }
 
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('DROP INDEX UNIQ_4FBF094F5E237E06');
+        $this->addSql('ALTER TABLE disruption ALTER lat TYPE DOUBLE PRECISION');
+        $this->addSql('ALTER TABLE disruption ALTER long TYPE DOUBLE PRECISION');
     }
 }

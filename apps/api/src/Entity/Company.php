@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
+use App\ApiResource\Status;
 
 #[ApiResource]
 #[ORM\Entity(repositoryClass: CompanyRepository::class)]
@@ -22,7 +23,7 @@ class Company
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
-    private ?CompanyStatus $status = null;
+    private ?Status $status = Status::DRAFT;
 
     #[ORM\OneToMany(mappedBy: 'company', targetEntity: Contact::class, orphanRemoval: true)]
     private Collection $contacts;
@@ -49,12 +50,12 @@ class Company
         return $this;
     }
 
-    public function getStatus(): ?CompanyStatus
+    public function getStatus(): ?Status
     {
         return $this->status;
     }
 
-    public function setStatus(CompanyStatus $status): self
+    public function setStatus(Status $status): self
     {
         $this->status = $status;
 
@@ -90,11 +91,4 @@ class Company
 
         return $this;
     }
-}
-
-enum CompanyStatus: string
-{
-    case DRAFT = 'draft';
-    case PUBLISHED = 'published';
-    case ARCHIVED = 'archived';
 }

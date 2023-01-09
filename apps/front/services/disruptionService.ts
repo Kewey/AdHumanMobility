@@ -1,5 +1,10 @@
 import axios from 'axios'
-import { Disruption } from '../types/disruption'
+import { getSession } from 'next-auth/react'
+import {
+  Disruption,
+  DisruptionFormType,
+  Disruption_TYPE,
+} from '../types/disruption'
 
 axios.defaults.baseURL = process.env.NEXT_PUBLIC_API_URL
 
@@ -26,42 +31,41 @@ async function get(disruptionId: string, params = {}): Promise<Disruption> {
   return disruption
 }
 
-// async function post({
-//   referent,
-//   evidences,
-//   type,
-//   ...data
-// }: DisruptionFormType & { author: string }): Promise<Disruption[]>
-// > {
-//   const session = await getSession()
-//   const jwt = session?.jwt
+async function post({
+  evidences,
+  type,
+  ...data
+}: DisruptionFormType): Promise<Disruption[]> {
+  const session = await getSession()
+  console.log(session)
 
-//   const formdata = new FormData()
+  const jwt = session?.jwt
 
-//   // Array.from(evidences).forEach((file) => {
-//   //   formdata.append('files.evidences', file, file.name)
-//   // })
-//   formdata.append(
-//     'data',
-//     JSON.stringify({
-//       ...data,
-//       type,
-//       referent: type === Disruption_TYPE.PROFESSIONAL ? referent : null,
-//     })
-//   )
+  const formdata = new FormData()
 
-//   const { data: responseData } = await axios.post(`/disruptions`, formdata, {
-//     headers: {
-//       Authorization: `Bearer ${jwt}`,
-//     },
-//   })
-//   return responseData
-// }
+  Array.from(evidences).forEach((file) => {
+    formdata.append('files.evidences', file, file.name)
+  })
+  formdata.append(
+    'data',
+    JSON.stringify({
+      ...data,
+      type,
+    })
+  )
+
+  const { data: responseData } = await axios.post(`/disruptions`, formdata, {
+    headers: {
+      Authorization: `Bearer ${jwt}`,
+    },
+  })
+  return responseData
+}
 
 const disruptionService = {
   getAll,
   get,
-  // post,
+  post,
 }
 
 export default disruptionService

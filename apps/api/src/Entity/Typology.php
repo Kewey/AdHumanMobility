@@ -38,17 +38,17 @@ class Typology
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Groups(['typology:read', 'typology:create'])]
+    #[Groups(['typology:read', 'typology:create', 'disruptions:read'])]
     #[Assert\NotBlank]
     #[ORM\Column(length: 255)]
     private ?string $label = null;
 
-    #[Groups(['typology:read', 'typology:create'])]
+    #[Groups(['typology:read', 'typology:create', 'disruptions:read'])]
     #[ORM\Column(length: 255)]
     private ?string $color = null;
 
     #[Assert\NotBlank]
-    #[Groups(['typology:read', 'typology:create'])]
+    #[Groups(['typology:read', 'typology:create', 'disruptions:read'])]
     #[ORM\ManyToOne(targetEntity: MediaObject::class)]
     #[ORM\JoinColumn(nullable: false)]
     private ?MediaObject $icon = null;
@@ -66,9 +66,21 @@ class Typology
     #[ORM\ManyToMany(targetEntity: self::class, mappedBy: 'parents')]
     private Collection $children;
 
+    #[ORM\OneToMany(mappedBy: 'typology', targetEntity: Disruption::class)]
+    private Collection $disruptions;
+
+    #[ORM\OneToMany(mappedBy: 'category', targetEntity: Disruption::class)]
+    private Collection $categoryDisruptions;
+
+    #[ORM\OneToMany(mappedBy: 'subCategory', targetEntity: Disruption::class)]
+    private Collection $subCategoryDisruptions;
+
     public function __construct()
     {
         $this->parents = new ArrayCollection();
+        $this->disruptions = new ArrayCollection();
+        $this->categoryDisruptions = new ArrayCollection();
+        $this->subCategoryDisruptions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -160,6 +172,96 @@ class Typology
     public function removeParents(self $parents): self
     {
         $this->parents->removeElement($parents);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Disruption>
+     */
+    public function getDisruptions(): Collection
+    {
+        return $this->disruptions;
+    }
+
+    public function addDisruption(Disruption $disruption): self
+    {
+        if (!$this->disruptions->contains($disruption)) {
+            $this->disruptions->add($disruption);
+            $disruption->setTypology($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDisruption(Disruption $disruption): self
+    {
+        if ($this->disruptions->removeElement($disruption)) {
+            // set the owning side to null (unless already changed)
+            if ($disruption->getTypology() === $this) {
+                $disruption->setTypology(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Disruption>
+     */
+    public function getCategoryDisruptions(): Collection
+    {
+        return $this->categoryDisruptions;
+    }
+
+    public function addCategoryDisruption(Disruption $categoryDisruption): self
+    {
+        if (!$this->categoryDisruptions->contains($categoryDisruption)) {
+            $this->categoryDisruptions->add($categoryDisruption);
+            $categoryDisruption->setCategory($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCategoryDisruption(Disruption $categoryDisruption): self
+    {
+        if ($this->categoryDisruptions->removeElement($categoryDisruption)) {
+            // set the owning side to null (unless already changed)
+            if ($categoryDisruption->getCategory() === $this) {
+                $categoryDisruption->setCategory(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Disruption>
+     */
+    public function getSubCategoryDisruptions(): Collection
+    {
+        return $this->subCategoryDisruptions;
+    }
+
+    public function addSubCategoryDisruption(Disruption $subCategoryDisruption): self
+    {
+        if (!$this->subCategoryDisruptions->contains($subCategoryDisruption)) {
+            $this->subCategoryDisruptions->add($subCategoryDisruption);
+            $subCategoryDisruption->setSubCategory($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSubCategoryDisruption(Disruption $subCategoryDisruption): self
+    {
+        if ($this->subCategoryDisruptions->removeElement($subCategoryDisruption)) {
+            // set the owning side to null (unless already changed)
+            if ($subCategoryDisruption->getSubCategory() === $this) {
+                $subCategoryDisruption->setSubCategory(null);
+            }
+        }
 
         return $this;
     }

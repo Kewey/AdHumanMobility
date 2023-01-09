@@ -2,6 +2,7 @@
 
 namespace App\Serializer;
 
+use App\Entity\Disruption;
 use App\Entity\MediaObject;
 use Symfony\Component\Serializer\Normalizer\NormalizerAwareInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerAwareTrait;
@@ -33,6 +34,14 @@ final class MediaObjectNormalizer implements NormalizerInterface, NormalizerAwar
             return false;
         }
 
-        return $data instanceof MediaObject;
+        if ($data instanceof MediaObject) {
+            return true;
+        }
+
+        if ($data instanceof Disruption) {
+            return true;
+        }
+
+        return false;
     }
 }
