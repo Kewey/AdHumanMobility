@@ -62,6 +62,11 @@ api_platform:
   # Enable the data collector and the WebProfilerBundle integration.
   enable_profiler: true
 
+  defaults:
+    stateless: false
+    cache_headers:
+      vary: ['Content-Type', 'Authorization', 'Origin']
+
   swagger:
     versions: [3]
     api_keys:

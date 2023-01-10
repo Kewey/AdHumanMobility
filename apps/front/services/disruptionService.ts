@@ -26,6 +26,9 @@ async function getAll(
 async function get(disruptionId: string, params = {}): Promise<Disruption> {
   const { data: disruption } = await axios(`/disruptions/${disruptionId}`, {
     params,
+    headers: {
+      Authorization: '',
+    },
   })
 
   return disruption

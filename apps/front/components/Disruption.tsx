@@ -31,7 +31,12 @@ export const Disruption = ({
   <div className="max-w-4xl mx-auto">
     <Link href={'/'}>
       <a>
-        <FontAwesomeIcon icon={faAngleLeft} className="mr-1" />
+        <FontAwesomeIcon
+          height={16}
+          width={16}
+          icon={faAngleLeft}
+          className="mr-1"
+        />
         <span>Retour</span>
       </a>
     </Link>

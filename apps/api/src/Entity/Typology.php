@@ -8,6 +8,7 @@ use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Link;
 use ApiPlatform\Metadata\Post;
 use App\Repository\TypologyRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -28,6 +29,14 @@ use Symfony\Component\Validator\Constraints as Assert;
     ],
     normalizationContext: ['groups' => ['typology:read']],
     denormalizationContext: ['groups' => ['typology:create']],
+)]
+#[ApiResource(
+    uriTemplate: '/typologies/{typologyId}/children',
+    uriVariables: [
+        'typologyId' => new Link(fromClass: self::class, toProperty: 'parents'),
+    ],
+    normalizationContext: ['groups' => ['typology:read']],
+    operations: [new GetCollection()]
 )]
 #[ApiFilter(SearchFilter::class, properties: ['label' => 'exact'])]
 class Typology
@@ -60,9 +69,9 @@ class Typology
     #[ORM\InverseJoinColumn(name: "parent_id", referencedColumnName: "id")]
     private Collection $parents;
 
-    #[ApiProperty(writableLink: false, readableLink: true)]
     #[MaxDepth(1)]
     #[Groups(['typology:read'])]
+    #[ApiProperty(writableLink: false, readableLink: true)]
     #[ORM\ManyToMany(targetEntity: self::class, mappedBy: 'parents')]
     private Collection $children;
 

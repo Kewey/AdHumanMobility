@@ -61,6 +61,8 @@ const Home = ({ disruptions }: HomePageProps) => {
   const router = useRouter()
   const { data: session } = useSession()
 
+  console.log(session?.user)
+
   const mapRef = useRef<Map | null>(null)
 
   useEffect(() => {

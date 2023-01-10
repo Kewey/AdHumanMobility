@@ -42,7 +42,13 @@ export const getServerSideProps = async (
     }
   }
 
-  const { typologies } = await typologyService.getMainTypologies()
+  const {
+    data: { 'hydra:member': typologies, 'hydra:totalItems': totalItems },
+  } = await axios(`/typologies/${'1'}/children`, {
+    headers: {
+      Authorization: `Bearer ${session?.user.token}`,
+    },
+  })
 
   return {
     props: {
@@ -76,17 +82,16 @@ function Newdisruption({ typologies }: NewDisruptionProps) {
     const subscription = watch(async (value, { name }) => {
       switch (name) {
         case TYPOLOGY_ENUM.TYPOLOGY:
-          const categories = await typologyService.getCategoriesFromTypology(
-            value[name]
-          )
+          const { typologies: categories } =
+            await typologyService.getTypologyChildren(value[name])
 
           setCategories(categories)
           setValue(TYPOLOGY_ENUM.SUB_CATEGORY, '')
           setValue(TYPOLOGY_ENUM.CATEGORY, '')
           return
         case TYPOLOGY_ENUM.CATEGORY:
-          const subCategories =
-            await typologyService.getSubCategoriesFromCategory(value[name])
+          const { typologies: subCategories } =
+            await typologyService.getTypologyChildren(value[name])
           setSubCategories(subCategories)
           setValue(TYPOLOGY_ENUM.SUB_CATEGORY, '')
           return
@@ -120,8 +125,8 @@ function Newdisruption({ typologies }: NewDisruptionProps) {
 
     try {
       const res = await disruptionService.post(data)
-      await axios.post('/api/form/disruption', body)
-      router.push(`/disruptions/${resd}`)
+      await axios.post('/api/form/disruption', data)
+      router.push(`/disruptions/${res}`)
     } catch (error) {
       const { message, response } = error as AxiosError<any>
       console.error(error)
@@ -334,11 +339,11 @@ function Newdisruption({ typologies }: NewDisruptionProps) {
                   displayedProperty="companyName"
                   placeholder="Uber, Lime, ..."
                   options={companies}
-                  selectedValue={watch('referent')}
+                  selectedValue={watch('company')}
                   query={companyQuery}
                   setQuery={(value) => setCompanyQuery(value)}
-                  handleSelectedOption={(value: Referent) =>
-                    setValue('referent', value)
+                  handleSelectedOption={(value: string) =>
+                    setValue('company', value)
                   }
                   handleAddNewOption={async (value) => {
                     // const newCompany = await postCompany(value)

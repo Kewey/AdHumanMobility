@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiProperty;
 use App\Repository\UserRepository;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
@@ -11,6 +12,7 @@ use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use App\Controller\GetCurrentUser;
 use App\State\UserPasswordHasher;
+use App\State\UserProcessor;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -25,6 +27,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 #[ORM\Table(name: '`user`')]
 #[UniqueEntity('email')]
 #[ApiResource(
+    processor: UserProcessor::class,
     operations: [
         new Post(
             processor: UserPasswordHasher::class,

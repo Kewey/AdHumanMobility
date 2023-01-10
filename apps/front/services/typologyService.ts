@@ -1,4 +1,6 @@
 import axios from 'axios'
+import { getSession } from 'next-auth/react'
+import { useRouter } from 'next/router'
 import { Referent } from '../types/referent'
 import { Typology } from '../types/typology'
 
@@ -17,29 +19,41 @@ async function getAll(
 }
 
 async function get(typologyId = '', params = {}): Promise<Typology> {
+  const session = await getSession()
+
   const { data: typologies } = await axios(`/typologies/${typologyId}`, {
     params,
+    headers: {
+      Authorization: `Bearer ${session?.user.token}`,
+    },
   })
 
   return typologies
 }
 
-async function getMainTypologies(
+async function getTypologyChildren(
+  typologyId = '1',
   params = {}
 ): Promise<{ typologies: Typology[]; totalItems: number }> {
+  const session = await getSession()
+
+  if (!session) {
+    return { typologies: [], totalItems: 0 }
+  }
+  console.log(session)
+
   const {
-    data: {
-      'hydra:member': [rootTypology],
-      'hydra:totalItems': totalItems,
-    },
-  } = await axios(`/typologies`, {
+    data: { 'hydra:member': typologies, 'hydra:totalItems': totalItems },
+  } = await axios(`/typologies/${typologyId}/children`, {
     params: {
-      label: 'root',
       ...params,
+    },
+    headers: {
+      Authorization: `Bearer ${session?.user.token}`,
     },
   })
 
-  return { typologies: rootTypology.children, totalItems }
+  return { typologies, totalItems }
 }
 
 async function getCategoriesFromTypology(
@@ -117,7 +131,7 @@ async function getSubCategoriesFromCategory(
 export default {
   get,
   getAll,
-  getMainTypologies,
+  getTypologyChildren,
   getCategoriesFromTypology,
   getSubCategoriesFromCategory,
 }
