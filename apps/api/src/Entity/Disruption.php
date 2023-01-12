@@ -13,7 +13,6 @@ use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use App\ApiResource\Priority;
 use App\ApiResource\Transport;
-use DateTime;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
@@ -89,9 +88,7 @@ class Disruption
     #[ApiProperty(
         openapiContext: [
             'type' => 'string',
-            'enum' => [
-                Transport::CASES,
-            ],
+            'enum' => Transport::CASES,
             'example' => Transport::WALKER->value
         ]
     )]
@@ -118,7 +115,7 @@ class Disruption
     #[ApiProperty(
         openapiContext: [
             'type' => 'string',
-            'enum' => [Priority::CASES],
+            'enum' => Priority::CASES,
             'example' => Priority::LOW->value
         ]
     )]
@@ -149,16 +146,19 @@ class Disruption
 
     #[ORM\ManyToOne(inversedBy: 'disruptions')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['disruptions:read'])]
+    #[Assert\NotNull]
+    #[Groups(['disruptions:read', 'disruptions:write'])]
     private ?Typology $typology = null;
 
     #[ORM\ManyToOne(inversedBy: 'categoryDisruptions')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['disruptions:read'])]
+    #[Assert\NotNull]
+    #[Groups(['disruptions:read', 'disruptions:write'])]
     private ?Typology $category = null;
 
     #[ORM\ManyToOne(inversedBy: 'subCategoryDisruptions')]
-    #[Groups(['disruptions:read'])]
+    #[Assert\NotNull]
+    #[Groups(['disruptions:read', 'disruptions:write'])]
     private ?Typology $subCategory = null;
 
     public function __construct()

@@ -23,19 +23,19 @@ export interface Disruption {
 
 export interface DisruptionFormType {
   type: Disruption_TYPE
-  car_type: VEHICULE_TYPE
+  transportType: VEHICULE_TYPE
   priority: PRIORITY
-  evidences: FileList
+  file: FileList
   company: string
   typology: string
   category: string
   subCategory: string
   instances: string[]
   status: string
-  description: string
+  content: string
   location: string
-  longitude: number
-  latitude: number
+  long: number
+  lat: number
   relationship: string
   disruptionAt: string
 }
@@ -46,11 +46,11 @@ export enum Disruption_TYPE {
 }
 
 export enum VEHICULE_TYPE {
-  WALKER = 'Piéton',
-  BIKE = 'Vélo',
-  SCOOTER = 'Trottinette',
-  CAR = 'Voiture',
-  TRUCK = 'Camion',
+  WALKER = 'walker',
+  BIKE = 'bike',
+  SCOOTER = 'scooter',
+  CAR = 'car',
+  TRUCK = 'truck',
 }
 
 export enum PRIORITY {

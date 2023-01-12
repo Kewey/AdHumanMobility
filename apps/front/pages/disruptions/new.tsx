@@ -67,28 +67,41 @@ function Newdisruption({ typologies }: NewDisruptionProps) {
   const [companies, setCompanies] = useState<Referent[]>([])
   const [companyQuery, setCompanyQuery] = useState<string>('')
 
-  const { register, handleSubmit, control, setValue, getValues, watch } =
+  const { register, handleSubmit, setValue, getValues, watch } =
     useForm<DisruptionFormType>({
       defaultValues: {
-        latitude: 0,
-        longitude: 0,
+        lat: 0,
+        long: 0,
       },
     })
 
-  const { data: session } = useSession()
   const router = useRouter()
 
   useEffect(() => {
     const subscription = watch(async (value, { name }) => {
-      switch (name) {
-        case TYPOLOGY_ENUM.TYPOLOGY:
-          const { typologies: categories } =
-            await typologyService.getTypologyChildren(value[name])
+      if (name !== TYPOLOGY_ENUM.TYPOLOGY) {
+        return
+      }
 
-          setCategories(categories)
-          setValue(TYPOLOGY_ENUM.SUB_CATEGORY, '')
-          setValue(TYPOLOGY_ENUM.CATEGORY, '')
-          return
+      const { typologies: categories } =
+        await typologyService.getTypologyChildren(value[name])
+
+      setCategories(categories)
+      setValue(TYPOLOGY_ENUM.SUB_CATEGORY, '')
+      setValue(TYPOLOGY_ENUM.CATEGORY, '')
+      return
+    })
+
+    return () => subscription.unsubscribe()
+  }, [watch(TYPOLOGY_ENUM.TYPOLOGY)])
+
+  useEffect(() => {
+    if (!categories?.length) {
+      return
+    }
+
+    const subscription = watch(async (value, { name }) => {
+      switch (name) {
         case TYPOLOGY_ENUM.CATEGORY:
           const { typologies: subCategories } =
             await typologyService.getTypologyChildren(value[name])
@@ -101,7 +114,7 @@ function Newdisruption({ typologies }: NewDisruptionProps) {
     })
 
     return () => subscription.unsubscribe()
-  }, [watch(TYPOLOGY_ENUM.TYPOLOGY), watch(TYPOLOGY_ENUM.CATEGORY)])
+  }, [categories])
 
   // useEffect(() => {
   //   if (!companyQuery) return
@@ -121,12 +134,10 @@ function Newdisruption({ typologies }: NewDisruptionProps) {
   */
 
   const onSubmit = async (data: DisruptionFormType) => {
-    console.log(data)
-
     try {
       const res = await disruptionService.post(data)
-      await axios.post('/api/form/disruption', data)
-      router.push(`/disruptions/${res}`)
+      // await axios.post('/api/form/disruption', data)
+      router.push(`/disruptions/${res.id}`)
     } catch (error) {
       const { message, response } = error as AxiosError<any>
       console.error(error)
@@ -151,7 +162,6 @@ function Newdisruption({ typologies }: NewDisruptionProps) {
           </p>
         </div>
         <form
-          id="disruptionForm"
           onSubmit={handleSubmit(onSubmit)}
           className="grid lg:grid-cols-2 grid-cols-1 gap-8"
         >
@@ -224,7 +234,7 @@ function Newdisruption({ typologies }: NewDisruptionProps) {
                 </label>
                 <div className="h-[500px] rounded-xl overflow-hidden">
                   <Map
-                    selectedPosition={watch(['latitude', 'longitude'])}
+                    selectedPosition={watch(['lat', 'long'])}
                     onChange={async ([lat, lon]: [number, number]) => {
                       const {
                         data: { address },
@@ -243,8 +253,8 @@ function Newdisruption({ typologies }: NewDisruptionProps) {
                         'location',
                         `${address?.house_number} ${address?.road}, ${address?.city}, ${address?.country}`
                       )
-                      setValue('latitude', lat)
-                      setValue('longitude', lon)
+                      setValue('lat', lat)
+                      setValue('long', lon)
                     }}
                   />
                 </div>
@@ -296,7 +306,7 @@ function Newdisruption({ typologies }: NewDisruptionProps) {
                   Photo de la perturbation ou des lieux
                 </label>
                 <input
-                  {...register('evidences', { required: true })}
+                  {...register('file', { required: true })}
                   type={'file'}
                   multiple={true}
                 />
@@ -352,30 +362,30 @@ function Newdisruption({ typologies }: NewDisruptionProps) {
                 />
               </div>
 
-              {/* <div className="mb-3 lg:col-span-2">
-              <label className="mb-2 text-gray-400 font-semibold block w-full">
-                Type de véhicule
-              </label>
-              <div className="grid md:grid-cols-3 grid-cols-2 gap-2">
-                {(
-                  Object.keys(VEHICULE_TYPE) as (keyof typeof VEHICULE_TYPE)[]
-                ).map((key, index) => (
-                  <Checkbox
-                    key={index}
-                    register={register}
-                    name="car_type"
-                    label={VEHICULE_TYPE[key]}
-                    type={'radio'}
-                    value={VEHICULE_TYPE[key]}
-                  />
-                ))}
+              <div className="mb-3 lg:col-span-2">
+                <label className="mb-2 text-gray-400 font-semibold block w-full">
+                  Type de véhicule
+                </label>
+                <div className="grid md:grid-cols-3 grid-cols-2 gap-2">
+                  {(
+                    Object.keys(VEHICULE_TYPE) as (keyof typeof VEHICULE_TYPE)[]
+                  ).map((key, index) => (
+                    <Checkbox
+                      key={index}
+                      register={register}
+                      name="transportType"
+                      label={VEHICULE_TYPE[key]}
+                      type={'radio'}
+                      value={VEHICULE_TYPE[key]}
+                    />
+                  ))}
+                </div>
               </div>
-            </div> */}
 
               <div className="mb-3 lg:col-span-2">
                 <Textarea
                   register={register}
-                  name="description"
+                  name="content"
                   label="Description de la perturbation (250 caractères minimum)"
                   placeholder="Décrivez les lieux, si une ou plusieurs personnes sont bléssées, ..."
                   rows={4}

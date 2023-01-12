@@ -1,7 +1,21 @@
 import axios from 'axios'
-import NextAuth, { Awaitable, NextAuthOptions, Session, User } from 'next-auth'
+import NextAuth, { NextAuthOptions } from 'next-auth'
 import { JWT } from 'next-auth/jwt'
 import CredentialsProvider from 'next-auth/providers/credentials'
+
+async function refreshAccessToken(token: JWT) {
+  try {
+    const { data } = await axios.post(
+      `/token/refresh`,
+      { refreshToken: token.refreshToken },
+      {}
+    )
+
+    return data
+  } catch (error) {
+    return token
+  }
+}
 
 const options: NextAuthOptions = {
   providers: [
@@ -29,7 +43,7 @@ const options: NextAuthOptions = {
 
           // @ts-ignore
           axios.defaults.headers['Authorization'] = `Bearer ${data.token}`
-          return { token: data.token, ...data.user }
+          return data
         } catch (error) {
           return null
         }
@@ -48,7 +62,7 @@ const options: NextAuthOptions = {
         }
       }
 
-      return token
+      return refreshAccessToken(token)
     },
 
     async session({ session, token }) {

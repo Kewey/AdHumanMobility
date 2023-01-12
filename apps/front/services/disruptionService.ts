@@ -5,6 +5,7 @@ import {
   DisruptionFormType,
   Disruption_TYPE,
 } from '../types/disruption'
+import { TYPOLOGY_ENUM } from '../types/typology'
 
 axios.defaults.baseURL = process.env.NEXT_PUBLIC_API_URL
 
@@ -34,32 +35,45 @@ async function get(disruptionId: string, params = {}): Promise<Disruption> {
   return disruption
 }
 
-async function post({
-  evidences,
-  type,
-  ...data
-}: DisruptionFormType): Promise<Disruption[]> {
+async function post(data: DisruptionFormType): Promise<Disruption> {
   const session = await getSession()
   console.log(session)
 
-  const jwt = session?.jwt
+  const { file, ...rawData } = data
+
+  const jwt = session?.user.token
 
   const formdata = new FormData()
 
-  Array.from(evidences).forEach((file) => {
-    formdata.append('files.evidences', file, file.name)
+  Array.from(file).forEach((file) => {
+    formdata.append('file', file, file.name)
   })
-  formdata.append(
-    'data',
-    JSON.stringify({
-      ...data,
-      type,
-    })
-  )
+
+  for (const key in rawData) {
+    if (Object.prototype.hasOwnProperty.call(rawData, key)) {
+      // @ts-ignore
+      const dataValue = rawData[key]
+      switch (key) {
+        case TYPOLOGY_ENUM.TYPOLOGY:
+          formdata.append(key, `/typologies/${dataValue}`)
+          break
+        case TYPOLOGY_ENUM.CATEGORY:
+          formdata.append(key, `/typologies/${dataValue}`)
+          break
+        case TYPOLOGY_ENUM.SUB_CATEGORY:
+          formdata.append(key, `/typologies/${dataValue}`)
+          break
+
+        default:
+          formdata.append(key, dataValue)
+      }
+    }
+  }
 
   const { data: responseData } = await axios.post(`/disruptions`, formdata, {
     headers: {
       Authorization: `Bearer ${jwt}`,
+      'Content-Type': 'multipart/form-data',
     },
   })
   return responseData
