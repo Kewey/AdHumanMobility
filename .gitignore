@@ -3,3 +3,5 @@ memo.yml
 /back/docker
 /back/var
 /back/vendor
+/apps/*
+/docker
