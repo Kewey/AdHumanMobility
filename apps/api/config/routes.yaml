@@ -1,0 +1,9 @@
+auth:
+  path: /signin
+  methods: ['POST']
+
+api_token_refresh:
+  path: /token/refresh
+
+api_token_invalidate:
+  path: /token/invalidate

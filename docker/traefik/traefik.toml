@@ -1,0 +1,24 @@
+[global]
+  sendAnonymousUsage = false
+
+[api]
+  insecure = true
+  debug = true
+
+[entryPoints]
+  [entryPoints.web]
+    address = ":80"
+
+  [entryPoints.websecure]
+    address = ":443"
+
+[providers]
+  [providers.docker]
+    network = "proxy"
+    endpoint = "unix:///var/run/docker.sock"
+    watch = true
+    exposedByDefault = false
+    [docker.tls]
+      cert = "/etc/traefik/certs/local-cert.pem"
+      key = "/etc/traefik/certs/local-key.pem"
+    

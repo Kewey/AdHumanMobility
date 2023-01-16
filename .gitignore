@@ -1,7 +1,4 @@
-memo.yml
-/back/public
-/back/docker
-/back/var
-/back/vendor
-/apps/*
+.idea
+.vscode
+
 /docker
