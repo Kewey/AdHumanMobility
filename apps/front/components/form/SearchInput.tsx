@@ -1,11 +1,12 @@
 import React from 'react'
 import { Combobox } from '@headlessui/react'
-import { StrapiEntity } from '../../types/api'
+import { HydraCollection } from '../../types/api'
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
 }
 
+// TODO
 interface SearchProps<T> {
   options: T[]
   selectedValue: any
@@ -28,7 +29,7 @@ export const SearchInput = ({
   disabled,
   options,
   displayedProperty,
-}: SearchProps<StrapiEntity<any>>) => {
+}: SearchProps<any>) => {
   return (
     <Combobox
       value={selectedValue}
@@ -62,7 +63,7 @@ export const SearchInput = ({
                   )
                 }
               >
-                {option?.attributes?.[displayedProperty]}
+                {option?.[displayedProperty]}
               </Combobox.Option>
             ))}
             {!!handleAddNewOption && (
@@ -70,8 +71,7 @@ export const SearchInput = ({
                 value={null}
                 disabled={
                   !!options?.find(
-                    (option) =>
-                      option?.attributes?.[displayedProperty] === query
+                    (option) => option?.[displayedProperty] === query
                   )
                 }
               >
