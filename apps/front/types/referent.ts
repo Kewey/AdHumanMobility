@@ -1,7 +1,4 @@
-import { DefaultStrapyEntity, StrapiEntity } from './api'
-import { disruption } from './disruption'
-
-export interface Referent extends DefaultStrapyEntity {
+export interface Referent {
   companyName: string
   lastname?: string
   firstname?: string

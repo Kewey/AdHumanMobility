@@ -1,4 +1,5 @@
 import { Media } from './media'
+import { TYPOLOGY_ENUM } from './typology'
 import { User } from './user'
 
 export interface Disruption {
@@ -27,9 +28,9 @@ export interface DisruptionFormType {
   priority: PRIORITY
   file: FileList
   company: string
-  typology: string
-  category: string
-  subCategory: string
+  [TYPOLOGY_ENUM.TYPOLOGY]: string
+  [TYPOLOGY_ENUM.CATEGORY]: string
+  [TYPOLOGY_ENUM.SUB_CATEGORY]: string
   instances: string[]
   status: string
   content: string

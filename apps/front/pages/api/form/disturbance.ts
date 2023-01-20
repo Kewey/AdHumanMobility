@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { withSentry } from '@sentry/nextjs'
-import { postdisruption } from '../../../services/disruptionService'
+import disruptionService from '../../../services/disruptionService'
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== 'POST') {
@@ -10,7 +10,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   console.log('body', req.body)
 
   try {
-    const disruption = await postdisruption(req.body)
+    const disruption = await disruptionService.post(req.body)
     res.status(200).json(disruption)
   } catch (error) {
     console.log('error', error)

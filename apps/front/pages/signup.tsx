@@ -1,3 +1,4 @@
+import axios, { AxiosError } from 'axios'
 import { useRouter } from 'next/router'
 import React, { useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -14,6 +15,8 @@ interface UserForm {
   confirmPassword: string
   phone: string
 }
+
+axios.defaults.baseURL = process.env.NEXT_PUBLIC_API_URL
 
 function Signup() {
   const router = useRouter()
@@ -36,28 +39,22 @@ function Signup() {
     }
 
     setIsLoading(true)
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/auth/local/register`,
-      {
-        method: 'post',
+    try {
+      const { data: newUser } = await axios.post(`/signup`, body, {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(body),
-      }
-    )
+      })
+      toast.success('Votre compte a bien était crée !')
+      router.back()
+    } catch (error: any) {
+      console.log(error)
 
-    setIsLoading(false)
-
-    const resData = await response.json()
-
-    if (response.status === 400) {
-      toast.error(resData.error.message)
+      toast.error(error.message)
       return
+    } finally {
+      setIsLoading(false)
     }
-
-    toast.success('Votre compte a bien était crée !')
-    router.back()
   }
 
   return (

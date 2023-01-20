@@ -58,7 +58,6 @@ const Home = ({ disruptions }: HomePageProps) => {
   const [selectedLocationOptions, setSelectedLocationOptions] =
     useState<Adress | null>(null)
 
-  const router = useRouter()
   const { data: session } = useSession()
 
   console.log(session?.user)
