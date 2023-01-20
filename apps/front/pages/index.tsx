@@ -58,10 +58,6 @@ const Home = ({ disruptions }: HomePageProps) => {
   const [selectedLocationOptions, setSelectedLocationOptions] =
     useState<Adress | null>(null)
 
-  const { data: session } = useSession()
-
-  console.log(session?.user)
-
   const mapRef = useRef<Map | null>(null)
 
   useEffect(() => {
@@ -156,8 +152,7 @@ const Home = ({ disruptions }: HomePageProps) => {
   return (
     <Layout
       marginHorizontal={false}
-      title={'Bienvenue'}
-      description={'TODO'}
+      title="Bienvenue"
       searchBar={<SearchBar />}
     >
       <div className="bg-slate-100 h-[calc(100vh-80px)] -mx-6 overflow-hidden">

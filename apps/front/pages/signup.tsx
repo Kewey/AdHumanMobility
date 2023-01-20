@@ -33,8 +33,10 @@ function Signup() {
   password.current = watch('password', '')
 
   const registerUser = async (data: UserForm) => {
+    const { password, confirmPassword, ...bodyData } = data
     const body = {
-      ...data,
+      ...bodyData,
+      plainPassword: password,
       username: `${data.firstname} ${data.lastname}`,
     }
 
