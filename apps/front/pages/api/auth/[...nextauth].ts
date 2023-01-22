@@ -3,6 +3,8 @@ import NextAuth, { NextAuthOptions } from 'next-auth'
 import { JWT } from 'next-auth/jwt'
 import CredentialsProvider from 'next-auth/providers/credentials'
 
+axios.defaults.baseURL = process.env.NEXT_PUBLIC_API_URL
+
 async function refreshAccessToken(token: JWT) {
   try {
     const { data } = await axios.post(
