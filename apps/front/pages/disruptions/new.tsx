@@ -78,6 +78,8 @@ function Newdisruption({ typologies }: NewDisruptionProps) {
   const router = useRouter()
 
   useEffect(() => {
+    console.log(TYPOLOGY_ENUM.TYPOLOGY)
+
     const subscription = watch(async (value, { name }) => {
       if (name !== TYPOLOGY_ENUM.TYPOLOGY) {
         return
@@ -96,17 +98,18 @@ function Newdisruption({ typologies }: NewDisruptionProps) {
   }, [watch(TYPOLOGY_ENUM.TYPOLOGY)])
 
   useEffect(() => {
+    console.log(TYPOLOGY_ENUM.CATEGORY)
+
     if (!categories?.length) {
       return
     }
 
     const subscription = watch(async (value, { name }) => {
-      if (name !== TYPOLOGY_ENUM.CATEGORY && !value) {
+      if (name !== TYPOLOGY_ENUM.CATEGORY) {
         return
       }
 
       const { typologies: subCategories } =
-        // @ts-ignore
         await typologyService.getTypologyChildren(value[name])
       setSubCategories(subCategories)
       setValue(TYPOLOGY_ENUM.SUB_CATEGORY, '')

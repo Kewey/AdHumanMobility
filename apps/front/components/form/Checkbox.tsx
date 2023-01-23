@@ -31,8 +31,9 @@ function Checkbox({
         <div className="mr-2">
           <img
             src={`https://api.${process.env.NEXT_PUBLIC_DOMAIN}${iconUrl}`}
-            height={50}
-            width={50}
+            height={40}
+            width={40}
+            className="h-10 w-10 object-cover"
           />
         </div>
       )}
