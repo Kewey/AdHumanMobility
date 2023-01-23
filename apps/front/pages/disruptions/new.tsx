@@ -87,6 +87,7 @@ function Newdisruption({ typologies }: NewDisruptionProps) {
         await typologyService.getTypologyChildren(value[name])
 
       setCategories(categories)
+      setSubCategories([])
       setValue(TYPOLOGY_ENUM.SUB_CATEGORY, '')
       setValue(TYPOLOGY_ENUM.CATEGORY, '')
     })
