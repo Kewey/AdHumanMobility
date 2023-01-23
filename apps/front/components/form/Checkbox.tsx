@@ -33,7 +33,7 @@ function Checkbox({
             src={`https://api.${process.env.NEXT_PUBLIC_DOMAIN}${iconUrl}`}
             height={40}
             width={40}
-            className="h-10 w-10 object-cover"
+            className="h-10 w-10 object-contain"
           />
         </div>
       )}
