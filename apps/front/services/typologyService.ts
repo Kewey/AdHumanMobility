@@ -40,7 +40,6 @@ async function getTypologyChildren(
   if (!session) {
     return { typologies: [], totalItems: 0 }
   }
-  console.log(session)
 
   const {
     data: { 'hydra:member': typologies, 'hydra:totalItems': totalItems },

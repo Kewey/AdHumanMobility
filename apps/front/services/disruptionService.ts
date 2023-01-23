@@ -37,7 +37,6 @@ async function get(disruptionId: string, params = {}): Promise<Disruption> {
 
 async function post(data: DisruptionFormType): Promise<Disruption> {
   const session = await getSession()
-  console.log(session)
 
   const { file, ...rawData } = data
 

@@ -7,13 +7,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     res.status(401)
   }
 
-  console.log('body', req.body)
-
   try {
     const disruption = await disruptionService.post(req.body)
     res.status(200).json(disruption)
   } catch (error) {
-    console.log('error', error)
+    console.error(error)
     // res.status(error.response.data.status).json(error.response.data.message)
   }
 }
