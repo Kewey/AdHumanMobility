@@ -89,7 +89,6 @@ function Newdisruption({ typologies }: NewDisruptionProps) {
       setCategories(categories)
       setValue(TYPOLOGY_ENUM.SUB_CATEGORY, '')
       setValue(TYPOLOGY_ENUM.CATEGORY, '')
-      return
     })
 
     return () => subscription.unsubscribe()
@@ -101,16 +100,15 @@ function Newdisruption({ typologies }: NewDisruptionProps) {
     }
 
     const subscription = watch(async (value, { name }) => {
-      switch (name) {
-        case TYPOLOGY_ENUM.CATEGORY:
-          const { typologies: subCategories } =
-            await typologyService.getTypologyChildren(value[name])
-          setSubCategories(subCategories)
-          setValue(TYPOLOGY_ENUM.SUB_CATEGORY, '')
-          return
-        default:
-          return
+      if (name !== TYPOLOGY_ENUM.CATEGORY && !value) {
+        return
       }
+
+      const { typologies: subCategories } =
+        // @ts-ignore
+        await typologyService.getTypologyChildren(value[name])
+      setSubCategories(subCategories)
+      setValue(TYPOLOGY_ENUM.SUB_CATEGORY, '')
     })
 
     return () => subscription.unsubscribe()
