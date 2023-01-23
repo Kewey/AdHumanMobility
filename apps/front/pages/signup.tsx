@@ -50,7 +50,7 @@ function Signup() {
       toast.success('Votre compte a bien était crée !')
       router.back()
     } catch (error: any) {
-      console.log(error)
+      console.error(error)
 
       toast.error(error.message)
       return

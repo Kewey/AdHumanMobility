@@ -33,8 +33,6 @@ export const getServerSideProps = async (
 ) => {
   const session = await getSession(context)
 
-  console.log(session)
-
   if (!session) {
     return {
       redirect: {
@@ -167,7 +165,7 @@ function Newdisruption({ typologies }: NewDisruptionProps) {
           onSubmit={handleSubmit(onSubmit)}
           className="grid lg:grid-cols-2 grid-cols-1 gap-8"
         >
-          <div className="col-span-full">
+          <div className="col-span-2">
             <label className="mb-2 text-gray-400 font-semibold block w-full">
               Choissiez une typologie
             </label>
@@ -187,7 +185,7 @@ function Newdisruption({ typologies }: NewDisruptionProps) {
           </div>
 
           {categories.length > 0 && (
-            <div className="col-span-full">
+            <div className="col-span-2">
               <label className="mb-2 text-gray-400  font-semibold block w-full">
                 Choisissez une catégorie
               </label>
@@ -208,7 +206,7 @@ function Newdisruption({ typologies }: NewDisruptionProps) {
           )}
 
           {subCategories?.length > 0 && (
-            <div className="col-span-full">
+            <div className="col-span-2">
               <label className="mb-2 text-gray-400 font-semibold block w-full">
                 Choisissez une sous catégorie
               </label>
@@ -230,7 +228,7 @@ function Newdisruption({ typologies }: NewDisruptionProps) {
 
           {watch('subCategory') && (
             <>
-              <div className="mb-3 lg:col-span-2">
+              <div className="mb-3 col-span-2">
                 <label className="mb-2 text-gray-400 font-semibold block w-full">
                   Lieu de la perturbation
                 </label>
@@ -272,7 +270,7 @@ function Newdisruption({ typologies }: NewDisruptionProps) {
               />
             </div> */}
 
-              <div className="mb-3">
+              <div className="mb-3 col-span-2">
                 <Input
                   {...register('disruptionAt', {
                     max: dayjs().format('YYYY-MM-DDTHH:mm'),
@@ -283,7 +281,7 @@ function Newdisruption({ typologies }: NewDisruptionProps) {
                 />
               </div>
 
-              <div className="mb-3 lg:col-span-2">
+              <div className="mb-3 col-span-2">
                 <label className="mb-2 text-gray-400 font-semibold block w-full">
                   Priorité de la perturbation
                 </label>
@@ -303,7 +301,7 @@ function Newdisruption({ typologies }: NewDisruptionProps) {
                 </div>
               </div>
 
-              <div className="mb-3 col-span-full">
+              <div className="mb-3 col-span-2">
                 <label className="mb-2 text-gray-400 font-semibold block w-full">
                   Photo de la perturbation ou des lieux
                 </label>
@@ -314,7 +312,7 @@ function Newdisruption({ typologies }: NewDisruptionProps) {
                 />
               </div>
 
-              <div className="mb-3">
+              {/* <div className="mb-3">
                 <label className="mb-2 text-gray-400 font-semibold block w-full">
                   Une entreprise est elle mise en cause ?
                 </label>
@@ -362,7 +360,7 @@ function Newdisruption({ typologies }: NewDisruptionProps) {
                     // setValue('referent', newCompany)
                   }}
                 />
-              </div>
+              </div> */}
 
               <div className="mb-3 lg:col-span-2">
                 <label className="mb-2 text-gray-400 font-semibold block w-full">
@@ -384,7 +382,7 @@ function Newdisruption({ typologies }: NewDisruptionProps) {
                 </div>
               </div>
 
-              <div className="mb-3 lg:col-span-2">
+              <div className="mb-3 col-span-2">
                 <Textarea
                   register={register}
                   name="content"
