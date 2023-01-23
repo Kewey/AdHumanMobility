@@ -113,7 +113,7 @@ function Newdisruption({ typologies }: NewDisruptionProps) {
     })
 
     return () => subscription.unsubscribe()
-  }, [categories])
+  }, [watch(TYPOLOGY_ENUM.CATEGORY)])
 
   // useEffect(() => {
   //   if (!companyQuery) return
