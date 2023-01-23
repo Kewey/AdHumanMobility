@@ -43,14 +43,11 @@ export const Disruption = ({
     <div className="mt-4">
       {contentUrl ? (
         <div className="mb-3">
-          <Image
-            src={contentUrl}
+          <img
+            src={`https://api.${process.env.NEXT_PUBLIC_DOMAIN}${contentUrl}`}
             height={175}
-            layout="responsive"
             width={335}
-            className="rounded-xl"
-            objectFit="cover"
-            objectPosition={'50% 50%'}
+            className="rounded-xl object-cover object-center"
           />
         </div>
       ) : (

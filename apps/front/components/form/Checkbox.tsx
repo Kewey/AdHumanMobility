@@ -29,7 +29,11 @@ function Checkbox({
     >
       {iconUrl && (
         <div className="mr-2">
-          <Image src={iconUrl} layout="fixed" height={50} width={50} />
+          <img
+            src={`https://api.${process.env.NEXT_PUBLIC_DOMAIN}${iconUrl}`}
+            height={50}
+            width={50}
+          />
         </div>
       )}
       <span className="flex-1">{label}</span>

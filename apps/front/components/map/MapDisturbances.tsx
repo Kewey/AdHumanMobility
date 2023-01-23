@@ -33,7 +33,7 @@ const MapDisruptions = ({
       zoom={13}
       className="h-full"
     >
-      {disruptions?.map(({ id, lat, long, ...disruption }) => (
+      {disruptions?.map(({ id, lat, long, contentUrl, ...disruption }) => (
         <Marker
           key={id}
           icon={iconMarker}
@@ -49,8 +49,7 @@ const MapDisruptions = ({
             maxWidth={450}
           >
             <img
-              src=""
-              alt="WIP"
+              src={`https://api.${process.env.NEXT_PUBLIC_DOMAIN}${contentUrl}`}
               className="h-[150px] w-full bg-slate-100 rounded-md mb-2"
             />
             <h4 className="mb-2">{disruption.status}</h4>
