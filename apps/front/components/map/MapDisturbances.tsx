@@ -50,7 +50,7 @@ const MapDisruptions = ({
           >
             <img
               src={`https://api.${process.env.NEXT_PUBLIC_DOMAIN}${contentUrl}`}
-              className="h-[150px] w-full bg-slate-100 rounded-md mb-2"
+              className="h-[150px] w-full bg-slate-100 rounded-md mb-2 object-cover"
             />
             <h4 className="mb-2">{disruption.status}</h4>
             <div className="mb-4">

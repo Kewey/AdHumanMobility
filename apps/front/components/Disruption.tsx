@@ -47,7 +47,7 @@ export const Disruption = ({
             src={`https://api.${process.env.NEXT_PUBLIC_DOMAIN}${contentUrl}`}
             height={175}
             width={335}
-            className="rounded-xl object-cover object-center"
+            className="rounded-xl object-cover object-center w-100 h-100 max-h-44"
           />
         </div>
       ) : (
