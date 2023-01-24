@@ -1,8 +1,9 @@
 import { getCsrfToken, signIn } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import React from 'react'
+import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { toast, useToaster } from 'react-hot-toast'
 import Button from '../components/Button'
 import Input from '../components/form/Input'
 import Layout from '../components/Layout'
@@ -21,30 +22,40 @@ export async function getServerSideProps(context: any) {
 }
 
 function Login({ csrfToken }: any) {
+  const [isLoading, setIsLoading] = useState(false)
+
   const router = useRouter()
 
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors },
   } = useForm<AuthenticationFormType>()
 
   const onSubmit = async ({ email, password }: AuthenticationFormType) => {
+    setIsLoading(true)
     try {
-      await signIn('credentials', {
+      const resData = await signIn<'credentials'>('credentials', {
         email,
         password,
         redirect: false,
-      }).then(({ ok, error }: any) => {
-        if (!ok) {
-          throw new Error(error)
-        }
-
-        router.push('/')
       })
+
+      if (resData?.status === 401) {
+        toast.error(
+          "Cette combinaison adresse mail et mot de passe n'existe pas"
+        )
+        return
+      }
+
+      if (!resData?.ok) {
+        throw Error(resData?.error, resData?.url)
+      }
+      router.push('/')
     } catch (error) {
-      console.warn(error)
+      console.error(error)
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -82,8 +93,8 @@ function Login({ csrfToken }: any) {
           </div>
 
           <div className="mb-3">
-            <Button type="submit" variant="primary" block>
-              Connexion
+            <Button type="submit" variant="primary" block disabled={isLoading}>
+              {isLoading ? 'Connexion en cours ...' : 'Connexion'}
             </Button>
           </div>
         </form>

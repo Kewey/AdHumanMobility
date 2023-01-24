@@ -15,6 +15,7 @@ const Button = forwardRef(
       size = 'md',
       block,
       href,
+      disabled,
       textAlign,
       ...props
     }: ButtonProps & any,
@@ -63,6 +64,7 @@ const Button = forwardRef(
       <a
         {...props}
         ref={ref}
+        disabled={disabled}
         className={`${
           block ? 'w-full justify-center flex' : 'inline-flex'
         } items-center cursor-pointer rounded-md text-base font-medium ${buttonVariant()} ${buttonSize()} ${buttonTextAlign()}${
@@ -74,6 +76,7 @@ const Button = forwardRef(
     ) : (
       <button
         {...props}
+        disabled={disabled}
         ref={ref}
         className={`disabled:bg-slate-200 disabled:text-slate-500 ${
           block ? 'w-full justify-center flex' : 'inline-flex'
