@@ -49,7 +49,7 @@ function Login({ csrfToken }: any) {
       }
 
       if (!resData?.ok) {
-        throw Error(resData?.error, resData?.url)
+        throw new Error(resData?.error)
       }
       router.push('/')
     } catch (error) {
