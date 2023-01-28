@@ -82,13 +82,13 @@ const Header = ({ searchBar }: any) => {
           <nav className="flex flex-col gap-4">
             {searchBar}
             <Link href="/about-us">
-              <a>Qui somme nous ?</a>
+              <a className="px-6 py-2">Qui somme nous ?</a>
             </Link>
             <Link href="/objectifs">
-              <a>Nos objectifs</a>
+              <a className="px-6 py-2">Nos objectifs</a>
             </Link>
             <Link href="/contact">
-              <a>Contact</a>
+              <a className="px-6 py-2">Contact</a>
             </Link>
             <hr />
             <Link href="/disruptions/new" passHref>
@@ -102,16 +102,14 @@ const Header = ({ searchBar }: any) => {
               </Button>
             </Link>
             {!session ? (
-              <Link href="/api/auth/signin" passHref>
-                <Button
-                  variant="text"
-                  type="button"
-                  size="sm"
-                  onClick={() => signIn()}
-                >
-                  Me connecter
-                </Button>
-              </Link>
+              <Button
+                variant="text"
+                type="button"
+                size="sm"
+                onClick={() => signIn()}
+              >
+                Me connecter
+              </Button>
             ) : (
               <Button
                 variant="text"

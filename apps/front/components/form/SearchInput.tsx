@@ -38,7 +38,7 @@ export const SearchInput = ({
     >
       <div className="relative">
         <Combobox.Input
-          className="focus:outline-none focus:border-primary-500 px-4 py-3 w-full border rounded-lg"
+          className="focus:outline-none focus:border-primary-500 px-4 py-3 w-full border rounded-lg appearance-none"
           placeholder={placeholder}
           onChange={(e) => {
             setQuery(e.target.value)

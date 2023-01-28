@@ -34,7 +34,7 @@ const Input = forwardRef(
           id={name}
           name={name}
           ref={ref}
-          className={`focus:outline-none focus:border-primary-500 px-4 py-3 w-full border ${
+          className={`focus:outline-none focus:border-primary-500 px-4 py-3 w-full border appearance-none shadow-none ${
             error && 'border-red-500'
           } rounded-lg`}
           {...props}

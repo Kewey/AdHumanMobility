@@ -62,7 +62,13 @@ function Login({ csrfToken }: any) {
   return (
     <Layout title="Connexion">
       <div className="max-w-md m-auto p-4">
-        <h1 className="text-3xl font-extrabold">Connexion</h1>
+        <h1 className="text-3xl text-slate-800 font-extrabold mb-2">
+          Connexion
+        </h1>
+
+        <p className="text-slate-400 font-medium mb-6">
+          Connectez vous à votre compte pour déclarer des perturbations.
+        </p>
 
         <form method="post" onSubmit={handleSubmit(onSubmit)}>
           <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
@@ -79,26 +85,23 @@ function Login({ csrfToken }: any) {
             />
           </div>
 
-          <div className="mb-3">
-            <Input
-              {...register('password', {
-                required: 'Vous devez renseigner votre mot de passe',
-              })}
-              label="Mot de passe"
-              placeholder="******"
-              name="password"
-              type={'password'}
-              error={errors.password}
-            />
-          </div>
+          <Input
+            {...register('password', {
+              required: 'Vous devez renseigner votre mot de passe',
+            })}
+            label="Mot de passe"
+            placeholder="******"
+            name="password"
+            type={'password'}
+            error={errors.password}
+          />
 
-          <div className="mb-3">
+          <div className="mb-3 mt-6">
             <Button type="submit" variant="primary" block disabled={isLoading}>
               {isLoading ? 'Connexion en cours ...' : 'Connexion'}
             </Button>
           </div>
         </form>
-
         <Link href={'signup'}>
           <Button type="button" variant="text" block>
             Pas encore de compte ? Je m’inscris

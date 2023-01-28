@@ -24,7 +24,7 @@ const Button = forwardRef(
     const buttonVariant = () => {
       switch (variant) {
         case 'text':
-          return 'text-primary-500 hover:bg-gray-100'
+          return 'text-primary-500 bg-white hover:bg-gray-100'
 
         case 'secondary':
           return 'text-primary-900 bg-primary-100 hover:bg-primary-200'
@@ -80,7 +80,7 @@ const Button = forwardRef(
         ref={ref}
         className={`disabled:bg-slate-200 disabled:text-slate-500 ${
           block ? 'w-full justify-center flex' : 'inline-flex'
-        } items-center cursor-pointer rounded-md text-base font-medium ${buttonVariant()} ${buttonSize()} ${buttonTextAlign()} disabled:opacity-40`}
+        } items-center cursor-pointer rounded-md text-base appearance-none font-medium ${buttonVariant()} ${buttonSize()} ${buttonTextAlign()} disabled:opacity-40`}
       >
         {children}
       </button>
