@@ -89,7 +89,6 @@ class Disruption
         openapiContext: [
             'type' => 'string',
             'enum' => Transport::CASES,
-            'example' => Transport::WALKER->value
         ]
     )]
     #[Groups(['disruptions:write', 'disruptions:read'])]

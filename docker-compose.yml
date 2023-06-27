@@ -1,104 +1,77 @@
-# Docker-compose production
-
 version: '3.4'
 
 services:
-  traefik:
-    image: traefik:v2.0
+  reverse-proxy:
+    # The official v2 Traefik docker image
+    image: traefik:v2.4
+    # Enables the web UI and tells Traefik to listen to docker
+    command:
+      - --providers.docker
+      # Do not expose container by default
+      - '--providers.docker.exposedbydefault=false'
+      - '--entryPoints.web.address=:80'
+      - '--entryPoints.websecure.address=:443'
+      - '--certificatesResolvers.le.acme.email=monstoriste@dotsafe.fr'
+      - '--certificatesResolvers.le.acme.storage=acme.json'
+      - '--certificatesResolvers.le.acme.httpChallenge.entryPoint=web'
+
     ports:
+      # The HTTP port
       - '80:80'
       - '443:443'
-      - '8080:8080'
-    networks:
-      default:
-        aliases:
-          - $APP_DOMAIN
-          - api.$APP_DOMAIN
-    restart: unless-stopped
     volumes:
-      - ./docker/traefik/traefik.toml:/traefik.toml
+      # So that Traefik can listen to the Docker events
       - /var/run/docker.sock:/var/run/docker.sock
+      - ./docker-config/traefik/acme.json:/acme.json
 
-  adhmapi:
+  api:
     build:
       context: .
-      dockerfile: ./docker/adhmapi/Dockerfile
-      target: base
-    environment:
-      - APP_ENV=prod
-      - DATABASE_URL=postgres://$PG_USER:$PG_PASSWORD@database:5432/$PG_DATABASE
-      - DATABASE_PARAVOL_URL
-      - APP_DOMAIN
-      - JWT_COOKIE_HP
-      - JWT_COOKIE_SIGNATURE
+      target: local
+      dockerfile: docker-config/api/Dockerfile
+    restart: always
     healthcheck:
       interval: 10s
       timeout: 3s
       retries: 3
       start_period: 30s
-    depends_on:
-      - database
+    volumes:
+      # Comment out the next line in production
+      - ./AdHuman/apps/api:/var/www:rw,cached
     labels:
       - 'traefik.enable=true'
-      - 'traefik.docker.network=default'
-      # http
-      - 'traefik.http.routers.adhmapi-web.rule=Host(`api.$APP_DOMAIN`)'
-      - traefik.http.routers.adhmapi-web.entrypoints=web
-      - traefik.http.routers.adhmapi-web.middlewares=redirect
-      # - 'traefik.http.routers.adhmapi.tls=false'
-      # https
-      # - 'traefik.http.routers.adhmapi-tls.rule=Host(`api.$APP_DOMAIN`)'
-      # - 'traefik.http.routers.adhmapi-tls.tls=true'
-      # - 'traefik.http.routers.adhmapi-tls.tls.certresolver=le'
-    restart: unless-stopped
+      # Reusable middlewares
+      - 'traefik.http.middlewares.adhuman-mobility_force_https.redirectscheme.scheme=https'
+      # http://$HOST : Redirect to https
+      - 'traefik.http.routers.adhuman-mobility_api.rule=Host(`api.adhumanmobility.com`)'
+      - 'traefik.http.routers.adhuman-mobility_api.tls=false'
+      - 'traefik.http.routers.adhuman-mobility_api.middlewares=adhuman-mobility_api'
+      - 'traefik.http.middlewares.adhuman-mobility_api.chain.middlewares=adhuman-mobility_force_https'
+      - 'traefik.http.routers.adhuman-mobility_api.service=adhuman-mobility_api'
+      - 'traefik.http.services.adhuman-mobility_api.loadbalancer.server.port=80'
+      # https://$HOST
+      - 'traefik.http.routers.adhuman-mobility_api-tls.rule=Host(`api.adhumanmobility.com`)'
+      - 'traefik.http.routers.adhuman-mobility_api-tls.tls=true'
+      - 'traefik.http.routers.adhuman-mobility_api-tls.tls.certresolver=le'
+      - 'traefik.http.routers.adhuman-mobility_api-tls.service=adhuman-mobility_api-tls'
+      - 'traefik.http.services.adhuman-mobility_api-tls.loadbalancer.server.port=80'
 
-  # adhm:
-  #   image: registry.git.dotsafe.fr/malineo/adhm/adhm:$APP_VERSION
-  #   environment:
-  #     - APP_DOMAIN
-  #     - JWT_COOKIE_HP
-  #   labels:
-  #     - 'traefik.enable=true'
-  #     - 'traefik.docker.network=default'
-  #     # Middlewares
-  #     - 'traefik.http.middlewares.adhm-redirect-scheme.redirectscheme.scheme=https'
-  #     # http
-  #     - 'traefik.http.routers.adhm.rule=Host(`$APP_DOMAIN`)'
-  #     - 'traefik.http.routers.adhm.tls=false'
-  #     - 'traefik.http.routers.adhm.middlewares=adhm-redirect-scheme'
-  #     #            - 'traefik.http.services.adhm.loadbalancer.server.port=8080'
-  #     # https
-  #     - 'traefik.http.routers.adhm-tls.rule=Host(`$APP_DOMAIN`)'
-  #     - 'traefik.http.routers.adhm-tls.tls=true'
-  #     - 'traefik.http.routers.adhm-tls.tls.certresolver=le'
-  #   restart: unless-stopped
-
-  database:
-    image: postgres:14-alpine
+  db:
+    image: postgres:14.1-alpine
     volumes:
-      - /db-data:/var/lib/postgresql/data:rw
+      - adhm_database:/var/lib/postgresql/data/pgdata
     environment:
-      - POSTGRES_DB=api
-      - POSTGRES_PASSWORD=local
-      - POSTGRES_USER=api
-    ports:
-      - '127.0.0.1:3307:3306'
-    restart: unless-stopped
+      POSTGRES_USER: ${POSTGRES_USER:-adhm}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-adhm}
+      POSTGRES_DB: ${POSTGRES_DB:-adhm}
+      PGDATA: /var/lib/postgresql/data/pgdata
+      POSTGRES_HOST_AUTH_METHOD: md5
 
   adminer:
     image: adminer
     restart: always
-    environment:
-      - ADMINER_DESIGN=pepa-linha-dark
-    labels:
-      - 'traefik.enable=true'
-      - 'traefik.docker.network=default'
-      # http
-      - 'traefik.http.routers.adminer-web.rule=Host(`adminer.$APP_DOMAIN`)'
-      - traefik.http.routers.adminer-web.entrypoints=web
-      - traefik.http.routers.adminer-web.middlewares=redirect
+    ports:
+      - 8080:8080
 
-networks:
-  # Change if you're using another network
-  proxy:
-    external: true
+volumes:
+  adhm_database:
