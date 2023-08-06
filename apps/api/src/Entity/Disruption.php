@@ -111,13 +111,6 @@ class Disruption
 
     #[ORM\Column(length: 255)]
     #[Assert\NotNull]
-    #[ApiProperty(
-        openapiContext: [
-            'type' => 'string',
-            'enum' => Priority::CASES,
-            'example' => Priority::LOW->value
-        ]
-    )]
     #[Groups(['disruptions:write'])]
     private ?string $priority = null;
 
