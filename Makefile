@@ -12,7 +12,7 @@ dc\:down: ## Down the project
 	docker compose down
 
 dc\:api: ## Run bash in docker adhmapi container (alias: adhmapi)
-	docker compose exec -u app adhm_api bash
+	docker compose exec -u app api sh
 
 dc\:front: ## Run bash in docker adhm container (alias: adhm)
 	docker compose exec -u app front bash
