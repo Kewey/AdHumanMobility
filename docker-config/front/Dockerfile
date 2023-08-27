@@ -2,13 +2,14 @@ FROM node:18-alpine AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-COPY package.json package-lock.json ./
-RUN  npm install --production
+COPY ../../apps/front/package.json ../../apps/front/package-lock.json ./
+RUN npm install --production
 
 FROM node:18-alpine AS builder
 WORKDIR /app
+RUN pwd && ls
 COPY --from=deps /app/node_modules ./node_modules
-COPY . .
+COPY ../../apps/front/ .
 
 ENV NEXT_TELEMETRY_DISABLED 1
 
