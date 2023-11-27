@@ -1,3 +1,7 @@
-import { Media } from '../types/media'
+import { Media } from "../types/media"
 
-export const uploadMedia = (files: FileList) => {}
+export default {
+  getMedia: (path: string) => {
+    return `${process.env.NEXT_PUBLIC_API_URL}${path}`
+  },
+}

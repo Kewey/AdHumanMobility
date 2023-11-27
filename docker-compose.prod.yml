@@ -1,0 +1,72 @@
+version: '3.4'
+
+services:
+  reverse-proxy:
+    # The official v2 Traefik docker image
+    image: traefik:v2.4
+    # Enables the web UI and tells Traefik to listen to docker
+    command:
+      - --providers.docker
+      # Do not expose container by default
+      - '--providers.docker.exposedbydefault=false'
+      - '--entryPoints.web.address=:80'
+      - '--entryPoints.websecure.address=:443'
+    ports:
+      # The HTTP port
+      - '80:80'
+      - '443:443'
+    volumes:
+      # So that Traefik can listen to the Docker events
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  api:
+    build:
+      context: .
+      target: local
+      dockerfile: docker-config/api/Dockerfile
+    restart: always
+    healthcheck:
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 30s
+    volumes:
+      # Comment out the next line in production
+      - ./AdHuman/apps/api:/var/www:rw,cached
+    labels:
+      - 'traefik.enable=true'
+      # Reusable middlewares
+      - 'traefik.http.middlewares.adhuman-mobility_force_https.redirectscheme.scheme=https'
+      # http://$HOST : Redirect to https
+      - 'traefik.http.routers.adhuman-mobility_api.rule=Host(`api.adhumanmobility.com`)'
+      - 'traefik.http.routers.adhuman-mobility_api.tls=false'
+      - 'traefik.http.routers.adhuman-mobility_api.middlewares=adhuman-mobility_api'
+      - 'traefik.http.middlewares.adhuman-mobility_api.chain.middlewares=adhuman-mobility_force_https'
+      - 'traefik.http.routers.adhuman-mobility_api.service=adhuman-mobility_api'
+      - 'traefik.http.services.adhuman-mobility_api.loadbalancer.server.port=80'
+      # https://$HOST
+      - 'traefik.http.routers.adhuman-mobility_api-tls.rule=Host(`api.adhumanmobility.com`)'
+      - 'traefik.http.routers.adhuman-mobility_api-tls.tls=true'
+      - 'traefik.http.routers.adhuman-mobility_api-tls.tls.certresolver=le'
+      - 'traefik.http.routers.adhuman-mobility_api-tls.service=adhuman-mobility_api-tls'
+      - 'traefik.http.services.adhuman-mobility_api-tls.loadbalancer.server.port=80'
+
+  db:
+    image: postgres:14.1-alpine
+    volumes:
+      - adhm_database:/var/lib/postgresql/data/pgdata
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-adhm}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-adhm}
+      POSTGRES_DB: ${POSTGRES_DB:-adhm}
+      PGDATA: /var/lib/postgresql/data/pgdata
+      POSTGRES_HOST_AUTH_METHOD: md5
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+
+volumes:
+  adhm_database:

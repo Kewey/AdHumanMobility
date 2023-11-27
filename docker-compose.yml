@@ -11,10 +11,9 @@ services:
       - '--providers.docker.exposedbydefault=false'
       - '--entryPoints.web.address=:80'
       - '--entryPoints.websecure.address=:443'
-      - '--certificatesResolvers.le.acme.email=monstoriste@dotsafe.fr'
-      - '--certificatesResolvers.le.acme.storage=acme.json'
-      - '--certificatesResolvers.le.acme.httpChallenge.entryPoint=web'
-
+      - "--certificatesResolvers.le.acme.email=contact@adhm.local"
+      - "--certificatesResolvers.le.acme.storage=acme.json"
+      - "--certificatesResolvers.le.acme.httpChallenge.entryPoint=web"
     ports:
       # The HTTP port
       - '80:80'
@@ -22,9 +21,9 @@ services:
     volumes:
       # So that Traefik can listen to the Docker events
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./docker-config/traefik/acme.json:/acme.json
 
   api:
+    container_name: adhm_api
     build:
       context: .
       target: local
@@ -37,26 +36,32 @@ services:
       start_period: 30s
     volumes:
       # Comment out the next line in production
-      - ./AdHuman/apps/api:/var/www:rw,cached
+      - ./apps/api:/var/www:rw,cached
     labels:
       - 'traefik.enable=true'
       # Reusable middlewares
       - 'traefik.http.middlewares.adhuman-mobility_force_https.redirectscheme.scheme=https'
-      # http://$HOST : Redirect to https
-      - 'traefik.http.routers.adhuman-mobility_api.rule=Host(`api.adhumanmobility.com`)'
-      - 'traefik.http.routers.adhuman-mobility_api.tls=false'
-      - 'traefik.http.routers.adhuman-mobility_api.middlewares=adhuman-mobility_api'
-      - 'traefik.http.middlewares.adhuman-mobility_api.chain.middlewares=adhuman-mobility_force_https'
-      - 'traefik.http.routers.adhuman-mobility_api.service=adhuman-mobility_api'
+
+      - 'traefik.http.routers.adhuman-mobility_api-secure.rule=Host(`api.adhm.local`)'
+      - 'traefik.http.routers.adhuman-mobility_api-secure.tls=true'
+      - 'traefik.http.routers.adhuman-mobility_api-secure.service=adhuman-mobility_api'
       - 'traefik.http.services.adhuman-mobility_api.loadbalancer.server.port=80'
-      # https://$HOST
-      - 'traefik.http.routers.adhuman-mobility_api-tls.rule=Host(`api.adhumanmobility.com`)'
-      - 'traefik.http.routers.adhuman-mobility_api-tls.tls=true'
-      - 'traefik.http.routers.adhuman-mobility_api-tls.tls.certresolver=le'
-      - 'traefik.http.routers.adhuman-mobility_api-tls.service=adhuman-mobility_api-tls'
-      - 'traefik.http.services.adhuman-mobility_api-tls.loadbalancer.server.port=80'
+      - 'traefik.http.routers.adhuman-mobility_api-secure.middlewares=adhuman-mobility_force_https'
+
+  front:
+    container_name: adhm_front
+    build:
+      context: .
+      dockerfile: docker-config/front/Dockerfile
+      target: runner
+    volumes:
+      - ./apps/front:/app
+    command: npm run dev
+    environment:
+      NODE_ENV: development
 
   db:
+    container_name: adhm_db
     image: postgres:14.1-alpine
     volumes:
       - adhm_database:/var/lib/postgresql/data/pgdata
@@ -72,6 +77,12 @@ services:
     restart: always
     ports:
       - 8080:8080
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.adhuman-mobility_adminer.rule=Host(`adminer.adhm.local`)'
+      - 'traefik.http.routers.adhuman-mobility_adminer.tls=false'
+      - 'traefik.http.routers.adhuman-mobility_adminer.service=adhuman-mobility_adminer'
+      - 'traefik.http.services.adhuman-mobility_adminer.loadbalancer.server.port=8080'
 
 volumes:
   adhm_database:

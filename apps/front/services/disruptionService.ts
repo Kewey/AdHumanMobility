@@ -14,7 +14,7 @@ async function getAll(
 ): Promise<{ disruptions: Disruption[]; totalItems: number }> {
   const {
     data: { 'hydra:member': disruptions, 'hydra:totalItems': totalItems },
-  } = await axios(`/disruptions`, {
+  } = await axios.get(`/disruptions`, {
     params,
     headers: {
       Authorization: '',
@@ -25,7 +25,7 @@ async function getAll(
 }
 
 async function get(disruptionId: string, params = {}): Promise<Disruption> {
-  const { data: disruption } = await axios(`/disruptions/${disruptionId}`, {
+  const { data: disruption } = await axios.get(`/disruptions/${disruptionId}`, {
     params,
     headers: {
       Authorization: '',
@@ -37,10 +37,12 @@ async function get(disruptionId: string, params = {}): Promise<Disruption> {
 
 async function post(data: DisruptionFormType): Promise<Disruption> {
   const session = await getSession()
+  console.log(session);
+
 
   const { file, ...rawData } = data
 
-  const jwt = session?.user.token
+  const jwt = session?.token
 
   const formdata = new FormData()
 
